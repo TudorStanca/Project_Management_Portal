@@ -1,0 +1,6 @@
+@EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress = http://localhost:5136
+
+GET {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
