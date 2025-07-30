@@ -1,4 +1,8 @@
+using EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories;
+using EY.UbbstractThinkers.ProjectManagementPortal.Server.Services;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EY.UbbstractThinkers.ProjectManagementPortal.Server
@@ -10,6 +14,10 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            var connectionString = builder.Configuration.GetConnectionString("ConnectionString");
+            builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
+            builder.Services.AddScoped<IRepository, DbRepository>();
+            builder.Services.AddScoped<IProjectService, ProjectService>();
 
             builder.Services.AddControllers();
 
@@ -23,7 +31,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

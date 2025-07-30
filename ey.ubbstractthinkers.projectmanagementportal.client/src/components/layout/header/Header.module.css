@@ -1,0 +1,28 @@
+.headerAppbar {
+  position: "static";
+}
+
+.headerToolbar {
+  justify-content: space-between;
+}
+
+.headerBox {
+  display: flex;
+  align-items: center;
+}
+
+.headerIconButton {
+  margin-right: 0.0625em;
+  color: inherit;
+}
+
+.headerTypography {
+  font-weight: 37.5rem;
+  padding-left: 0.5em;
+}
+
+.headerButton:hover,
+.headerIconbutton:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}

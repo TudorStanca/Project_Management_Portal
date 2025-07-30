@@ -1,58 +1,51 @@
-import { useEffect, useState } from 'react';
-import './App.css';
-
-interface Forecast {
-    date: string;
-    temperatureC: number;
-    temperatureF: number;
-    summary: string;
-}
+import { useEffect, useRef, useState } from "react";
+import "./App.css";
+import { Box, Toolbar } from "@mui/material";
+import Header from "./components/layout/header/Header";
+import Navbar from "./components/layout/navbar/Navbar";
+import Footer from "./components/layout/footer/Footer";
+import HomePage from "./views/home/HomePage";
+import { Route, Routes, BrowserRouter } from "react-router-dom";
+import ProjectsPage from "./views/projects/ProjectsPage";
 
 function App() {
-    const [forecasts, setForecasts] = useState<Forecast[]>();
+  const [open, setOpen] = useState(true);
+  const [footerVisible, setFooterVisible] = useState(false);
+  const footerRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        populateWeatherData();
-    }, []);
-
-    const contents = forecasts === undefined
-        ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
-        : <table className="table table-striped" aria-labelledby="tableLabel">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Temp. (C)</th>
-                    <th>Temp. (F)</th>
-                    <th>Summary</th>
-                </tr>
-            </thead>
-            <tbody>
-                {forecasts.map(forecast =>
-                    <tr key={forecast.date}>
-                        <td>{forecast.date}</td>
-                        <td>{forecast.temperatureC}</td>
-                        <td>{forecast.temperatureF}</td>
-                        <td>{forecast.summary}</td>
-                    </tr>
-                )}
-            </tbody>
-        </table>;
-
-    return (
-        <div>
-            <h1 id="tableLabel">Weather forecast</h1>
-            <p>This component demonstrates fetching data from the server.</p>
-            {contents}
-        </div>
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setFooterVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
     );
 
-    async function populateWeatherData() {
-        const response = await fetch('weatherforecast');
-        if (response.ok) {
-            const data = await response.json();
-            setForecasts(data);
-        }
+    if (footerRef.current) {
+      observer.observe(footerRef.current);
     }
+
+    return () => {
+      if (footerRef.current) {
+        observer.unobserve(footerRef.current);
+      }
+    };
+  }, []);
+
+  return (
+    <Box className="home-box">
+      <BrowserRouter>
+        <Header />
+        <Toolbar />
+        <Navbar open={open} setOpen={setOpen} footerVisible={footerVisible} />
+        <Routes>
+          <Route path="/" element={<HomePage open={open} />} />
+          <Route path="/projects" element={<ProjectsPage open={open} />} />
+        </Routes>
+        <Footer ref={footerRef} />
+      </BrowserRouter>
+    </Box>
+  );
 }
 
 export default App;

@@ -1,0 +1,17 @@
+.footerBox {
+  height: 64px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.125em 0.1875em;
+  background: linear-gradient(to top, rgba(4, 5, 16, 1), rgba(37, 39, 52, 0.5));
+  border-top: 0.0625em solid rgba(255, 255, 255, 0.2);
+  margin-top: auto;
+}
+
+.footerStack {
+  justify-content: center;
+  align-items: center;
+  flex-wrap: "wrap";
+}

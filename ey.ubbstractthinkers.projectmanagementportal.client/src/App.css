@@ -1,11 +1,14 @@
 ﻿#root {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem;
-    text-align: center;
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  margin: 0;
+  padding: 0;
+  text-align: center;
 }
 
-th, td {
-    padding-left: 1rem;
-    padding-right: 1rem;
+.home-box {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
