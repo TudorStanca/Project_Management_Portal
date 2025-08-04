@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Models
+namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Dtos
 {
-    public class Project
+    public class ProjectDto
     {
         public Guid Uid { get; set; }
         public string Name { get; set; }

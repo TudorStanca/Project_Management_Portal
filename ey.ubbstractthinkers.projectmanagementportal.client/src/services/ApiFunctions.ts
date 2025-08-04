@@ -1,26 +1,33 @@
 import axios, { type AxiosResponse } from "axios";
+import type { Project } from "../models/Project";
 
 const api = axios.create({
   baseURL: "/api",
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
-interface Project {
-  Uid: string;
-  Name: string;
-  Description?: string;
-  StartDate: Date;
-  EndDate?: Date;
+export async function getProjects(): Promise<Project[]> {
+  const response: AxiosResponse<Project[]> = await api.get("/project");
+
+  return response.data;
 }
 
-export async function getProjects(): Promise<Project[]> {
-  try {
-    const response: AxiosResponse<Project[]> = await api.get("/project");
-    console.log(response.data);
-    console.log(response.headers);
-    return response.data;
-  } catch (error) {
-    //TO DO: Actually do error handling
-    console.log(error);
-    throw error;
-  }
+export async function getProject(uid: string): Promise<Project> {
+  const response: AxiosResponse<Project> = await api.get("/project/" + uid);
+
+  return response.data;
+}
+
+export async function saveProject(project: Project): Promise<void> {
+  await api.post("/project", project);
+}
+
+export async function updateProject(project: Project): Promise<void> {
+  await api.put("/project" + project.uid, project);
+}
+
+export async function deleteProject(uid: string): Promise<void> {
+  await api.delete("/project" + uid);
 }

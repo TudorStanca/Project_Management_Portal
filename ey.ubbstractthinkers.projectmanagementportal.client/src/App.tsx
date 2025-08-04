@@ -4,9 +4,11 @@ import { Box, Toolbar } from "@mui/material";
 import Header from "./components/layout/header/Header";
 import Navbar from "./components/layout/navbar/Navbar";
 import Footer from "./components/layout/footer/Footer";
-import HomePage from "./views/home/HomePage";
+import HomePage from "./pages/home/HomePage";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
-import ProjectsPage from "./views/projects/ProjectsPage";
+import ProjectsPage from "./pages/projects/ProjectsPage";
+import AddProjectPage from "./pages/projects/AddProjectPage";
+import ProjectPage from "./pages/projects/ProjectPage";
 
 function App() {
   const [open, setOpen] = useState(true);
@@ -18,7 +20,7 @@ function App() {
       ([entry]) => {
         setFooterVisible(entry.isIntersecting);
       },
-      { threshold: 0.1 }
+      { threshold: 0.8 }
     );
 
     if (footerRef.current) {
@@ -41,6 +43,11 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage open={open} />} />
           <Route path="/projects" element={<ProjectsPage open={open} />} />
+          <Route path="/add-project" element={<AddProjectPage open={open} />} />
+          <Route
+            path="/project/:projectId"
+            element={<ProjectPage open={open} />}
+          />
         </Routes>
         <Footer ref={footerRef} />
       </BrowserRouter>

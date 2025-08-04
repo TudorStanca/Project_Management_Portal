@@ -36,7 +36,7 @@ const HomePage = (props: HomePageProps) => {
 
   return (
     <Box className={`${styles.mainContent} ${props.open ? styles.open : ""}`}>
-      <Typography variant="h1" className={styles.mainHeader}>
+      <Typography variant="h2" className={styles.mainHeader}>
         Home
       </Typography>
       <Typography variant="body1" className={styles.description}>
@@ -47,7 +47,7 @@ const HomePage = (props: HomePageProps) => {
         team, share updates and manage workloads effectively to drive project
         success.
       </Typography>
-      <Typography variant="h2" className={styles.overviewHeader}>
+      <Typography variant="h4" className={styles.overviewHeader}>
         Overview
       </Typography>
       <Grid container spacing={3} className={styles.mainContainerGrid}>
