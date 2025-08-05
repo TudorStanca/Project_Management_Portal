@@ -9,6 +9,8 @@ import { Route, Routes, BrowserRouter } from "react-router-dom";
 import ProjectsPage from "./pages/projects/ProjectsPage";
 import AddProjectPage from "./pages/projects/AddProjectPage";
 import ProjectPage from "./pages/projects/ProjectPage";
+import RegisterPage from "./pages/auth/RegisterPage";
+import LoginPage from "./pages/auth/LoginPage";
 
 function App() {
   const [open, setOpen] = useState(true);
@@ -37,11 +39,13 @@ function App() {
   return (
     <Box className="home-box">
       <BrowserRouter>
-        <Header />
+        {<Header />}
         <Toolbar />
         <Navbar open={open} setOpen={setOpen} footerVisible={footerVisible} />
         <Routes>
           <Route path="/" element={<HomePage open={open} />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
           <Route path="/projects" element={<ProjectsPage open={open} />} />
           <Route path="/add-project" element={<AddProjectPage open={open} />} />
           <Route

@@ -6,11 +6,13 @@ import {
   ListItemButton,
   ListItemText,
   ListItem,
+  Tooltip,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import styles from "./Navbar.module.css";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
+import { useAuth } from "../../context/auth/AuthFunction";
 
 interface NavbarProps {
   open: boolean;
@@ -19,6 +21,10 @@ interface NavbarProps {
 }
 
 const Navbar = (props: NavbarProps) => {
+  const location = useLocation();
+
+  const { isAuthenticated } = useAuth();
+
   const drawerWidth = "240px";
   const headerHeight = "64px";
   const footerHeight = "64px";
@@ -30,6 +36,10 @@ const Navbar = (props: NavbarProps) => {
     { text: "Home", path: "/" },
     { text: "Projects", path: "/projects" },
   ];
+
+  if (location.pathname === "/login" || location.pathname === "/register") {
+    return null;
+  }
 
   return (
     <>
@@ -70,15 +80,29 @@ const Navbar = (props: NavbarProps) => {
               className={({ isActive }) =>
                 isActive ? `${styles.activeLink}` : ""
               }
+              key={text}
+              onClick={(e) => {
+                if (!isAuthenticated) {
+                  e.preventDefault();
+                }
+              }}
             >
-              <ListItem key={text} disablePadding>
-                <ListItemButton>
-                  <ListItemText
-                    className={styles.navbarListItemText}
-                    primary={text}
-                  />
-                </ListItemButton>
-              </ListItem>
+              <Tooltip
+                title={
+                  !isAuthenticated ? "Authenticate to use this feature" : ""
+                }
+                arrow
+                disableHoverListener={isAuthenticated}
+              >
+                <ListItem key={text} disablePadding>
+                  <ListItemButton disabled={!isAuthenticated}>
+                    <ListItemText
+                      className={styles.navbarListItemText}
+                      primary={text}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              </Tooltip>
             </NavLink>
           ))}
         </List>

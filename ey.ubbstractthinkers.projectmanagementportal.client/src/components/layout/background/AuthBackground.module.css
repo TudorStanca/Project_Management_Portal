@@ -1,0 +1,36 @@
+.backgroundImage {
+  position: absolute;
+  width: 150px;
+  height: auto;
+  opacity: 0.5;
+}
+
+.backgroundImage:nth-child(1) {
+  top: 10%;
+  left: 5%;
+}
+
+.backgroundImage:nth-child(2) {
+  top: 20%;
+  right: 10%;
+}
+
+.backgroundImage:nth-child(3) {
+  bottom: 15%;
+  left: 20%;
+}
+
+.backgroundImage:nth-child(4) {
+  bottom: 10%;
+  right: 15%;
+}
+
+.backgroundImage:nth-child(5) {
+  top: 30%;
+  left: 40%;
+}
+
+.backgroundImage:nth-child(6) {
+  top: 40%;
+  left: 70%;
+}

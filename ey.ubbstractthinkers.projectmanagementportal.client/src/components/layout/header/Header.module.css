@@ -21,6 +21,12 @@
   padding-left: 0.5em;
 }
 
+.headerBoxButtons {
+  width: 190px;
+  display: flex;
+  justify-content: space-around;
+}
+
 .headerButton:hover,
 .headerIconbutton:hover {
   color: var(--color-accent);

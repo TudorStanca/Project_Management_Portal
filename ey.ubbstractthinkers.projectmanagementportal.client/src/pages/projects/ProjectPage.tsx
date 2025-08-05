@@ -2,7 +2,7 @@ import { Box, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
 import styles from "./ProjectPage.module.css";
 import { useEffect, useState, type FormEvent } from "react";
-import { getProject } from "../../services/ApiFunctions";
+import { getProject } from "../../services/ProjectClient";
 import type { Project } from "../../models/Project";
 
 interface ProjectPageProps {

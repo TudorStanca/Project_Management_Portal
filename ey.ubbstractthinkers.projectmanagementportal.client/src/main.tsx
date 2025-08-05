@@ -6,13 +6,16 @@ import { ThemeProvider } from "@emotion/react";
 import { CssBaseline } from "@mui/material";
 import ThemeCssVars from "./utils/ThemeCssVars.tsx";
 import Theme from "./utils/Theme.ts";
+import AuthProvider from "./components/context/auth/AuthProvider.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider theme={Theme}>
       <CssBaseline />
       <ThemeCssVars />
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </ThemeProvider>
   </StrictMode>
 );

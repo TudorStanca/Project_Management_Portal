@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import styles from "./ProjectsPage.module.css";
-import { getProjects } from "../../services/ApiFunctions";
+import { getProjects } from "../../services/ProjectClient";
 import { useEffect, useState } from "react";
 import { AddCircleOutline } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";

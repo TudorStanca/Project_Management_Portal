@@ -13,7 +13,7 @@ import styles from "./AddProjectPage.module.css";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { saveProject } from "../../services/ApiFunctions";
+import { saveProject } from "../../services/ProjectClient";
 import { handleApiError } from "../../services/ErrorHandler";
 
 interface ProjectFormProps {

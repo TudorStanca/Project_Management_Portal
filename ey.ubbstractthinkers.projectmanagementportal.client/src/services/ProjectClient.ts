@@ -2,32 +2,32 @@ import axios, { type AxiosResponse } from "axios";
 import type { Project } from "../models/Project";
 
 const api = axios.create({
-  baseURL: "/api",
+  baseURL: "/api/project",
   headers: {
     "Content-Type": "application/json",
   },
 });
 
 export async function getProjects(): Promise<Project[]> {
-  const response: AxiosResponse<Project[]> = await api.get("/project");
+  const response: AxiosResponse<Project[]> = await api.get("");
 
   return response.data;
 }
 
 export async function getProject(uid: string): Promise<Project> {
-  const response: AxiosResponse<Project> = await api.get("/project/" + uid);
+  const response: AxiosResponse<Project> = await api.get("/" + uid);
 
   return response.data;
 }
 
 export async function saveProject(project: Project): Promise<void> {
-  await api.post("/project", project);
+  await api.post("", project);
 }
 
 export async function updateProject(project: Project): Promise<void> {
-  await api.put("/project" + project.uid, project);
+  await api.put("/" + project.uid, project);
 }
 
 export async function deleteProject(uid: string): Promise<void> {
-  await api.delete("/project" + uid);
+  await api.delete("/" + uid);
 }
