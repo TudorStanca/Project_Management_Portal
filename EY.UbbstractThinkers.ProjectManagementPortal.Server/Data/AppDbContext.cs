@@ -1,8 +1,8 @@
-﻿using EY.UbbstractThinkers.ProjectManagementPortal.Server.Models;
+﻿using EY.UbbstractThinkers.ProjectManagementPortal.Server.Data.ModelConfig;
+using EY.UbbstractThinkers.ProjectManagementPortal.Server.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 
-namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories
+namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Data
 {
     public class AppDbContext : DbContext
     {
@@ -29,7 +29,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            modelBuilder.ApplyConfiguration(new ProjectConfiguration());
         }
     }
 }

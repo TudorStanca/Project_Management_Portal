@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories
+namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Data.ModelConfig
 {
     public class ProjectConfiguration : IEntityTypeConfiguration<Project>
     {

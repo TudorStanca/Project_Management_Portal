@@ -20,7 +20,7 @@ function App() {
       ([entry]) => {
         setFooterVisible(entry.isIntersecting);
       },
-      { threshold: 0.8 }
+      { threshold: 0.8 },
     );
 
     if (footerRef.current) {

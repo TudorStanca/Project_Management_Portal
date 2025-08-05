@@ -4,3 +4,33 @@ GET {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/weatherf
 Accept: application/json
 
 ###
+
+POST {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "daria@ro.ey.com",
+  "password": "12345aA!",
+  "firstName": "Daria",
+  "lastName": "dsadsa"
+}
+
+###
+
+POST {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/auth/login?useCookies=true
+Content-Type: application/json
+
+{
+  "email": "daria@ro.ey.com",
+  "password": "12345aA!"
+}
+
+###
+
+GET {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/auth/pingauth
+
+###
+
+POST {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/auth/logout
+
+###

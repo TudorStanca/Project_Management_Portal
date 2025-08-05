@@ -46,18 +46,15 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
                 return NotFound();
             }
 
-            return DtoUtils.MapProjectToProjectDto(project);
+            return DtoUtils.ToDto(project);
         }
 
         [HttpPost]
         public async Task<ActionResult<ProjectDto>> SaveProject(ProjectDto projectDto)
         {
-            var project = await _projectService.SaveProject(DtoUtils.MapProjectDtoToProject(projectDto));
+            var project = await _projectService.SaveProject(DtoUtils.FromDto(projectDto));
 
-            return CreatedAtAction(
-                nameof(GetProject),
-                new { id = project.Uid },
-                DtoUtils.MapProjectToProjectDto(project));
+            return CreatedAtAction(nameof(GetProject), new { id = project.Uid }, DtoUtils.ToDto(project));
         }
 
         [HttpDelete("{id}")]
@@ -78,7 +75,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<ProjectDto>> UpdateProject(Guid id, ProjectDto projectDto)
         {
-            var project = await _projectService.UpdateProject(id, DtoUtils.MapProjectDtoToProject(projectDto));
+            var project = await _projectService.UpdateProject(id, DtoUtils.FromDto(projectDto));
 
             if (project == null)
             {

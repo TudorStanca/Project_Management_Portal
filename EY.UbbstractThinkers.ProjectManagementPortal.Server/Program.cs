@@ -1,12 +1,18 @@
+using EY.UbbstractThinkers.ProjectManagementPortal.Server.Data;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Exceptions;
+using EY.UbbstractThinkers.ProjectManagementPortal.Server.Models;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Validators;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using System.Threading.Tasks;
 
 namespace EY.UbbstractThinkers.ProjectManagementPortal.Server
 {
@@ -22,6 +28,33 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server
 
             // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("ConnectionString");
+
+            builder.Services.AddDbContext<UserDbContext>(options => options.UseSqlServer(connectionString));
+
+            builder.Services.AddAuthorization();
+            builder.Services
+                .AddAuthentication()
+                .AddCookie(IdentityConstants.ApplicationScheme, options =>
+                {
+                    options.LoginPath = "/api/auth/login";
+                    options.LogoutPath = "/api/auth/logout";
+
+                    options.Events = new CookieAuthenticationEvents()
+                    {
+                        OnRedirectToLogin = context =>
+                        {
+                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+
+                            return Task.CompletedTask;
+                        }
+                    };
+                });
+
+            builder.Services.AddIdentityCore<User>()
+                .AddEntityFrameworkStores<UserDbContext>()
+                .AddDefaultTokenProviders()
+                .AddSignInManager<SignInManager<User>>();
+
             builder.Host.UseSerilog((context, loggerConfiguration) =>
             {
                 loggerConfiguration.WriteTo.Console();
@@ -47,6 +80,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server
 
             app.UseExceptionHandler();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();

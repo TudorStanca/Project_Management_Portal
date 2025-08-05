@@ -5,9 +5,9 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils
 {
     public class DtoUtils
     {
-        public static ProjectDto MapProjectToProjectDto(Project project)
+        public static ProjectDto ToDto(Project project)
         {
-            ProjectDto projectDto = new ProjectDto()
+            return new ProjectDto()
             {
                 Uid = project.Uid,
                 Name = project.Name,
@@ -15,13 +15,11 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils
                 StartDate = project.StartDate,
                 EndDate = project.EndDate,
             };
-
-            return projectDto;
         }
 
-        public static Project MapProjectDtoToProject(ProjectDto projectDto)
+        public static Project FromDto(ProjectDto projectDto)
         {
-            Project project = new Project()
+            return new Project()
             {
                 Uid = projectDto.Uid,
                 Name = projectDto.Name,
@@ -29,8 +27,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils
                 StartDate = projectDto.StartDate,
                 EndDate = projectDto.EndDate,
             };
-
-            return project;
         }
     }
 }
