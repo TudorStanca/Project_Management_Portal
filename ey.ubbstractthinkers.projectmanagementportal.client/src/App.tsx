@@ -8,9 +8,12 @@ import HomePage from "./pages/home/HomePage";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import ProjectsPage from "./pages/projects/ProjectsPage";
 import AddProjectPage from "./pages/projects/AddProjectPage";
-import ProjectPage from "./pages/projects/ProjectPage";
+import ProjectPage from "./pages/projects/projectPage/ProjectPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import LoginPage from "./pages/auth/LoginPage";
+import ProjectStakeholdersPage from "./pages/projects/projectPage/ProjectStakeholdersPage";
+import ProjectResourcesPage from "./pages/projects/projectPage/ProjectResourcesPage";
+import ProjectTasksPage from "./pages/projects/projectPage/ProjectTasksPage";
 
 function App() {
   const [open, setOpen] = useState(true);
@@ -25,13 +28,15 @@ function App() {
       { threshold: 0.8 },
     );
 
-    if (footerRef.current) {
-      observer.observe(footerRef.current);
+    const currentFooterRef = footerRef.current;
+
+    if (currentFooterRef) {
+      observer.observe(currentFooterRef);
     }
 
     return () => {
-      if (footerRef.current) {
-        observer.unobserve(footerRef.current);
+      if (currentFooterRef) {
+        observer.unobserve(currentFooterRef);
       }
     };
   }, []);
@@ -41,7 +46,11 @@ function App() {
       <BrowserRouter>
         {<Header />}
         <Toolbar />
-        <Navbar open={open} setOpen={setOpen} footerVisible={footerVisible} />
+        <Navbar
+          open={open}
+          setOpen={(bool: boolean) => setOpen(bool)}
+          footerVisible={footerVisible}
+        />
         <Routes>
           <Route path="/" element={<HomePage open={open} />} />
           <Route path="/login" element={<LoginPage />} />
@@ -49,8 +58,20 @@ function App() {
           <Route path="/projects" element={<ProjectsPage open={open} />} />
           <Route path="/add-project" element={<AddProjectPage open={open} />} />
           <Route
-            path="/project/:projectId"
+            path="/projects/:projectId"
             element={<ProjectPage open={open} />}
+          />
+          <Route
+            path="/projects/:projectId/stakeholders"
+            element={<ProjectStakeholdersPage open={open} />}
+          />
+          <Route
+            path="/projects/:projectId/resources"
+            element={<ProjectResourcesPage open={open} />}
+          />
+          <Route
+            path="/projects/:projectId/tasks"
+            element={<ProjectTasksPage open={open} />}
           />
         </Routes>
         <Footer ref={footerRef} />

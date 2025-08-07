@@ -13,6 +13,8 @@ import { useEffect, useState } from "react";
 import { AddCircleOutline } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import type { Project } from "../../models/Project";
+import type { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 
 interface ProjectsPageProps {
   open: boolean;
@@ -28,8 +30,7 @@ const ProjectsPage = (props: ProjectsPageProps) => {
 
     const fetchProjects = async () => {
       try {
-        const projects = await getProjects();
-        setProjects(projects);
+        setProjects(await getProjects());
       } catch (error) {
         console.error(error);
       } finally {
@@ -43,17 +44,26 @@ const ProjectsPage = (props: ProjectsPageProps) => {
   const truncateDescription = (description: string) => {
     const words = description.split(" ");
     let truncated = "";
+
     for (const word of words) {
       if ((truncated + word).length <= 100) {
         truncated += word + " ";
+
         if (word.endsWith(".")) break;
       }
     }
     return truncated.trim();
   };
 
-  const formatFriendlyDate = (isoDate) => {
-    const date = new Date(isoDate);
+  const formatFriendlyDate = (isoDate: string | Dayjs) => {
+    let date: Date;
+
+    if (dayjs.isDayjs(isoDate)) {
+      date = isoDate.toDate();
+    } else {
+      date = new Date(isoDate);
+    }
+
     return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
@@ -70,7 +80,7 @@ const ProjectsPage = (props: ProjectsPageProps) => {
       </Typography>
       {isLoading ? (
         <Box className={styles.projectsMessageBox}>
-          <CircularProgress className={styles.projectsCircularProgrress} />
+          <CircularProgress />
         </Box>
       ) : projects.length === 0 ? (
         <Box className={styles.projectsMessageBox}>
@@ -90,7 +100,7 @@ const ProjectsPage = (props: ProjectsPageProps) => {
               <div className={styles.projectsCardGlowWrapper}>
                 <Card
                   className={styles.projectsCard}
-                  onClick={() => navigate(`/project/${project.uid}`)}
+                  onClick={() => navigate(`/projects/${project.uid}`)}
                 >
                   <CardContent className={styles.projectsCardContent}>
                     <Typography

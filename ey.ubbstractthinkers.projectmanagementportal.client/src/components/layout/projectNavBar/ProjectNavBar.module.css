@@ -1,0 +1,36 @@
+.navBarContainer {
+  display: flex;
+  justify-content: flex-end;
+  background-color: transparent;
+  padding: 16px 5%;
+}
+
+.navBarLink {
+  position: relative;
+  text-transform: none;
+  color: var(--color-accent);
+  text-decoration: none;
+  margin: 8px 16px;
+  cursor: pointer;
+}
+
+.navBarLink::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--color-accent);
+  transition: width 0.3s ease, left 0.3s ease;
+}
+
+.navBarLink:hover::after {
+  width: 100%;
+  left: 0;
+}
+
+.activeLink {
+  font-weight: bold;
+  text-decoration: none;
+}

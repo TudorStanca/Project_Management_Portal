@@ -1,4 +1,3 @@
-import { type Dispatch, type SetStateAction } from "react";
 import {
   IconButton,
   Drawer,
@@ -16,7 +15,7 @@ import { useAuth } from "../../context/auth/AuthFunction";
 
 interface NavbarProps {
   open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  setOpen: (bool: boolean) => void;
   footerVisible: boolean;
 }
 

@@ -1,0 +1,18 @@
+.resourcesResourcesContent {
+  position: relative;
+  flex-grow: 1;
+  transition: margin 225ms cubic-bezier(0.4, 0, 0.6, 0.1);
+  margin-left: 2.5em;
+  background-color: var(--color-bg);
+}
+
+.resourcesResourcesContent.open {
+  margin-left: 15em;
+  transition: margin 225ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.resourcesResourcesHeader {
+  padding-left: 0.31em;
+  color: var(--color-primary);
+  text-align: left;
+}

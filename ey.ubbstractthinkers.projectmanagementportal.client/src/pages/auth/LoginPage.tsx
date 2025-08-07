@@ -1,4 +1,4 @@
-import React, { useState, type ChangeEvent, type FormEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import {
   Box,
   TextField,
@@ -16,6 +16,7 @@ import AuthBackground from "../../components/layout/background/AuthBackground";
 import { login } from "../../services/AuthClient";
 import { handleApiError } from "../../services/ErrorHandler";
 import { useAuth } from "../../components/context/auth/AuthFunction";
+import type { SnackbarSeverity } from "../../models/SnackbarSeverity";
 
 const LoginPage = () => {
   const [email, setEmail] = useState<string>("");
@@ -26,9 +27,8 @@ const LoginPage = () => {
   const [successMessage, setSuccessMessage] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
-  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
-    "success"
-  );
+  const [snackbarSeverity, setSnackbarSeverity] =
+    useState<SnackbarSeverity>("success");
   const { handleLogin } = useAuth();
 
   const navigate = useNavigate();

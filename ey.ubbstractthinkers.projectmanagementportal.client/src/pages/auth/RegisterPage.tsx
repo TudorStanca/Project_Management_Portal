@@ -1,4 +1,4 @@
-import React, { useState, type ChangeEvent, type FormEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import {
   Box,
   TextField,
@@ -15,6 +15,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { handleApiError } from "../../services/ErrorHandler";
 import { register } from "../../services/AuthClient";
 import AuthBackground from "../../components/layout/background/AuthBackground";
+import type { SnackbarSeverity } from "../../models/SnackbarSeverity";
 
 const RegisterPage = () => {
   const [email, setEmail] = useState<string>("");
@@ -26,9 +27,8 @@ const RegisterPage = () => {
   const [successMessage, setSuccessMessage] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
-  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
-    "success"
-  );
+  const [snackbarSeverity, setSnackbarSeverity] =
+    useState<SnackbarSeverity>("success");
 
   const navigate = useNavigate();
 

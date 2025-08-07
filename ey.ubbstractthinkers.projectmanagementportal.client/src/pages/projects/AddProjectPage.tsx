@@ -15,6 +15,8 @@ import { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { saveProject } from "../../services/ProjectClient";
 import { handleApiError } from "../../services/ErrorHandler";
+import type { Project } from "../../models/Project";
+import type { SnackbarSeverity } from "../../models/SnackbarSeverity";
 
 interface ProjectFormProps {
   open: boolean;
@@ -25,13 +27,13 @@ const AddProjectPage = (props: ProjectFormProps) => {
   const [description, setDescription] = useState<string>("");
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
-  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
-    "success"
-  );
+  const [snackbarSeverity, setSnackbarSeverity] =
+    useState<SnackbarSeverity>("success");
 
   const handleChangeName = (e: ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
@@ -64,11 +66,11 @@ const AddProjectPage = (props: ProjectFormProps) => {
       return;
     }
 
-    const formattedProject = {
+    const formattedProject: Project = {
       name,
       description,
-      startDate: startDate!.format("YYYY-MM-DD"),
-      endDate: endDate ? endDate.format("YYYY-MM-DD") : undefined,
+      startDate: startDate.format("YYYY-MM-DD"),
+      endDate: endDate ? endDate.format("YYYY-MM-DD") : null,
     };
 
     try {
