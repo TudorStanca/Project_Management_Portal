@@ -17,6 +17,7 @@ import { login } from "../../services/AuthClient";
 import { handleApiError } from "../../services/ErrorHandler";
 import { useAuth } from "../../components/context/auth/AuthFunction";
 import type { SnackbarSeverity } from "../../models/SnackbarSeverity";
+import type { User } from "../../models/Auth";
 
 const LoginPage = () => {
   const [email, setEmail] = useState<string>("");
@@ -47,16 +48,20 @@ const LoginPage = () => {
     setErrorMessage("");
     setSuccessMessage("");
 
-    const user = {
+    const user: User = {
+      id: null,
       email,
       password,
+      firstName: null,
+      lastName: null,
+      photo: null,
     };
 
     try {
       await login(user);
       handleLogin();
 
-      setSuccessMessage("User registered successfully");
+      setSuccessMessage("User logged in successfully");
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
       setNavigateToLandingPage(true);
@@ -73,6 +78,7 @@ const LoginPage = () => {
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
+
     if (navigateToLandingPage) {
       navigate("/");
     }

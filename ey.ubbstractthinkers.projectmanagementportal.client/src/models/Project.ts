@@ -6,4 +6,5 @@ export interface Project {
   description: string;
   startDate: Dayjs | string;
   endDate: Dayjs | string | null;
+  ownerId: string | null;
 }

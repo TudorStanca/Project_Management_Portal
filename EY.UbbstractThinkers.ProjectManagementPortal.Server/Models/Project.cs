@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Models
 {
@@ -9,5 +10,8 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Models
         public string Description { get; set; }
         public DateOnly StartDate { get; set; }
         public DateOnly? EndDate { get; set; }
+        public List<ProjectStakeholder> Stakeholders { get; set; }
+        public List<ProjectResources> Resources { get; set; }
+        public string OwnerId { get; set; }
     }
 }

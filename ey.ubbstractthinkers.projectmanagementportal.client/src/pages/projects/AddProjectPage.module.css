@@ -30,3 +30,7 @@
 .addProjectSubmitButton:hover {
   background-color: var(--color-accent);
 }
+
+.addProjectSpanEmail {
+  margin-left: 8px;
+}

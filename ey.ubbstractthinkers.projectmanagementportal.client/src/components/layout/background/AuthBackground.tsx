@@ -1,10 +1,10 @@
 import { Box } from "@mui/material";
-import backgroundDetail1 from "../../../assets/background-detail1.svg";
-import backgroundDetail2 from "../../../assets/background-detail2.svg";
-import backgroundDetail3 from "../../../assets/background-detail3.svg";
-import backgroundDetail4 from "../../../assets/background-detail4.svg";
-import backgroundDetail5 from "../../../assets/background-detail5.svg";
-import backgroundDetail6 from "../../../assets/background-detail6.svg";
+import backgroundDecor1 from "../../../assets/background-decor1.svg";
+import backgroundDecor2 from "../../../assets/background-decor2.svg";
+import backgroundDecor3 from "../../../assets/background-decor3.svg";
+import backgroundDecor4 from "../../../assets/background-decor4.svg";
+import backgroundDecor5 from "../../../assets/background-decor5.svg";
+import backgroundDecor6 from "../../../assets/background-decor6.svg";
 import styles from "./AuthBackground.module.css";
 
 const AuthBackground = () => {
@@ -12,38 +12,38 @@ const AuthBackground = () => {
     <>
       <Box
         component="img"
-        src={backgroundDetail1}
-        alt="background-detail1"
+        src={backgroundDecor1}
+        alt="background-decor1"
         className={styles.backgroundImage}
       />
       <Box
         component="img"
-        src={backgroundDetail2}
-        alt="background-detail2"
+        src={backgroundDecor2}
+        alt="background-decor2"
         className={styles.backgroundImage}
       />
       <Box
         component="img"
-        src={backgroundDetail3}
-        alt="background-detail3"
+        src={backgroundDecor3}
+        alt="background-decor3"
         className={styles.backgroundImage}
       />
       <Box
         component="img"
-        src={backgroundDetail4}
-        alt="background-detail4"
+        src={backgroundDecor4}
+        alt="background-decor4"
         className={styles.backgroundImage}
       />
       <Box
         component="img"
-        src={backgroundDetail5}
-        alt="background-detail5"
+        src={backgroundDecor5}
+        alt="background-decor5"
         className={styles.backgroundImage}
       />
       <Box
         component="img"
-        src={backgroundDetail6}
-        alt="background-detail6"
+        src={backgroundDecor6}
+        alt="background-decor6"
         className={styles.backgroundImage}
       />
     </>

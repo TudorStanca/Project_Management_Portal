@@ -4,6 +4,7 @@ using EY.UbbstractThinkers.ProjectManagementPortal.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250806125314_ProjectOwner")]
+    partial class ProjectOwner
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,19 +58,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
                     b.ToTable("Projects");
                 });
 
-            modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.ProjectResources", b =>
-                {
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("ProjectId", "UserId");
-
-                    b.ToTable("ProjectResources");
-                });
-
             modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.ProjectStakeholder", b =>
                 {
                     b.Property<Guid>("ProjectId")
@@ -81,15 +71,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
                     b.ToTable("ProjectStakeholders");
                 });
 
-            modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.ProjectResources", b =>
-                {
-                    b.HasOne("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Project", null)
-                        .WithMany("Resources")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.ProjectStakeholder", b =>
                 {
                     b.HasOne("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Project", null)
@@ -101,8 +82,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
 
             modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Project", b =>
                 {
-                    b.Navigation("Resources");
-
                     b.Navigation("Stakeholders");
                 });
 #pragma warning restore 612, 618

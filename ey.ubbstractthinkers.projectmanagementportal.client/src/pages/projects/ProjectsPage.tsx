@@ -8,19 +8,29 @@ import {
   Typography,
 } from "@mui/material";
 import styles from "./ProjectsPage.module.css";
-import { getProjects } from "../../services/ProjectClient";
+import { getProjectsForUser } from "../../services/ProjectClient";
 import { useEffect, useState } from "react";
 import { AddCircleOutline } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import type { Project } from "../../models/Project";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
+import type { User } from "../../models/Auth";
+import { getUser } from "../../services/AuthClient";
 
 interface ProjectsPageProps {
   open: boolean;
 }
 
 const ProjectsPage = (props: ProjectsPageProps) => {
+  const [user, setUser] = useState<User>({
+    id: null,
+    email: "",
+    password: "",
+    firstName: "",
+    lastName: "",
+    photo: new Blob(),
+  });
   const [projects, setProjects] = useState<Project[]>([]);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -28,9 +38,12 @@ const ProjectsPage = (props: ProjectsPageProps) => {
   useEffect(() => {
     setIsLoading(true);
 
-    const fetchProjects = async () => {
+    const fetchUserWithProjects = async () => {
       try {
-        setProjects(await getProjects());
+        const user: User = await getUser();
+        setUser(user);
+        const projects = await getProjectsForUser(user.id ?? "");
+        setProjects(projects);
       } catch (error) {
         console.error(error);
       } finally {
@@ -38,8 +51,8 @@ const ProjectsPage = (props: ProjectsPageProps) => {
       }
     };
 
-    fetchProjects();
-  }, []);
+    fetchUserWithProjects();
+  }, [user.id]);
 
   const truncateDescription = (description: string) => {
     const words = description.split(" ");

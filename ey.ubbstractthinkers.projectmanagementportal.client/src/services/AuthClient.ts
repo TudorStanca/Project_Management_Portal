@@ -25,3 +25,9 @@ export async function getUser(): Promise<User> {
 
   return response.data;
 }
+
+export async function getUsers(): Promise<User[]> {
+  const response: AxiosResponse<User[]> = await api.get("");
+
+  return response.data;
+}

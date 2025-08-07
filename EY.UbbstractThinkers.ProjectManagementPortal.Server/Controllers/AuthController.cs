@@ -3,6 +3,8 @@ using EY.UbbstractThinkers.ProjectManagementPortal.Server.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -79,6 +81,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
             return Ok(new
             {
                 message = "User is logged in.",
+                loggedUser.Id,
                 loggedUser.Email,
                 loggedUser.FirstName,
                 loggedUser.LastName,
@@ -93,6 +96,27 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
             await _signInManager.SignOutAsync();
 
             return Ok("User logged out successfully.");
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<UserDto>> GetUsers()
+        {
+            var users = await _userManager.Users.ToListAsync();
+
+            if (!users.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(users.Select(x =>
+            new
+            {
+                x.Id,
+                x.Email,
+                x.FirstName,
+                x.LastName,
+                x.ProfileImage
+            }));
         }
     }
 }

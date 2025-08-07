@@ -1,14 +1,20 @@
 import {
   Alert,
+  Avatar,
   Box,
   Button,
   CircularProgress,
+  FormControl,
   Grid,
+  InputLabel,
+  MenuItem,
+  Select,
   Snackbar,
   TextField,
   Typography,
+  type SelectChangeEvent,
 } from "@mui/material";
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import styles from "./AddProjectPage.module.css";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { Dayjs } from "dayjs";
@@ -17,12 +23,17 @@ import { saveProject } from "../../services/ProjectClient";
 import { handleApiError } from "../../services/ErrorHandler";
 import type { Project } from "../../models/Project";
 import type { SnackbarSeverity } from "../../models/SnackbarSeverity";
+import type { User } from "../../models/Auth";
+import { getUsers } from "../../services/AuthClient";
+import LetterAvatar from "../../components/avatar/LetterAvatar";
 
 interface ProjectFormProps {
   open: boolean;
 }
 
 const AddProjectPage = (props: ProjectFormProps) => {
+  const [users, setUsers] = useState<User[]>([]);
+  const [ownerId, setOwnerId] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
@@ -34,6 +45,10 @@ const AddProjectPage = (props: ProjectFormProps) => {
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
   const [snackbarSeverity, setSnackbarSeverity] =
     useState<SnackbarSeverity>("success");
+
+  const handleChange = (event: SelectChangeEvent) => {
+    setOwnerId(event.target.value);
+  };
 
   const handleChangeName = (e: ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
@@ -71,6 +86,7 @@ const AddProjectPage = (props: ProjectFormProps) => {
       description,
       startDate: startDate.format("YYYY-MM-DD"),
       endDate: endDate ? endDate.format("YYYY-MM-DD") : null,
+      ownerId: ownerId;
     };
 
     try {
@@ -94,6 +110,20 @@ const AddProjectPage = (props: ProjectFormProps) => {
     setStartDate(null);
     setEndDate(null);
   };
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const users: User[] = await getUsers();
+
+        setUsers(users);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -159,6 +189,42 @@ const AddProjectPage = (props: ProjectFormProps) => {
               </LocalizationProvider>
             </Grid>
           </Grid>
+          <FormControl required>
+            <InputLabel id="owner_select_label">Project Owner</InputLabel>
+            <Select
+              labelId="owner_select_label"
+              id="owner_select"
+              value={ownerId}
+              label="Project Owner"
+              onChange={handleChange}
+              sx={{ minWidth: 170 }}
+            >
+              {users.map((user) => (
+                <MenuItem
+                  key={user.id}
+                  value={user.id ?? ""}
+                  sx={{ minWidth: 250, display: "flex" }}
+                >
+                  <div className={styles.addProjectAvatarDiv}>
+                    {user.photo ? (
+                      <Avatar
+                        alt={user.firstName + " " + user.lastName}
+                        src={`user.photo instanceof Blob ? URL.createObjectURL(user.photo) : undefined`}
+                      />
+                    ) : (
+                      <LetterAvatar
+                        firstName={user.firstName ? user.firstName : ""}
+                        lastName={user.lastName ? user.lastName : ""}
+                      />
+                    )}
+                  </div>
+                  <span className={styles.addProjectSpanEmail}>
+                    {user.email}
+                  </span>
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <Grid size={{ xs: 12, sm: 6 }} justifyContent="flex-start">
             <Button
               variant="contained"

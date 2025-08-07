@@ -16,6 +16,7 @@ import { handleApiError } from "../../services/ErrorHandler";
 import { register } from "../../services/AuthClient";
 import AuthBackground from "../../components/layout/background/AuthBackground";
 import type { SnackbarSeverity } from "../../models/SnackbarSeverity";
+import type { User } from "../../models/Auth";
 
 const RegisterPage = () => {
   const [email, setEmail] = useState<string>("");
@@ -54,11 +55,13 @@ const RegisterPage = () => {
     setErrorMessage("");
     setSuccessMessage("");
 
-    const user = {
+    const user: User = {
+      id: null,
       email,
       password,
       firstName,
       lastName,
+      photo: null,
     };
 
     try {
@@ -81,6 +84,7 @@ const RegisterPage = () => {
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
+
     if (navigateToLogin) {
       navigate("/login");
     }

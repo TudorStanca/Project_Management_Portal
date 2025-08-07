@@ -7,6 +7,9 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Data
     public class AppDbContext : DbContext
     {
         public DbSet<Project> Projects { get; set; }
+        public DbSet<ProjectStakeholder> ProjectStakeholders { get; set; }
+        public DbSet<ProjectResources> ProjectResources { get; set; }
+
 
         private string _connectionString;
 
@@ -30,6 +33,8 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new ProjectConfiguration());
+            modelBuilder.ApplyConfiguration(new ProjectStakeholderConfiguration());
+            modelBuilder.ApplyConfiguration(new ProjectResourcesConfiguration());
         }
     }
 }

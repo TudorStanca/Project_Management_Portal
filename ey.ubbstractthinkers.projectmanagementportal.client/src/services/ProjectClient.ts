@@ -14,6 +14,12 @@ export async function getProjects(): Promise<Project[]> {
   return response.data;
 }
 
+export async function getProjectsForUser(userId: string): Promise<Project[]> {
+  const response: AxiosResponse<Project[]> = await api.get("/users/" + userId);
+
+  return response.data;
+}
+
 export async function getProject(uid: string): Promise<Project> {
   const response: AxiosResponse<Project> = await api.get("/" + uid);
 

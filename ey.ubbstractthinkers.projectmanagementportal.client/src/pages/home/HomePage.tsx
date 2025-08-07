@@ -8,31 +8,34 @@ import {
 } from "@mui/material";
 import styles from "./HomePage.module.css";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../components/context/auth/AuthFunction";
 
 interface HomePageProps {
   open: boolean;
 }
 
+const cardData = [
+  {
+    title: "Task Management",
+    description:
+      "Easily create, assign, and track tasks to ensure that your team stays on schedule and meets deadlines.",
+  },
+  {
+    title: "Progress Tracking",
+    description:
+      "Monitor project progress with visual dashboards and reports to identify bottlenecks and make informed decisions.",
+  },
+  {
+    title: "Resource Allocation",
+    description:
+      "Allocate resources effectively to optimize team performance and project outcomes.",
+  },
+];
+
 const HomePage = (props: HomePageProps) => {
   const navigate = useNavigate();
 
-  const cardData = [
-    {
-      title: "Task Management",
-      description:
-        "Easily create, assign, and track tasks to ensure that your team stays on schedule and meets deadlines.",
-    },
-    {
-      title: "Progress Tracking",
-      description:
-        "Monitor project progress with visual dashboards and reports to identify bottlenecks and make informed decisions.",
-    },
-    {
-      title: "Resource Allocation",
-      description:
-        "Allocate resources effectively to optimize team performance and project outcomes.",
-    },
-  ];
+  const { isAuthenticated } = useAuth();
 
   return (
     <Box className={`${styles.mainContent} ${props.open ? styles.open : ""}`}>
@@ -73,7 +76,9 @@ const HomePage = (props: HomePageProps) => {
         <Button
           variant="outlined"
           className={styles.mainButton}
-          onClick={() => navigate("/projects")}
+          onClick={() =>
+            isAuthenticated ? navigate("/projects") : navigate("/login")
+          }
         >
           Get Started
         </Button>

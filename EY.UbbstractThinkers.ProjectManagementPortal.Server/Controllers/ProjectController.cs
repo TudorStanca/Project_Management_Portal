@@ -1,6 +1,7 @@
 ﻿using EY.UbbstractThinkers.ProjectManagementPortal.Server.Dtos;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Services;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,6 +13,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
 {
     [ApiController]
     [Route("/api/[controller]")]
+    [Authorize]
     public class ProjectController : ControllerBase
     {
         private IProjectService _projectService;
@@ -33,7 +35,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
                 return NotFound();
             }
 
-            return Ok(projects);
+            return Ok(projects.Select(x => DtoUtils.ToDto(x)));
         }
 
         [HttpGet("{id}")]
@@ -83,6 +85,54 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
             }
 
             return NoContent();
+        }
+
+        [HttpGet("users/{id}")]
+        public async Task<ActionResult<ProjectDto>> GetProjectsForUser(string id)
+        {
+            var allProjects = await _projectService.GetProjectsVisibleToUser(id);
+
+            return Ok(allProjects);
+        }
+
+        [HttpPost("{id}/stakeholders")]
+        public async Task<IActionResult> SaveStakeholders(Guid id, List<string> stakeholderIds)
+        {
+            var project = await _projectService.GetProject(id);
+
+            if (project == null)
+            {
+                return NotFound();
+            }
+
+            var projectWithStakeholders = await _projectService.SaveStakeholders(project, stakeholderIds);
+
+            if (projectWithStakeholders == null)
+            {
+                return NotFound();
+            }
+
+            return Created();
+        }
+
+        [HttpPost("{id}/resources")]
+        public async Task<IActionResult> SaveResources(Guid id, List<string> resourceIds)
+        {
+            var project = await _projectService.GetProject(id);
+
+            if (project == null)
+            {
+                return NotFound();
+            }
+
+            var projectWithStakeholders = await _projectService.SaveStakeholders(project, resourceIds);
+
+            if (projectWithStakeholders == null)
+            {
+                return NotFound();
+            }
+
+            return Created();
         }
     }
 }
