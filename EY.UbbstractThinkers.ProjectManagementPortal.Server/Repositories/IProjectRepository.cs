@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories
 {
-    public interface IRepository
+    public interface IProjectRepository
     {
         Task<IEnumerable<Project>> GetProjects();
         Task<Project> GetProject(Guid id);

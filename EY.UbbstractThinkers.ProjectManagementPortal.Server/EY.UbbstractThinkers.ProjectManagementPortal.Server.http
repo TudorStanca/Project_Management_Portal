@@ -34,3 +34,68 @@ GET {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/auth
 POST {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/auth/logout
 
 ###
+
+GET {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/stage
+
+###
+
+POST {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/template
+Content-Type: application/json
+
+{
+    "name": "Sample Template",
+    "description": "This is a sample template.",
+    "stages": [
+        {
+            "uid": "39983EAC-9546-4545-A21F-2E7C83484FA7",
+            "name": "Initiate",
+            "description": "Initiate the project",
+            "orderNumber": 1
+        },
+        {
+            "uid": "DFFFC24A-46D0-4435-85E1-B41646C0434C",
+            "name": "Plan",
+            "description": "Plan the project",
+            "orderNumber": 2
+        },
+        {
+            "uid": "2CDE6B5E-3B53-4535-B6B3-A740820C15E2",
+            "name": "Execute",
+            "description": "Execute the project",
+            "orderNumber": 3
+        }
+    ]
+}
+
+###
+
+POST {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/template
+Content-Type: application/json
+
+{
+    "name": "Sample Template",
+    "description": "This is a sample template.",
+    "stageUids": [
+      "DFFFC24A-46D0-4435-85E1-B41646C0434C"
+    ]
+}
+
+###
+
+POST {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/project
+Content-Type: application/json
+
+{
+  "name":"jhhjgj",
+  "description":"sadadsadsa",
+  "startDate":"2025-08-30",
+  "endDate":null,
+  "ownerId":"aa743b20-8824-4367-89c3-27a78313078b",
+  "templateUid":"0FFABD40-C206-4702-9E6D-DBDD06B5BDED"
+}
+
+### 
+
+GET {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/project
+
+###

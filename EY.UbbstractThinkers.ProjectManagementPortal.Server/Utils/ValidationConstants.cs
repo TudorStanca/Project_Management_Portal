@@ -5,5 +5,6 @@
         public const string DateFormat = "yyyy-MM-dd";
         public const int MaxNameLength = 250;
         public const int MaxDescriptionLength = 500;
+        public const string ExecuteStageName = "Execute";
     }
 }

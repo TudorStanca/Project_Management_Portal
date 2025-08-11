@@ -2,6 +2,7 @@ using EY.UbbstractThinkers.ProjectManagementPortal.Server.Data;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Exceptions;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Models;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Validators;
+using EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Validators.Interfaces;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -61,9 +62,12 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server
                 loggerConfiguration.ReadFrom.Configuration(context.Configuration);
             });
             builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
-            builder.Services.AddScoped<IRepository, DbRepository>();
+            builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+            builder.Services.AddScoped<ITemplateRepository, TemplateRepository>();
             builder.Services.AddScoped<IProjectValidator, ProjectValidator>();
+            builder.Services.AddScoped<ITemplateValidator, TemplateValidator>();
             builder.Services.AddScoped<IProjectService, ProjectService>();
+            builder.Services.AddScoped<ITemplateService, TemplateService>();
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddProblemDetails();
 

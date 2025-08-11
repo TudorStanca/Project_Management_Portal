@@ -1,4 +1,5 @@
 ﻿using EY.David.FileImportTool.Utils;
+using EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Validators.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -53,6 +54,11 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Validators
                 {
                     results.Add(new ValidationResult("End Date must be in correct format"));
                 }
+            }
+
+            if (project.TemplateUid == Guid.Empty)
+            {
+                results.Add(new ValidationResult("Project must have a template assigned."));
             }
 
             return results;

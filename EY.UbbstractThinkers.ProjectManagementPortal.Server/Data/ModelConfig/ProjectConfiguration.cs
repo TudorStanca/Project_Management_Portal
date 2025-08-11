@@ -24,6 +24,16 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Data.ModelConfig
 
             builder.Property(x => x.StartDate)
                 .IsRequired();
+
+            builder.HasOne(x => x.Template)
+                .WithMany(x => x.Projects)
+                .HasForeignKey(x => x.TemplateUid)
+                .IsRequired();
+
+            builder.HasOne(x => x.CurrentStage)
+                .WithMany(x => x.Projects)
+                .HasForeignKey(x => x.CurrentStageUid)
+                .IsRequired();
         }
     }
 }

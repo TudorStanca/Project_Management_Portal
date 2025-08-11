@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories
 {
-    public class DbRepository : IRepository
+    public class ProjectRepository : IProjectRepository
     {
         private AppDbContext _context;
 
-        public DbRepository(AppDbContext context)
+        public ProjectRepository(AppDbContext context)
         {
             _context = context;
         }
@@ -22,6 +22,8 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories
             return await _context.Projects
                 .Include(x => x.Stakeholders)
                 .Include(x => x.Resources)
+                .Include(x => x.Template)
+                .Include(x => x.CurrentStage)
                 .FirstOrDefaultAsync(x => x.Uid == id);
         }
 
@@ -30,6 +32,8 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories
             return await _context.Projects
                 .Include(x => x.Stakeholders)
                 .Include(x => x.Resources)
+                .Include(x => x.Template)
+                .Include(x => x.CurrentStage)
                 .FirstOrDefaultAsync(x => x.Name == name);
         }
 
@@ -38,6 +42,8 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories
             return await _context.Projects
                 .Include(x => x.Stakeholders)
                 .Include(x => x.Resources)
+                .Include(x => x.Template)
+                .Include(x => x.CurrentStage)
                 .ToListAsync();
         }
 

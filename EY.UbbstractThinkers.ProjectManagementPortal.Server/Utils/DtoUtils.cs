@@ -21,6 +21,8 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils
                 OwnerId = project.OwnerId,
                 StakeholderIds = stakeholderIds,
                 ResourceIds = resourceIds,
+                TemplateUid = project.TemplateUid,
+                CurrentStageUid = project.CurrentStageUid,
             };
         }
 
@@ -33,7 +35,9 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils
                 Description = projectDto.Description,
                 StartDate = projectDto.StartDate,
                 EndDate = projectDto.EndDate,
-                OwnerId = projectDto.OwnerId
+                OwnerId = projectDto.OwnerId,
+                TemplateUid = projectDto.TemplateUid,
+                CurrentStageUid = projectDto.CurrentStageUid,
             };
         }
 
@@ -48,5 +52,48 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils
             };
         }
 
+        public static StageDto ToDto(Stage stage)
+        {
+            return new StageDto()
+            {
+                Uid = stage.Uid,
+                Name = stage.Name,
+                Description = stage.Description,
+                OrderNumber = stage.OrderNumber,
+            };
+        }
+
+        public static TemplateDto ToDto(Template template)
+        {
+            return new TemplateDto()
+            {
+                Uid = template.Uid,
+                Name = template.Name,
+                Description = template.Description,
+                StageUids = template.Stages.Select(x => x.Uid).ToList()
+            };
+        }
+
+        public static Stage FromDto(StageDto stage)
+        {
+            return new Stage()
+            {
+                Uid = stage.Uid,
+                Name = stage.Name,
+                Description = stage.Description,
+                OrderNumber = stage.OrderNumber
+            };
+        }
+
+        public static Template FromDto(TemplateDto template)
+        {
+            return new Template()
+            {
+                Uid = template.Uid,
+                Name = template.Name,
+                Description = template.Description,
+                Stages = template.StageUids.Select(x => new Stage() { Uid = x }).ToList()
+            };
+        }
     }
 }

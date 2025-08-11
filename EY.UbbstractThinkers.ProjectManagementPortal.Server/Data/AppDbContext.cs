@@ -9,7 +9,8 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Data
         public DbSet<Project> Projects { get; set; }
         public DbSet<ProjectStakeholder> ProjectStakeholders { get; set; }
         public DbSet<ProjectResources> ProjectResources { get; set; }
-
+        public DbSet<Stage> Stages { get; set; }
+        public DbSet<Template> Templates { get; set; }
 
         private string _connectionString;
 
@@ -35,6 +36,8 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Data
             modelBuilder.ApplyConfiguration(new ProjectConfiguration());
             modelBuilder.ApplyConfiguration(new ProjectStakeholderConfiguration());
             modelBuilder.ApplyConfiguration(new ProjectResourcesConfiguration());
+            modelBuilder.ApplyConfiguration(new StageConfiguration());
+            modelBuilder.ApplyConfiguration(new TemplateConfiguration());
         }
     }
 }

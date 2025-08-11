@@ -10,5 +10,10 @@
         public const string OwnerIsStakeholder = "Owner can't be a stakeholder.";
         public const string NotAnOwner = "You must be an owner to do this action.";
         public const string InexistentUser = "Can't use a inexistent user.";
+        public const string InexistentTemplate = "Project template does not exist.";
+        public const string InexistentStage = "A stage does not exist.";
+        public const string CommonError = "An error occurred.";
+        public const string CurrentStageChangeError = "Can't change current state without approval.";
+        public const string TemplateChangeError = "Can't change project template.";
     }
 }

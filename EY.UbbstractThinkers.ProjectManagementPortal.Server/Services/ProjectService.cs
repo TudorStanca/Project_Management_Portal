@@ -1,7 +1,7 @@
 ﻿using EY.UbbstractThinkers.ProjectManagementPortal.Server.Data;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Exceptions;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Models;
-using EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Validators;
+using EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Validators.Interfaces;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils;
 using Microsoft.AspNetCore.Http;
@@ -18,15 +18,17 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
 {
     public class ProjectService : IProjectService
     {
-        private readonly IRepository _repository;
+        private readonly IProjectRepository _projectRepository;
+        private readonly ITemplateRepository _templateRepository;
         private readonly AppDbContext _context;
         private readonly IProjectValidator _projectValidator;
         private readonly UserManager<User> _userManager;
         private readonly IHttpContextAccessor _accesor;
 
-        public ProjectService(IRepository repository, AppDbContext context, IProjectValidator projectValidator, ILogger<ProjectService> logger, UserManager<User> userManager, IHttpContextAccessor accesor)
+        public ProjectService(IProjectRepository projectRepository, ITemplateRepository templateRepository, AppDbContext context, IProjectValidator projectValidator, ILogger<ProjectService> logger, UserManager<User> userManager, IHttpContextAccessor accesor)
         {
-            _repository = repository;
+            _projectRepository = projectRepository;
+            _templateRepository = templateRepository;
             _context = context;
             _projectValidator = projectValidator;
             _userManager = userManager;
@@ -35,12 +37,12 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
 
         public async Task<IEnumerable<Project>> GetProjects()
         {
-            return await _repository.GetProjects();
+            return await _projectRepository.GetProjects();
         }
 
         public async Task<Project> GetProject(Guid id)
         {
-            var project = await _repository.GetProject(id);
+            var project = await _projectRepository.GetProject(id);
 
             if (project == null)
             {
@@ -64,9 +66,14 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
                 throw new ApiException(ErrorMessageConstants.ProjectOwnerUnavailable);
             }
 
-            if (await _repository.GetProjectByName(project.Name) != null)
+            if (await _projectRepository.GetProjectByName(project.Name) != null)
             {
                 throw new ApiException(ErrorMessageConstants.ProjectNameNotUniqueMessage);
+            }
+
+            if (project.CurrentStageUid != Guid.Empty)
+            {
+                throw new ApiException(ErrorMessageConstants.CurrentStageChangeError);
             }
 
             var projectValidationResults = _projectValidator.Validate(new ValidationContext(project));
@@ -75,6 +82,11 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
             {
                 throw new ApiException(string.Join(", ", projectValidationResults));
             }
+
+            var template = await _templateRepository.GetTemplate(project.TemplateUid) ?? throw new ApiException(ErrorMessageConstants.InexistentTemplate);
+
+            project.Template = template;
+            project.CurrentStage = template.Stages.MinBy(x => x.OrderNumber);
 
             await _context.Projects.AddAsync(project);
             await _context.SaveChangesAsync();
@@ -91,7 +103,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
 
         public async Task<Project> UpdateProject(Guid id, Project project)
         {
-            var existingProject = await _repository.GetProject(id);
+            var existingProject = await _projectRepository.GetProject(id);
 
             if (existingProject == null)
             {
@@ -105,11 +117,16 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
                 throw new ApiException(ErrorMessageConstants.ProjectOwnerUnavailable);
             }
 
-            var existingProjectByName = await _repository.GetProjectByName(project.Name);
+            var existingProjectByName = await _projectRepository.GetProjectByName(project.Name);
 
             if (existingProjectByName != null && existingProject.Uid != existingProjectByName.Uid)
             {
                 throw new ApiException(ErrorMessageConstants.ProjectNameNotUniqueMessage);
+            }
+
+            if (project.CurrentStageUid == Guid.Empty || project.CurrentStageUid != existingProject.CurrentStageUid)
+            {
+                throw new ApiException(ErrorMessageConstants.CurrentStageChangeError);
             }
 
             var projectValidationResults = _projectValidator.Validate(new ValidationContext(project));
@@ -117,6 +134,11 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
             if (projectValidationResults.Any())
             {
                 throw new ApiException(string.Join(", ", projectValidationResults));
+            }
+
+            if (project.TemplateUid != existingProject.TemplateUid)
+            {
+                throw new ApiException(ErrorMessageConstants.TemplateChangeError);
             }
 
             existingProject.Name = project.Name;
@@ -193,7 +215,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
 
         public async Task<IEnumerable<Project>> GetProjectsVisibleToUser(string userId)
         {
-            var projects = await _repository.GetProjectsVisibleToUser(userId);
+            var projects = await _projectRepository.GetProjectsVisibleToUser(userId);
 
             return projects;
         }

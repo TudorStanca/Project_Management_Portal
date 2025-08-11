@@ -4,6 +4,7 @@ using EY.UbbstractThinkers.ProjectManagementPortal.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250808101445_GenerateUidForTemplateAndStage")]
+    partial class GenerateUidForTemplateAndStage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,9 +31,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("NEWID()");
-
-                    b.Property<Guid>("CurrentStageUid")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasMaxLength(500)
@@ -50,17 +50,10 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
 
-                    b.Property<Guid>("TemplateUid")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Uid");
-
-                    b.HasIndex("CurrentStageUid");
 
                     b.HasIndex("Name")
                         .IsUnique();
-
-                    b.HasIndex("TemplateUid");
 
                     b.ToTable("Projects");
                 });
@@ -154,25 +147,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
                     b.ToTable("TemplateStages");
                 });
 
-            modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Project", b =>
-                {
-                    b.HasOne("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Stage", "CurrentStage")
-                        .WithMany("Projects")
-                        .HasForeignKey("CurrentStageUid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Template", "Template")
-                        .WithMany("Projects")
-                        .HasForeignKey("TemplateUid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CurrentStage");
-
-                    b.Navigation("Template");
-                });
-
             modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.ProjectResources", b =>
                 {
                     b.HasOne("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Project", null)
@@ -211,16 +185,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
                     b.Navigation("Resources");
 
                     b.Navigation("Stakeholders");
-                });
-
-            modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Stage", b =>
-                {
-                    b.Navigation("Projects");
-                });
-
-            modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Template", b =>
-                {
-                    b.Navigation("Projects");
                 });
 #pragma warning restore 612, 618
         }
