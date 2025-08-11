@@ -14,8 +14,8 @@ import styles from "./Header.module.css";
 import logo from "../../../assets/logo.svg";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth/AuthFunction";
-import { getUser, logout } from "../../../services/AuthClient";
-import type { User } from "../../../models/Auth";
+import { getUser, logout } from "@services/AuthClient";
+import type { User } from "@models/Auth";
 import LetterAvatar from "../../avatar/LetterAvatar";
 
 const Header = () => {

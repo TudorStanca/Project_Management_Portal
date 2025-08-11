@@ -1,22 +1,26 @@
 import {
+  Alert,
   Box,
   Button,
   Card,
   CardContent,
   CircularProgress,
   Grid,
+  Snackbar,
   Typography,
 } from "@mui/material";
 import styles from "./ProjectsPage.module.css";
-import { getProjectsForUser } from "../../services/ProjectClient";
+import { getProjectsForUser } from "@services/ProjectClient";
 import { useEffect, useState } from "react";
 import { AddCircleOutline } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import type { Project } from "../../models/Project";
+import type { Project } from "@models/Project";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
-import type { User } from "../../models/Auth";
-import { getUser } from "../../services/AuthClient";
+import type { User } from "@models/Auth";
+import { getUser } from "@services/AuthClient";
+import { handleApiError } from "@services/ErrorHandler";
+import type { SnackbarSeverity } from "@models/SnackbarSeverity";
 
 interface ProjectsPageProps {
   open: boolean;
@@ -34,6 +38,14 @@ const ProjectsPage = (props: ProjectsPageProps) => {
   const [projects, setProjects] = useState<Project[]>([]);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+  const [snackbarSeverity, setSnackbarSeverity] =
+    useState<SnackbarSeverity>("success");
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -46,6 +58,10 @@ const ProjectsPage = (props: ProjectsPageProps) => {
         setProjects(projects);
       } catch (error) {
         console.error(error);
+
+        setErrorMessage(handleApiError(error));
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
       } finally {
         setIsLoading(false);
       }
@@ -155,6 +171,16 @@ const ProjectsPage = (props: ProjectsPageProps) => {
       >
         Add
       </Button>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={4000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
+          {errorMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

@@ -9,6 +9,6 @@
         public const string ProjectOwnerUnavailable = "Project Owner must be a user in the application.";
         public const string OwnerIsStakeholder = "Owner can't be a stakeholder.";
         public const string NotAnOwner = "You must be an owner to do this action.";
-        public const string InexistentUser = "Can't use a inexistent user."
+        public const string InexistentUser = "Can't use a inexistent user.";
     }
 }

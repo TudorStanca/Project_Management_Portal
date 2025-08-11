@@ -15,15 +15,15 @@ import {
   deleteProject,
   getProject,
   updateProject,
-} from "../../../services/ProjectClient";
+} from "@services/ProjectClient";
 import ProjectNavBar from "../../../components/layout/projectNavBar/ProjectNavBar";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import type { Project } from "../../../models/Project";
-import { handleApiError } from "../../../services/ErrorHandler";
+import type { Project } from "@models/Project";
+import { handleApiError } from "@services/ErrorHandler";
 import AlertDialog from "../../../components/AlertDialog";
-import type { SnackbarSeverity } from "../../../models/SnackbarSeverity";
+import type { SnackbarSeverity } from "@models/SnackbarSeverity";
 
 interface ProjectPageProps {
   open: boolean;
@@ -56,6 +56,9 @@ const ProjectPage = (props: ProjectPageProps) => {
     description: "",
     startDate: dayjs(),
     endDate: null,
+    ownerId: null,
+    stakeholderIds: [],
+    resourceIds: [],
   });
 
   const navigate = useNavigate();
@@ -98,6 +101,10 @@ const ProjectPage = (props: ProjectPageProps) => {
         setEndDate(convertToDayjsOrNull(project.endDate));
       } catch (error) {
         console.error(error);
+
+        setErrorMessage(handleApiError(error));
+        setSnackbarSeverity("error");
+        setIsSnackbarOpen(true);
       } finally {
         setIsLoading(false);
       }
@@ -127,6 +134,9 @@ const ProjectPage = (props: ProjectPageProps) => {
       description: description ?? "",
       startDate: startDate.format("YYYY-MM-DD"),
       endDate: endDate ? endDate.format("YYYY-MM-DD") : null,
+      ownerId: project.ownerId,
+      stakeholderIds: project.stakeholderIds,
+      resourceIds: project.resourceIds,
     };
 
     try {

@@ -34,7 +34,7 @@ if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
         "Pem",
         "--no-password",
       ],
-      { stdio: "inherit" }
+      { stdio: "inherit" },
     ).status
   ) {
     throw new Error("Could not create certificate.");
@@ -44,8 +44,8 @@ if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
 const target = env.ASPNETCORE_HTTPS_PORT
   ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}`
   : env.ASPNETCORE_URLS
-  ? env.ASPNETCORE_URLS.split(";")[0]
-  : "https://localhost:7110";
+    ? env.ASPNETCORE_URLS.split(";")[0]
+    : "https://localhost:7110";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -53,6 +53,8 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
+      "@models": fileURLToPath(new URL("./src/models", import.meta.url)),
+      "@services": fileURLToPath(new URL("./src/services", import.meta.url)),
     },
   },
   server: {

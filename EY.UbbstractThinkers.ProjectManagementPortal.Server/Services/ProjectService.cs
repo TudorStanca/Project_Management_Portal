@@ -164,7 +164,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
 
         public async Task<Project> SaveResources(Project project, List<string> resourceIds)
         {
-            User loggedUser = await _userManager.FindByEmailAsync(_accesor.HttpContext.User.FindFirstValue(ClaimTypes.Email));
+            var loggedUser = await _userManager.FindByEmailAsync(_accesor.HttpContext.User.FindFirstValue(ClaimTypes.Email));
 
             if (loggedUser.Id != project.OwnerId)
             {
@@ -178,12 +178,12 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
                     throw new ApiException(ErrorMessageConstants.InexistentUser);
                 }
 
-                var stakeholderProject = new ProjectStakeholder
+                var stakeholderResource = new ProjectResources
                 {
                     ProjectId = project.Uid,
                     UserId = id
                 };
-                _context.ProjectStakeholders.Add(stakeholderProject);
+                _context.ProjectResources.Add(stakeholderResource);
             }
 
             await _context.SaveChangesAsync();
@@ -196,6 +196,54 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
             var projects = await _repository.GetProjectsVisibleToUser(userId);
 
             return projects;
+        }
+
+        public async Task DeleteStakeholders(Project project, List<string> stakeholderIds)
+        {
+            var loggedUser = await _userManager.FindByEmailAsync(_accesor.HttpContext.User.FindFirstValue(ClaimTypes.Email));
+
+            if (loggedUser.Id != project.OwnerId)
+            {
+                throw new ApiException(ErrorMessageConstants.NotAnOwner);
+            }
+
+            foreach (var id in stakeholderIds)
+            {
+                if (await _userManager.FindByIdAsync(id) == null)
+                {
+                    throw new ApiException(ErrorMessageConstants.InexistentUser);
+                }
+
+                var projectStakeholder = await _context.ProjectStakeholders.FindAsync(project.Uid, id);
+
+                project.Stakeholders.Remove(projectStakeholder);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteResources(Project project, List<string> resourceIds)
+        {
+            var loggedUser = await _userManager.FindByEmailAsync(_accesor.HttpContext.User.FindFirstValue(ClaimTypes.Email));
+
+            if (loggedUser.Id != project.OwnerId)
+            {
+                throw new ApiException(ErrorMessageConstants.NotAnOwner);
+            }
+
+            foreach (var id in resourceIds)
+            {
+                if (await _userManager.FindByIdAsync(id) == null)
+                {
+                    throw new ApiException(ErrorMessageConstants.InexistentUser);
+                }
+
+                var projectResources = await _context.ProjectResources.FindAsync(project.Uid, id);
+
+                project.Resources.Remove(projectResources);
+            }
+
+            await _context.SaveChangesAsync();
         }
     }
 }

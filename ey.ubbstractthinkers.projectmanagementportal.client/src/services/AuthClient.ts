@@ -1,5 +1,5 @@
 import axios, { type AxiosResponse } from "axios";
-import type { User } from "../models/Auth";
+import type { User } from "@models/Auth";
 
 const api = axios.create({
   baseURL: "/api/auth",

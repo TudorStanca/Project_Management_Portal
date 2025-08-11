@@ -34,3 +34,7 @@
 .addProjectSpanEmail {
   margin-left: 8px;
 }
+
+.addProjectAvatarDiv {
+  display: inline-block;
+}

@@ -19,12 +19,12 @@ import styles from "./AddProjectPage.module.css";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { saveProject } from "../../services/ProjectClient";
-import { handleApiError } from "../../services/ErrorHandler";
-import type { Project } from "../../models/Project";
-import type { SnackbarSeverity } from "../../models/SnackbarSeverity";
-import type { User } from "../../models/Auth";
-import { getUsers } from "../../services/AuthClient";
+import { saveProject } from "@services/ProjectClient";
+import { handleApiError } from "@services/ErrorHandler";
+import type { Project } from "@models/Project";
+import type { SnackbarSeverity } from "@models/SnackbarSeverity";
+import type { User } from "@models/Auth";
+import { getUsers } from "@services/AuthClient";
 import LetterAvatar from "../../components/avatar/LetterAvatar";
 
 interface ProjectFormProps {
@@ -86,7 +86,9 @@ const AddProjectPage = (props: ProjectFormProps) => {
       description,
       startDate: startDate.format("YYYY-MM-DD"),
       endDate: endDate ? endDate.format("YYYY-MM-DD") : null,
-      ownerId: ownerId;
+      ownerId: ownerId,
+      stakeholderIds: [],
+      resourceIds: [],
     };
 
     try {
@@ -119,6 +121,10 @@ const AddProjectPage = (props: ProjectFormProps) => {
         setUsers(users);
       } catch (error) {
         console.error(error);
+
+        setErrorMessage(handleApiError(error));
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
       }
     };
 

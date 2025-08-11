@@ -105,12 +105,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
                 return NotFound();
             }
 
-            var projectWithStakeholders = await _projectService.SaveStakeholders(project, stakeholderIds);
-
-            if (projectWithStakeholders == null)
-            {
-                return NotFound();
-            }
+            await _projectService.SaveStakeholders(project, stakeholderIds);
 
             return Created();
         }
@@ -125,14 +120,39 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
                 return NotFound();
             }
 
-            var projectWithStakeholders = await _projectService.SaveStakeholders(project, resourceIds);
+            await _projectService.SaveResources(project, resourceIds);
 
-            if (projectWithStakeholders == null)
+            return Created();
+        }
+
+        [HttpDelete("{id}/stakeholders")]
+        public async Task<IActionResult> DeleteStakeholders(Guid id, List<string> stakeholderIds)
+        {
+            var project = await _projectService.GetProject(id);
+
+            if (project == null)
             {
                 return NotFound();
             }
 
-            return Created();
+            await _projectService.DeleteStakeholders(project, stakeholderIds);
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}/resources")]
+        public async Task<IActionResult> DeleteResources(Guid id, List<string> resourceIds)
+        {
+            var project = await _projectService.GetProject(id);
+
+            if (project == null)
+            {
+                return NotFound();
+            }
+
+            await _projectService.DeleteResources(project, resourceIds);
+
+            return NoContent();
         }
     }
 }

@@ -13,11 +13,11 @@ import styles from "./LoginPage.module.css";
 import logo from "../../assets/logo.svg";
 import { Link, useNavigate } from "react-router-dom";
 import AuthBackground from "../../components/layout/background/AuthBackground";
-import { login } from "../../services/AuthClient";
-import { handleApiError } from "../../services/ErrorHandler";
+import { login } from "@services/AuthClient";
+import { handleApiError } from "@services/ErrorHandler";
 import { useAuth } from "../../components/context/auth/AuthFunction";
-import type { SnackbarSeverity } from "../../models/SnackbarSeverity";
-import type { User } from "../../models/Auth";
+import type { SnackbarSeverity } from "@models/SnackbarSeverity";
+import type { User } from "@models/Auth";
 
 const LoginPage = () => {
   const [email, setEmail] = useState<string>("");

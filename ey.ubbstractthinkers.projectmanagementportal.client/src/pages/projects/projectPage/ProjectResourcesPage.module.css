@@ -1,4 +1,4 @@
-.resourcesResourcesContent {
+.projectResourcesContent {
   position: relative;
   flex-grow: 1;
   transition: margin 225ms cubic-bezier(0.4, 0, 0.6, 0.1);
@@ -6,13 +6,58 @@
   background-color: var(--color-bg);
 }
 
-.resourcesResourcesContent.open {
+.projectResourcesContent.open {
   margin-left: 15em;
   transition: margin 225ms cubic-bezier(0, 0, 0.2, 1);
 }
 
-.resourcesResourcesHeader {
+.projectResourcesHeader {
   padding-left: 0.31em;
   color: var(--color-primary);
   text-align: left;
+}
+
+.projectResourcesTableContainer {
+  max-width: 95%;
+  box-sizing: border-box;
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  padding-right: 10px;
+  padding-top: 10px;
+  border: 1px solid var(--color-secondary);
+}
+
+.projectResourcesAddButton {
+  color: var(--color-text);
+  width: 106px;
+}
+
+.projectResourcesAddButton:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.projectResourcesButtonsBox {
+  width: 220px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.projectResourcesAvatarDiv {
+  display: inline-block;
+}
+
+.projectResourcesDialogBox {
+  padding: 10px 20px;
+}
+
+.projectResourcesDialogBox:last-child {
+  padding-bottom: 0;
+}
+
+.projectResourcesEmailTypography {
+  padding-left: 10px;
 }
