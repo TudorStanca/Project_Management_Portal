@@ -15,5 +15,12 @@
         public const string CommonError = "An error occurred.";
         public const string CurrentStageChangeError = "Can't change current state without approval.";
         public const string TemplateChangeError = "Can't change project template.";
+        public const string OnlyOnePendingApprovalRequest = "Project already has pending approval request.";
+        public const string UnableToChangeStage = "Unable to change stage in current state.";
+        public const string LoggedUserNotAStakeholder = "Approval requests can only be edited by stakeholders of a project.";
+        public const string OnlyPendingApprovalRequests = "Only pending approval requests can be approved or rejected.";
+        public const string CantChangeStateToPending = "Can't change the state to Pending.";
+        public const string NotAValidStatusType = "Status must be have valid value.";
+
     }
 }

@@ -13,6 +13,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Models
 
         public List<ProjectStakeholder> Stakeholders { get; set; } = [];
         public List<ProjectResources> Resources { get; set; } = [];
+        public List<ApprovalRequest> Approvals { get; set; } = [];
         public string OwnerId { get; set; }
 
         public Guid TemplateUid { get; set; }

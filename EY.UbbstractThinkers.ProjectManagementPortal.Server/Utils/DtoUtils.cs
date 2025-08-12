@@ -95,5 +95,20 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils
                 Stages = template.StageUids.Select(x => new Stage() { Uid = x }).ToList()
             };
         }
+
+        public static ReadApprovalRequestDto ToDto(ApprovalRequest approval)
+        {
+            return new ReadApprovalRequestDto()
+            {
+                Uid = approval.Uid,
+                ProjectName = approval.Project.Name,
+                StageFromName = approval.FromStage.Name,
+                StageToName = approval.ToStage.Name,
+                Status = approval.Status,
+                CreatedAt = approval.CreatedAt,
+                ModifiedAt = approval.ModifiedAt,
+                ChangedByUserEmail = approval.ModifiedByUserEmail,
+            };
+        }
     }
 }

@@ -6,7 +6,6 @@ using EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -24,8 +23,9 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
         private readonly IProjectValidator _projectValidator;
         private readonly UserManager<User> _userManager;
         private readonly IHttpContextAccessor _accesor;
+        private readonly IApprovalService _approvalService;
 
-        public ProjectService(IProjectRepository projectRepository, ITemplateRepository templateRepository, AppDbContext context, IProjectValidator projectValidator, ILogger<ProjectService> logger, UserManager<User> userManager, IHttpContextAccessor accesor)
+        public ProjectService(IProjectRepository projectRepository, ITemplateRepository templateRepository, AppDbContext context, IProjectValidator projectValidator, UserManager<User> userManager, IHttpContextAccessor accesor, IApprovalService approvalService)
         {
             _projectRepository = projectRepository;
             _templateRepository = templateRepository;
@@ -33,6 +33,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
             _projectValidator = projectValidator;
             _userManager = userManager;
             _accesor = accesor;
+            _approvalService = approvalService;
         }
 
         public async Task<IEnumerable<Project>> GetProjects()
@@ -43,11 +44,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
         public async Task<Project> GetProject(Guid id)
         {
             var project = await _projectRepository.GetProject(id);
-
-            if (project == null)
-            {
-                return null;
-            }
 
             return project;
         }
@@ -152,7 +148,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
 
         public async Task<Project> SaveStakeholders(Project project, List<string> stakeholderIds)
         {
-            User loggedUser = await _userManager.FindByEmailAsync(_accesor.HttpContext.User.FindFirstValue(ClaimTypes.Email));
+            var loggedUser = await _userManager.FindByEmailAsync(_accesor.HttpContext.User.FindFirstValue(ClaimTypes.Email));
 
             if (loggedUser.Id != project.OwnerId)
             {
@@ -266,6 +262,11 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
             }
 
             await _context.SaveChangesAsync();
+        }
+
+        public async Task AdvanceToNextStage(Guid id)
+        {
+            await _approvalService.CreateApprovalRequest(new ApprovalRequest() { ProjectId = id });
         }
     }
 }

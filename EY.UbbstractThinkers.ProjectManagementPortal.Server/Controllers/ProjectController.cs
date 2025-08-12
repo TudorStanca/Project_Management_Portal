@@ -3,7 +3,6 @@ using EY.UbbstractThinkers.ProjectManagementPortal.Server.Services;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +16,10 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
     public class ProjectController : ControllerBase
     {
         private IProjectService _projectService;
-        private readonly ILogger<ProjectController> _logger;
 
-        public ProjectController(IProjectService projectService, ILogger<ProjectController> logger)
+        public ProjectController(IProjectService projectService)
         {
             _projectService = projectService;
-            _logger = logger;
         }
 
         [HttpGet]
@@ -108,6 +105,14 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
             await _projectService.SaveStakeholders(project, stakeholderIds);
 
             return Created();
+        }
+
+        [HttpPost("{id}/approvals")]
+        public async Task<IActionResult> AdvanceToNextStage(Guid id)
+        {
+            await _projectService.AdvanceToNextStage(id);
+
+            return Ok();
         }
 
         [HttpPost("{id}/resources")]

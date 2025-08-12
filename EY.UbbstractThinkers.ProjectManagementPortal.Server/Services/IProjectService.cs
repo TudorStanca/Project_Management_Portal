@@ -17,5 +17,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
         Task<IEnumerable<Project>> GetProjectsVisibleToUser(string userId);
         Task DeleteStakeholders(Project project, List<string> stakeholderIds);
         Task DeleteResources(Project project, List<string> resourceIds);
+        Task AdvanceToNextStage(Guid id);
     }
 }

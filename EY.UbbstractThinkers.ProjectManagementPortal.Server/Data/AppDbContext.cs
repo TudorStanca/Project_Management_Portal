@@ -11,6 +11,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Data
         public DbSet<ProjectResources> ProjectResources { get; set; }
         public DbSet<Stage> Stages { get; set; }
         public DbSet<Template> Templates { get; set; }
+        public DbSet<ApprovalRequest> ApprovalRequests { get; set; }
 
         private string _connectionString;
 
@@ -38,6 +39,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Data
             modelBuilder.ApplyConfiguration(new ProjectResourcesConfiguration());
             modelBuilder.ApplyConfiguration(new StageConfiguration());
             modelBuilder.ApplyConfiguration(new TemplateConfiguration());
+            modelBuilder.ApplyConfiguration(new ApprovalConfiguration());
         }
     }
 }

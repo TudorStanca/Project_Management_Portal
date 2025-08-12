@@ -68,6 +68,8 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server
             builder.Services.AddScoped<ITemplateValidator, TemplateValidator>();
             builder.Services.AddScoped<IProjectService, ProjectService>();
             builder.Services.AddScoped<ITemplateService, TemplateService>();
+            builder.Services.AddScoped<IApprovalRepository, ApprovalRepository>();
+            builder.Services.AddScoped<IApprovalService, ApprovalService>();
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddProblemDetails();
 

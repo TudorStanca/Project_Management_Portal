@@ -4,6 +4,7 @@ using EY.UbbstractThinkers.ProjectManagementPortal.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250811092236_AddedApprovals")]
+    partial class AddedApprovals
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,26 +25,26 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.ApprovalRequest", b =>
+            modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Approval", b =>
                 {
                     b.Property<Guid>("Uid")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("NEWID()");
 
-                    b.Property<string>("ChangedByUserEmail")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("ChangedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("FromStageId")
+                    b.Property<Guid>("ProjectId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("ModifiedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<Guid>("StageFromId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ProjectId")
+                    b.Property<Guid>("StageToId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Status")
@@ -49,18 +52,15 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(1);
 
-                    b.Property<Guid>("ToStageId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Uid");
-
-                    b.HasIndex("FromStageId");
 
                     b.HasIndex("ProjectId");
 
-                    b.HasIndex("ToStageId");
+                    b.HasIndex("StageFromId");
 
-                    b.ToTable("ApprovalRequests");
+                    b.HasIndex("StageToId");
+
+                    b.ToTable("Approvals");
                 });
 
             modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Project", b =>
@@ -195,31 +195,31 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
                     b.ToTable("TemplateStages");
                 });
 
-            modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.ApprovalRequest", b =>
+            modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Approval", b =>
                 {
-                    b.HasOne("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Stage", "FromStage")
-                        .WithMany()
-                        .HasForeignKey("FromStageId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Project", "Project")
                         .WithMany("Approvals")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Stage", "ToStage")
+                    b.HasOne("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Stage", "StageFrom")
                         .WithMany()
-                        .HasForeignKey("ToStageId")
+                        .HasForeignKey("StageFromId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("FromStage");
+                    b.HasOne("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Stage", "StageTo")
+                        .WithMany()
+                        .HasForeignKey("StageToId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Project");
 
-                    b.Navigation("ToStage");
+                    b.Navigation("StageFrom");
+
+                    b.Navigation("StageTo");
                 });
 
             modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Project", b =>
