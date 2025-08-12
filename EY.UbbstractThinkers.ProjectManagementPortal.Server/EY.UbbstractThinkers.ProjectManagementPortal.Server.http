@@ -76,7 +76,8 @@ Content-Type: application/json
     "name": "Sample Template",
     "description": "This is a sample template.",
     "stageUids": [
-      "DFFFC24A-46D0-4435-85E1-B41646C0434C"
+      "DFFFC24A-46D0-4435-85E1-B41646C0434C",
+      "2CDE6B5E-3B53-4535-B6B3-A740820C15E2"
     ]
 }
 

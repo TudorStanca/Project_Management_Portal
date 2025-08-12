@@ -90,9 +90,9 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
         [HttpGet("users/{id}")]
         public async Task<ActionResult<ProjectDto>> GetProjectsForUser(string id)
         {
-            var allProjects = await _projectService.GetProjectsVisibleToUser(id);
+            var projects = await _projectService.GetProjectsVisibleToUser(id);
 
-            return Ok(allProjects);
+            return Ok(projects.Select(DtoUtils.ToDto));
         }
 
         [HttpPost("{id}/stakeholders")]

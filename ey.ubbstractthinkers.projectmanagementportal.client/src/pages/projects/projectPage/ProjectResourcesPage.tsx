@@ -24,9 +24,8 @@ import { useParams } from "react-router-dom";
 import styles from "./ProjectResourcesPage.module.css";
 import ProjectNavBar from "../../../components/layout/projectNavBar/ProjectNavBar";
 import { useEffect, useState } from "react";
-import type { User } from "@models/Auth";
-import type { Project } from "@models/Project";
-import dayjs from "dayjs";
+import { DefaultUser, type User } from "@models/Auth";
+import { DefaultProject, type Project } from "@models/Project";
 import type { SnackbarSeverity } from "@models/SnackbarSeverity";
 import {
   addResources,
@@ -45,36 +44,27 @@ interface ProjectResourcesPageProps {
 
 const ProjectResourcesPage = (props: ProjectResourcesPageProps) => {
   const { projectId } = useParams();
+
   const [resources, setResources] = useState<User[]>([]);
   const [users, setUsers] = useState<User[]>([]);
-  const [loggedUser, setLoggedUser] = useState<User>({
-    id: null,
-    email: "",
-    password: "",
-    firstName: "",
-    lastName: "",
-    photo: new Blob(),
-  });
-  const [project, setProject] = useState<Project>({
-    name: "",
-    description: "",
-    startDate: dayjs(),
-    endDate: null,
-    ownerId: null,
-    stakeholderIds: [],
-    resourceIds: [],
-  });
+  const [loggedUser, setLoggedUser] = useState<User>(DefaultUser);
+  const [project, setProject] = useState<Project>(DefaultProject);
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const [successMessage, setSuccessMessage] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
   const [snackbarSeverity, setSnackbarSeverity] =
     useState<SnackbarSeverity>("success");
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
   const [selectedResourceIds, setSelectedResourceIds] = useState<string[]>([]);
-  const [openAddDialog, setOpenAddDialog] = useState<boolean>(false);
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
+
+  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+  const [openAddDialog, setOpenAddDialog] = useState<boolean>(false);
   const [openConfirmDialog, setOpenConfirmDialog] = useState<boolean>(false);
 
   useEffect(() => {
@@ -113,7 +103,7 @@ const ProjectResourcesPage = (props: ProjectResourcesPageProps) => {
     };
 
     fetchAll();
-  }, []);
+  }, [projectId]);
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -219,7 +209,7 @@ const ProjectResourcesPage = (props: ProjectResourcesPageProps) => {
     setOpenAddDialog(false);
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
   };
 

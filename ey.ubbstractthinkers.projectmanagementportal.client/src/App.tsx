@@ -14,6 +14,7 @@ import LoginPage from "./pages/auth/LoginPage";
 import ProjectStakeholdersPage from "./pages/projects/projectPage/ProjectStakeholdersPage";
 import ProjectResourcesPage from "./pages/projects/projectPage/ProjectResourcesPage";
 import ProjectTasksPage from "./pages/projects/projectPage/ProjectTasksPage";
+import AddTemplatePage from "./pages/templates/AddTemplatePage";
 
 function App() {
   const [open, setOpen] = useState(true);
@@ -56,6 +57,10 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/projects" element={<ProjectsPage open={open} />} />
+          <Route
+            path="/add-template"
+            element={<AddTemplatePage open={open} />}
+          />
           <Route path="/add-project" element={<AddProjectPage open={open} />} />
           <Route
             path="/projects/:projectId"

@@ -24,8 +24,11 @@ import { handleApiError } from "@services/ErrorHandler";
 import type { Project } from "@models/Project";
 import type { SnackbarSeverity } from "@models/SnackbarSeverity";
 import type { User } from "@models/Auth";
-import { getUsers } from "@services/AuthClient";
+import { getUser, getUsers } from "@services/AuthClient";
 import LetterAvatar from "../../components/avatar/LetterAvatar";
+import type { Template } from "@models/Template";
+import { getTemplates } from "@services/TemplateClient";
+import { useNavigate } from "react-router-dom";
 
 interface ProjectFormProps {
   open: boolean;
@@ -33,21 +36,33 @@ interface ProjectFormProps {
 
 const AddProjectPage = (props: ProjectFormProps) => {
   const [users, setUsers] = useState<User[]>([]);
+  const [templates, setTemplates] = useState<Template[]>([]);
+
   const [ownerId, setOwnerId] = useState<string>("");
+  const [templateUid, setTemplateUid] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+
   const [successMessage, setSuccessMessage] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
   const [snackbarSeverity, setSnackbarSeverity] =
     useState<SnackbarSeverity>("success");
 
+  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+
+  const navigate = useNavigate();
+
   const handleChange = (event: SelectChangeEvent) => {
     setOwnerId(event.target.value);
+  };
+
+  const handleTemplateChange = (event: SelectChangeEvent) => {
+    setTemplateUid(event.target.value);
   };
 
   const handleChangeName = (e: ChangeEvent<HTMLInputElement>) => {
@@ -68,12 +83,10 @@ const AddProjectPage = (props: ProjectFormProps) => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsLoading(true);
     setErrorMessage("");
     setSuccessMessage("");
 
     if (!startDate) {
-      setIsLoading(false);
       setErrorMessage("Start Date is required");
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
@@ -89,7 +102,10 @@ const AddProjectPage = (props: ProjectFormProps) => {
       ownerId: ownerId,
       stakeholderIds: [],
       resourceIds: [],
+      templateUid,
     };
+
+    setIsSaving(true);
 
     try {
       await saveProject(formattedProject);
@@ -104,7 +120,7 @@ const AddProjectPage = (props: ProjectFormProps) => {
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
 
     setName("");
@@ -114,21 +130,29 @@ const AddProjectPage = (props: ProjectFormProps) => {
   };
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    setIsLoading(true);
+
+    const fetchData = async () => {
       try {
-        const users: User[] = await getUsers();
+        const [users, loggedUser, templates] = await Promise.all([
+          getUsers(),
+          getUser(),
+          getTemplates(),
+        ]);
 
         setUsers(users);
+        setOwnerId(loggedUser.id!);
+        setTemplates(templates);
       } catch (error) {
-        console.error(error);
-
         setErrorMessage(handleApiError(error));
         setSnackbarSeverity("error");
         setSnackbarOpen(true);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchUsers();
+    fetchData();
   }, []);
 
   const handleSnackbarClose = () => {
@@ -142,117 +166,169 @@ const AddProjectPage = (props: ProjectFormProps) => {
       <Typography variant="h2" className={styles.addProjectHeader}>
         Add Project
       </Typography>
-      <form onSubmit={handleSubmit}>
-        <Grid container spacing={2} className={styles.addProjectGridContainer}>
-          <Grid size={{ xs: 12 }}>
-            <TextField
-              fullWidth
-              label="Name"
-              name="name"
-              value={name}
-              onChange={handleChangeName}
-              required
-            />
-          </Grid>
-          <Grid size={{ xs: 12 }}>
-            <TextField
-              fullWidth
-              label="Description"
-              name="description"
-              value={description}
-              onChange={handleChangeDescription}
-              multiline
-              rows={4}
-            />
-          </Grid>
-          <Grid
-            container
-            spacing={2}
-            className={styles.addProjectGridDateContainer}
+      {isLoading ? (
+        <Box className={styles.addProjectMessageBox}>
+          <CircularProgress />
+        </Box>
+      ) : templates.length === 0 ? (
+        <Box className={styles.addProjectNoTemplateBox}>
+          <Typography
+            variant="h4"
+            className={styles.addProjectMessageTypography}
           >
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <LocalizationProvider
-                dateAdapter={AdapterDayjs}
-                adapterLocale="en"
-              >
-                <DatePicker
-                  label="Start Date"
-                  value={startDate}
-                  onChange={handleStartDateChange}
-                />
-              </LocalizationProvider>
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <LocalizationProvider
-                dateAdapter={AdapterDayjs}
-                adapterLocale="en"
-              >
-                <DatePicker
-                  label="End Date"
-                  value={endDate}
-                  onChange={handleEndDateChange}
-                />
-              </LocalizationProvider>
-            </Grid>
-          </Grid>
-          <FormControl required>
-            <InputLabel id="owner_select_label">Project Owner</InputLabel>
-            <Select
-              labelId="owner_select_label"
-              id="owner_select"
-              value={ownerId}
-              label="Project Owner"
-              onChange={handleChange}
-              sx={{ minWidth: 170 }}
+            There are no templates available, add one.
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            className={styles.addTemplateButton}
+            onClick={() => navigate("/add-template")}
+          >
+            Add Template
+          </Button>
+        </Box>
+      ) : (
+        <>
+          <form onSubmit={handleSubmit}>
+            <Grid
+              container
+              spacing={2}
+              className={styles.addProjectGridContainer}
             >
-              {users.map((user) => (
-                <MenuItem
-                  key={user.id}
-                  value={user.id ?? ""}
-                  sx={{ minWidth: 250, display: "flex" }}
+              <Grid size={{ xs: 12 }}>
+                <TextField
+                  fullWidth
+                  label="Name"
+                  name="name"
+                  value={name}
+                  onChange={handleChangeName}
+                  required
+                />
+              </Grid>
+              <Grid size={{ xs: 12 }}>
+                <TextField
+                  fullWidth
+                  label="Description"
+                  name="description"
+                  value={description}
+                  onChange={handleChangeDescription}
+                  multiline
+                  rows={4}
+                />
+              </Grid>
+              <Grid
+                container
+                spacing={2}
+                className={styles.addProjectGridDateContainer}
+              >
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <LocalizationProvider
+                    dateAdapter={AdapterDayjs}
+                    adapterLocale="en"
+                  >
+                    <DatePicker
+                      label="Start Date"
+                      value={startDate}
+                      onChange={handleStartDateChange}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <LocalizationProvider
+                    dateAdapter={AdapterDayjs}
+                    adapterLocale="en"
+                  >
+                    <DatePicker
+                      label="End Date"
+                      value={endDate}
+                      onChange={handleEndDateChange}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+              </Grid>
+              <FormControl required>
+                <InputLabel id="owner_select_label">Project Owner</InputLabel>
+                <Select
+                  labelId="owner_select_label"
+                  id="owner_select"
+                  value={ownerId}
+                  label="Project Owner"
+                  onChange={handleChange}
+                  className={styles.addProjectOwnerSelect}
                 >
-                  <div className={styles.addProjectAvatarDiv}>
-                    {user.photo ? (
-                      <Avatar
-                        alt={user.firstName + " " + user.lastName}
-                        src={`user.photo instanceof Blob ? URL.createObjectURL(user.photo) : undefined`}
-                      />
-                    ) : (
-                      <LetterAvatar
-                        firstName={user.firstName ? user.firstName : ""}
-                        lastName={user.lastName ? user.lastName : ""}
-                      />
-                    )}
-                  </div>
-                  <span className={styles.addProjectSpanEmail}>
-                    {user.email}
-                  </span>
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <Grid size={{ xs: 12, sm: 6 }} justifyContent="flex-start">
-            <Button
-              variant="contained"
-              type="submit"
-              disabled={isLoading}
-              className={styles.addProjectSubmitButton}
-            >
-              {isLoading ? <CircularProgress /> : "Submit"}
-            </Button>
-          </Grid>
-        </Grid>
-      </form>
+                  {users.map((user) => (
+                    <MenuItem
+                      key={user.id}
+                      value={user.id!}
+                      className={styles.addProjectOwnerSelectMenuItem}
+                    >
+                      <div className={styles.addProjectAvatarDiv}>
+                        {user.photo ? (
+                          <Avatar
+                            alt={user.firstName + " " + user.lastName}
+                            src={`user.photo instanceof Blob ? URL.createObjectURL(user.photo) : undefined`}
+                          />
+                        ) : (
+                          <LetterAvatar
+                            firstName={user.firstName ? user.firstName : ""}
+                            lastName={user.lastName ? user.lastName : ""}
+                          />
+                        )}
+                      </div>
+                      <span className={styles.addProjectSpanEmail}>
+                        {user.email}
+                      </span>
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl required>
+                <InputLabel id="template_select_label">
+                  Project Template
+                </InputLabel>
+                <Select
+                  labelId="template_select_label"
+                  id="template_select"
+                  value={templateUid}
+                  label="Template Owner"
+                  onChange={handleTemplateChange}
+                  className={styles.addProjectTemplateSelect}
+                >
+                  {templates.map((template) => (
+                    <MenuItem
+                      key={template.uid}
+                      value={template.uid!}
+                      className={styles.addProjectTemplateSelectMenuItem}
+                    >
+                      {template.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <Grid size={{ xs: 12 }}>
+                <Button
+                  variant="contained"
+                  type="submit"
+                  disabled={isSaving}
+                  className={styles.addProjectSubmitButton}
+                >
+                  {isSaving ? <CircularProgress /> : "Save"}
+                </Button>
+              </Grid>
+            </Grid>
+          </form>
 
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={4000}
-        onClose={handleSnackbarClose}
-      >
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
-          {successMessage || errorMessage}
-        </Alert>
-      </Snackbar>
+          <Snackbar
+            open={snackbarOpen}
+            autoHideDuration={4000}
+            onClose={handleSnackbarClose}
+          >
+            <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
+              {successMessage || errorMessage}
+            </Alert>
+          </Snackbar>
+        </>
+      )}
     </Box>
   );
 };

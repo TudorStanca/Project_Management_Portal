@@ -30,11 +30,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
         {
             var templates = await _templateService.GetTemplates();
 
-            if (!templates.Any())
-            {
-                return NotFound();
-            }
-
             return Ok(templates.Select(DtoUtils.ToDto));
         }
 

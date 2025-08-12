@@ -15,18 +15,11 @@ import logo from "../../../assets/logo.svg";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth/AuthFunction";
 import { getUser, logout } from "@services/AuthClient";
-import type { User } from "@models/Auth";
+import { DefaultUser, type User } from "@models/Auth";
 import LetterAvatar from "../../avatar/LetterAvatar";
 
 const Header = () => {
-  const [user, setUser] = useState<User>({
-    id: null,
-    email: "",
-    password: "",
-    firstName: "",
-    lastName: "",
-    photo: new Blob(),
-  });
+  const [user, setUser] = useState<User>(DefaultUser);
   const photoUrl =
     user.photo instanceof Blob ? URL.createObjectURL(user.photo) : undefined;
 

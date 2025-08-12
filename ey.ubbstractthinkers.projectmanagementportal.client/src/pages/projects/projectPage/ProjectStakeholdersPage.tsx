@@ -23,10 +23,9 @@ import {
 import { useParams } from "react-router-dom";
 import styles from "./ProjectStakeholdersPage.module.css";
 import ProjectNavBar from "../../../components/layout/projectNavBar/ProjectNavBar";
-import type { User } from "@models/Auth";
+import { DefaultUser, type User } from "@models/Auth";
 import { useEffect, useState } from "react";
-import type { Project } from "@models/Project";
-import dayjs from "dayjs";
+import { DefaultProject, type Project } from "@models/Project";
 import { getUser, getUsers } from "@services/AuthClient";
 import type { SnackbarSeverity } from "@models/SnackbarSeverity";
 import { handleApiError } from "@services/ErrorHandler";
@@ -48,23 +47,8 @@ const ProjectStakeholdersPage = (props: ProjectStakeholdersPageProps) => {
 
   const [stakeholders, setStakeholders] = useState<User[]>([]);
   const [users, setUsers] = useState<User[]>([]);
-  const [loggedUser, setLoggedUser] = useState<User>({
-    id: null,
-    email: "",
-    password: "",
-    firstName: "",
-    lastName: "",
-    photo: new Blob(),
-  });
-  const [project, setProject] = useState<Project>({
-    name: "",
-    description: "",
-    startDate: dayjs(),
-    endDate: null,
-    ownerId: null,
-    stakeholderIds: [],
-    resourceIds: [],
-  });
+  const [loggedUser, setLoggedUser] = useState<User>(DefaultUser);
+  const [project, setProject] = useState<Project>(DefaultProject);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -118,7 +102,7 @@ const ProjectStakeholdersPage = (props: ProjectStakeholdersPageProps) => {
     };
 
     fetchAll();
-  }, []);
+  }, [projectId]);
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -227,7 +211,7 @@ const ProjectStakeholdersPage = (props: ProjectStakeholdersPageProps) => {
     setOpenAddDialog(false);
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
   };
 

@@ -1,5 +1,4 @@
 import { Avatar } from "@mui/material";
-import React from "react";
 
 interface LetterAvatarProps {
   firstName: string;

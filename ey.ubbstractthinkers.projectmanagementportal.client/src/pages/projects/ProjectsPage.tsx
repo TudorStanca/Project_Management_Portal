@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 import type { Project } from "@models/Project";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
-import type { User } from "@models/Auth";
+import { DefaultUser, type User } from "@models/Auth";
 import { getUser } from "@services/AuthClient";
 import { handleApiError } from "@services/ErrorHandler";
 import type { SnackbarSeverity } from "@models/SnackbarSeverity";
@@ -27,17 +27,13 @@ interface ProjectsPageProps {
 }
 
 const ProjectsPage = (props: ProjectsPageProps) => {
-  const [user, setUser] = useState<User>({
-    id: null,
-    email: "",
-    password: "",
-    firstName: "",
-    lastName: "",
-    photo: new Blob(),
-  });
+  const [user, setUser] = useState<User>(DefaultUser);
   const [projects, setProjects] = useState<Project[]>([]);
+
   const navigate = useNavigate();
+
   const [isLoading, setIsLoading] = useState(false);
+
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
   const [snackbarSeverity, setSnackbarSeverity] =
@@ -53,12 +49,11 @@ const ProjectsPage = (props: ProjectsPageProps) => {
     const fetchUserWithProjects = async () => {
       try {
         const user: User = await getUser();
-        setUser(user);
         const projects = await getProjectsForUser(user.id ?? "");
+
+        setUser(user);
         setProjects(projects);
       } catch (error) {
-        console.error(error);
-
         setErrorMessage(handleApiError(error));
         setSnackbarSeverity("error");
         setSnackbarOpen(true);
@@ -113,7 +108,7 @@ const ProjectsPage = (props: ProjectsPageProps) => {
         </Box>
       ) : projects.length === 0 ? (
         <Box className={styles.projectsMessageBox}>
-          <Typography variant="h3" className={styles.projectsMessageTypography}>
+          <Typography variant="h4" className={styles.projectsMessageTypography}>
             No projects to show
           </Typography>
         </Box>

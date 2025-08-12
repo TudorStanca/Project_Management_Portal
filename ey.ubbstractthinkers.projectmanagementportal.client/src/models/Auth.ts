@@ -6,3 +6,12 @@ export interface User {
   lastName: string | null;
   photo: File | Blob | null;
 }
+
+export const DefaultUser: User = {
+  id: null,
+  email: "",
+  password: "",
+  firstName: "",
+  lastName: "",
+  photo: new Blob(),
+};

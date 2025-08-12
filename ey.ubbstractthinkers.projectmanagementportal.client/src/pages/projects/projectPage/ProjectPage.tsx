@@ -20,7 +20,7 @@ import ProjectNavBar from "../../../components/layout/projectNavBar/ProjectNavBa
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import type { Project } from "@models/Project";
+import { DefaultProject, type Project } from "@models/Project";
 import { handleApiError } from "@services/ErrorHandler";
 import AlertDialog from "../../../components/AlertDialog";
 import type { SnackbarSeverity } from "@models/SnackbarSeverity";
@@ -35,8 +35,8 @@ const convertToDayjsOrNull = (date: Dayjs | string | null): Dayjs | null => {
 
 const ProjectPage = (props: ProjectPageProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isUpdateLoading, setIsUpdateLoading] = useState<boolean>(false);
-  const [isDeleteLoading, setIdDeleteLoading] = useState<boolean>(false);
+  const [isUpdating, setIsUpdating] = useState<boolean>(false);
+  const [isDeleting, setIdDeleting] = useState<boolean>(false);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [isProjectDeleted, setIsProjectDeleted] = useState<boolean>(false);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
@@ -51,15 +51,7 @@ const ProjectPage = (props: ProjectPageProps) => {
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
 
-  const [project, setProject] = useState<Project>({
-    name: "",
-    description: "",
-    startDate: dayjs(),
-    endDate: null,
-    ownerId: null,
-    stakeholderIds: [],
-    resourceIds: [],
-  });
+  const [project, setProject] = useState<Project>(DefaultProject);
 
   const navigate = useNavigate();
 
@@ -100,8 +92,6 @@ const ProjectPage = (props: ProjectPageProps) => {
         setStartDate(convertToDayjsOrNull(project.startDate));
         setEndDate(convertToDayjsOrNull(project.endDate));
       } catch (error) {
-        console.error(error);
-
         setErrorMessage(handleApiError(error));
         setSnackbarSeverity("error");
         setIsSnackbarOpen(true);
@@ -115,12 +105,10 @@ const ProjectPage = (props: ProjectPageProps) => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setIsUpdateLoading(true);
     setErrorMessage("");
     setSuccessMessage("");
 
     if (!startDate) {
-      setIsUpdateLoading(false);
       setErrorMessage("Start Date is required");
       setSnackbarSeverity("error");
       setIsSnackbarOpen(true);
@@ -137,7 +125,11 @@ const ProjectPage = (props: ProjectPageProps) => {
       ownerId: project.ownerId,
       stakeholderIds: project.stakeholderIds,
       resourceIds: project.resourceIds,
+      templateUid: project.templateUid,
+      currentStageUid: project.currentStageUid,
     };
+
+    setIsUpdating(true);
 
     try {
       await updateProject(formattedProject);
@@ -150,7 +142,7 @@ const ProjectPage = (props: ProjectPageProps) => {
       setSnackbarSeverity("error");
       setIsSnackbarOpen(true);
     } finally {
-      setIsUpdateLoading(false);
+      setIsUpdating(false);
     }
 
     setProject(formattedProject);
@@ -158,7 +150,7 @@ const ProjectPage = (props: ProjectPageProps) => {
 
   const handleDelete = async () => {
     setIsDialogOpen(false);
-    setIdDeleteLoading(true);
+    setIdDeleting(true);
     setErrorMessage("");
     setSuccessMessage("");
 
@@ -176,7 +168,7 @@ const ProjectPage = (props: ProjectPageProps) => {
       setSnackbarSeverity("error");
       setIsSnackbarOpen(true);
     } finally {
-      setIdDeleteLoading(false);
+      setIdDeleting(false);
     }
   };
 
@@ -271,21 +263,21 @@ const ProjectPage = (props: ProjectPageProps) => {
                 type="submit"
                 variant="contained"
                 color="primary"
-                disabled={!isFormChanged || isUpdateLoading}
+                disabled={!isFormChanged || isUpdating}
                 className={styles.projectFormButton}
               >
-                {isUpdateLoading ? <CircularProgress /> : "Update"}
+                {isUpdating ? <CircularProgress /> : "Update"}
               </Button>
             </Grid>
             <Grid size={{ xs: 1 }}>
               <Button
                 variant="contained"
                 color="primary"
-                disabled={isDeleteLoading}
+                disabled={isDeleting}
                 className={styles.projectFormButton}
                 onClick={() => setIsDialogOpen(true)}
               >
-                {isDeleteLoading ? <CircularProgress /> : "Delete"}
+                {isDeleting ? <CircularProgress /> : "Delete"}
               </Button>
             </Grid>
           </Grid>
