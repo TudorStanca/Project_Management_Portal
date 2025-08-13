@@ -1,6 +1,6 @@
 ﻿namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Models
 {
-    public enum Status
+    public enum ApprovalStatus
     {
         Pending = 1,
         Approved = 2,

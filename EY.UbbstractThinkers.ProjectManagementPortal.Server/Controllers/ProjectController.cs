@@ -1,4 +1,5 @@
 ﻿using EY.UbbstractThinkers.ProjectManagementPortal.Server.Dtos;
+using EY.UbbstractThinkers.ProjectManagementPortal.Server.Dtos.Filters;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Services;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
 {
     [ApiController]
-    [Route("/api/[controller]")]
+    [Route("/api/[controller]s")]
     [Authorize]
     public class ProjectController : ControllerBase
     {
@@ -27,7 +28,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
         {
             var projects = await _projectService.GetProjects();
 
-            if (projects == null || !projects.Any())
+            if (projects == null || projects.Count == 0)
             {
                 return NotFound();
             }
@@ -72,7 +73,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<ProjectDto>> UpdateProject(Guid id, ProjectDto projectDto)
+        public async Task<ActionResult> UpdateProject(Guid id, ProjectDto projectDto)
         {
             var project = await _projectService.UpdateProject(id, DtoUtils.FromDto(projectDto));
 
@@ -158,6 +159,24 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
             await _projectService.DeleteResources(project, resourceIds);
 
             return NoContent();
+        }
+
+        [HttpGet("{projectUid}/tasks")]
+        public async Task<ActionResult<IEnumerable<TaskDto>>> GetProjectTasks(Guid projectUid)
+        {
+            var taskFilter = new TaskFilter { ProjectUid = projectUid };
+            var tasks = await _projectService.GetTasks(taskFilter);
+
+            return Ok(tasks.Select(DtoUtils.ToDto));
+        }
+
+        [HttpGet("{projectUid}/resources/{resourceId}/tasks")]
+        public async Task<ActionResult<IEnumerable<TaskDto>>> GetResourceTasks(Guid projectUid, string resourceId)
+        {
+            var taskFilter = new TaskFilter { ProjectUid = projectUid, ResourceId = resourceId };
+            var tasks = await _projectService.GetTasks(taskFilter);
+
+            return Ok(tasks.Select(DtoUtils.ToDto));
         }
     }
 }

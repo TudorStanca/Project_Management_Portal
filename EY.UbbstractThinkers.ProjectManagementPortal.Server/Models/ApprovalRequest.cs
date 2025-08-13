@@ -11,7 +11,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Models
         public Stage FromStage { get; set; }
         public Guid? ToStageId { get; set; }
         public Stage ToStage { get; set; }
-        public Status Status { get; set; }
+        public ApprovalStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime ModifiedAt { get; set; }
         public string ModifiedByUserEmail { get; set; }

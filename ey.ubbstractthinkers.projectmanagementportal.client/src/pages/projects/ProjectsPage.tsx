@@ -63,7 +63,7 @@ const ProjectsPage = (props: ProjectsPageProps) => {
     };
 
     fetchUserWithProjects();
-  }, [user.id]);
+  }, []);
 
   const truncateDescription = (description: string) => {
     const words = description.split(" ");

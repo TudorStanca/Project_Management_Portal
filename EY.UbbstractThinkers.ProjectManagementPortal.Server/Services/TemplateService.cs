@@ -25,21 +25,21 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
             _templateValidator = templateValidator;
         }
 
-        public async Task<IEnumerable<Stage>> GetStages()
+        public async Task<List<Stage>> GetStages()
         {
             var stages = await _templateRepository.GetStages();
 
             return stages.OrderBy(x => x.OrderNumber).ToList();
         }
 
-        public async Task<IEnumerable<Template>> GetTemplates()
+        public Task<List<Template>> GetTemplates()
         {
-            return await _templateRepository.GetTemplates();
+            return _templateRepository.GetTemplates();
         }
 
-        public async Task<Template> GetTemplate(Guid id)
+        public Task<Template> GetTemplate(Guid id)
         {
-            return await _templateRepository.GetTemplate(id);
+            return _templateRepository.GetTemplate(id);
         }
 
         public async Task<Template> SaveTemplate(Template template)

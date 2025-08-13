@@ -103,7 +103,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
         {
             var users = await _userManager.Users.ToListAsync();
 
-            if (!users.Any())
+            if (users.Count == 0)
             {
                 return NotFound();
             }

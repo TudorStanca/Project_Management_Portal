@@ -32,7 +32,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
             _templateRepository = templateRepository;
         }
 
-        public async Task<ApprovalRequest> CreateApprovalRequest(ApprovalRequest approval)
+        public async Task<ApprovalRequest> SaveApprovalRequest(ApprovalRequest approval)
         {
             var project = await _projectRepository.GetProject(approval.ProjectId);
             var loggedUser = await _userManager.FindByEmailAsync(_accesor.HttpContext.User.FindFirstValue(ClaimTypes.Email));
@@ -42,7 +42,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
                 throw new ApiException(ErrorMessageConstants.ProjectNotFoundMessage);
             }
 
-            if (project.Approvals.Any(x => x.Status == Status.Pending))
+            if (project.Approvals.Any(x => x.Status == ApprovalStatus.Pending))
             {
                 throw new ApiException(ErrorMessageConstants.OnlyOnePendingApprovalRequest);
             }
@@ -52,7 +52,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
                 throw new ApiException(ErrorMessageConstants.NotAnOwner);
             }
 
-            approval.Status = Status.Pending;
+            approval.Status = ApprovalStatus.Pending;
             approval.FromStage = project.CurrentStage;
 
             var projectTemplate = await _templateRepository.GetTemplate(project.TemplateUid);
@@ -74,21 +74,17 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
             return approval;
         }
 
-        public async Task<ApprovalRequest> GetApprovalRequest(Guid id)
+        public Task<ApprovalRequest> GetApprovalRequest(Guid id)
         {
-            var approval = await _approvalRepository.GetApprovalRequest(id);
-
-            return approval;
+            return _approvalRepository.GetApprovalRequest(id);
         }
 
-        public async Task<IEnumerable<ApprovalRequest>> GetApprovalRequestsForUser(string id)
+        public Task<List<ApprovalRequest>> GetApprovalRequestsForUser(string id)
         {
-            var approvals = await _approvalRepository.GetApprovalRequestsForUser(id);
-
-            return approvals;
+            return _approvalRepository.GetApprovalRequestsForUser(id);
         }
 
-        public async Task UpdateApprovalRequest(ApprovalRequest approval, Status status)
+        public async Task UpdateApprovalRequest(ApprovalRequest approval, ApprovalStatus status)
         {
             var project = await _projectRepository.GetProject(approval.ProjectId);
             var loggedUser = await _userManager.FindByEmailAsync(_accesor.HttpContext.User.FindFirstValue(ClaimTypes.Email));
@@ -98,17 +94,17 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
                 throw new ApiException(ErrorMessageConstants.LoggedUserNotAStakeholder);
             }
 
-            if (approval.Status != Status.Pending)
+            if (approval.Status != ApprovalStatus.Pending)
             {
                 throw new ApiException(ErrorMessageConstants.OnlyPendingApprovalRequests);
             }
 
-            if (!Enum.IsDefined(typeof(Status), status))
+            if (!Enum.IsDefined(status))
             {
                 throw new ApiException(ErrorMessageConstants.NotAValidStatusType);
             }
 
-            if (status == Status.Pending)
+            if (status == ApprovalStatus.Pending)
             {
                 throw new ApiException(ErrorMessageConstants.CantChangeStateToPending);
             }
@@ -117,7 +113,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
             approval.ModifiedAt = DateTime.Now;
             approval.ModifiedByUserEmail = loggedUser.Email;
 
-            if (status == Status.Approved)
+            if (status == ApprovalStatus.Approved)
             {
                 project.CurrentStage = approval.ToStage;
             }

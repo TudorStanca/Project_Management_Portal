@@ -7,8 +7,8 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
 {
     public interface ITemplateService
     {
-        Task<IEnumerable<Stage>> GetStages();
-        Task<IEnumerable<Template>> GetTemplates();
+        Task<List<Stage>> GetStages();
+        Task<List<Template>> GetTemplates();
         Task<Template> GetTemplate(Guid id);
         Task<Template> SaveTemplate(Template template);
     }

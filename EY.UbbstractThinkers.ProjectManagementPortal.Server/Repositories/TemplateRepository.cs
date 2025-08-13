@@ -16,26 +16,26 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories
             _context = context;
         }
 
-        public async Task<Stage> GetStage(Guid id)
+        public Task<Stage> GetStage(Guid id)
         {
-            return await _context.Stages.FirstOrDefaultAsync(x => x.Uid == id);
+            return _context.Stages.FirstOrDefaultAsync(x => x.Uid == id);
         }
 
-        public async Task<List<Stage>> GetStages()
+        public Task<List<Stage>> GetStages()
         {
-            return await _context.Stages.ToListAsync();
+            return _context.Stages.ToListAsync();
         }
 
-        public async Task<Template> GetTemplate(Guid id)
+        public Task<Template> GetTemplate(Guid id)
         {
-            return await _context.Templates
+            return _context.Templates
                 .Include(x => x.Stages)
                 .FirstOrDefaultAsync(x => x.Uid == id);
         }
 
-        public async Task<List<Template>> GetTemplates()
+        public Task<List<Template>> GetTemplates()
         {
-            return await _context.Templates
+            return _context.Templates
                 .Include(x => x.Stages)
                 .ToListAsync();
         }

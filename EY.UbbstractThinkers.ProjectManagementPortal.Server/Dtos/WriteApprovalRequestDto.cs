@@ -4,6 +4,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Dtos
 {
     public class WriteApprovalRequestDto
     {
-        public Status Status { get; set; }
+        public ApprovalStatus Status { get; set; }
     }
 }

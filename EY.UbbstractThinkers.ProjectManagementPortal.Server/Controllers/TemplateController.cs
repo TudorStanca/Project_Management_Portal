@@ -3,7 +3,6 @@ using EY.UbbstractThinkers.ProjectManagementPortal.Server.Services;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,17 +11,15 @@ using System.Threading.Tasks;
 namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
 {
     [ApiController]
-    [Route("/api/[controller]")]
+    [Route("/api/[controller]s")]
     [Authorize]
     public class TemplateController : ControllerBase
     {
         private ITemplateService _templateService;
-        private readonly ILogger<ProjectController> _logger;
 
-        public TemplateController(ITemplateService templateService, ILogger<ProjectController> logger)
+        public TemplateController(ITemplateService templateService)
         {
             _templateService = templateService;
-            _logger = logger;
         }
 
         [HttpGet]

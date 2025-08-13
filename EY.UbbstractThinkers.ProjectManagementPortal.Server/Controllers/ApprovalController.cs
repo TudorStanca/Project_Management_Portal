@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
 {
     [ApiController]
-    [Route("/api/[controller]")]
+    [Route("/api/[controller]s")]
     [Authorize]
     public class ApprovalController : ControllerBase
     {
@@ -42,7 +42,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
         {
             var approvals = await _approvalService.GetApprovalRequestsForUser(id);
 
-            var approvalDtos = approvals.Select(x => DtoUtils.ToDto(x));
+            var approvalDtos = approvals.Select(DtoUtils.ToDto);
 
             return Ok(approvalDtos);
         }

@@ -17,9 +17,9 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories
             _context = context;
         }
 
-        public async Task<ApprovalRequest> GetApprovalRequest(Guid id)
+        public Task<ApprovalRequest> GetApprovalRequest(Guid id)
         {
-            return await _context.ApprovalRequests.Include(x => x.Project).FirstOrDefaultAsync(x => x.Uid == id);
+            return _context.ApprovalRequests.Include(x => x.Project).FirstOrDefaultAsync(x => x.Uid == id);
         }
 
         public Task<List<ApprovalRequest>> GetApprovalRequestsForUser(string id)
@@ -28,13 +28,13 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories
                 .Include(x => x.Project)
                 .Include(x => x.FromStage)
                 .Include(x => x.ToStage)
-                .Where(x => x.Project.OwnerId == id && x.Status != Status.Pending);
+                .Where(x => x.Project.OwnerId == id && x.Status != ApprovalStatus.Pending);
 
             var pendingApprovals = _context.ApprovalRequests
                 .Include(x => x.Project)
                 .Include(x => x.FromStage)
                 .Include(x => x.ToStage)
-                .Where(x => x.Project.Stakeholders.Any(x => x.UserId == id) && x.Status == Status.Pending);
+                .Where(x => x.Project.Stakeholders.Any(x => x.UserId == id) && x.Status == ApprovalStatus.Pending);
 
             var approvals = finishedApprovals.Union(pendingApprovals);
 

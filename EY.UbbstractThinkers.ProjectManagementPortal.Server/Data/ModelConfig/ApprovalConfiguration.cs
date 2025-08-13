@@ -30,7 +30,10 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Data.ModelConfig
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Property(x => x.Status)
-                .HasDefaultValue(Status.Pending);
+                .HasDefaultValue(ApprovalStatus.Pending);
+
+            builder.Property(x => x.ModifiedByUserEmail)
+                .HasMaxLength(256);
         }
     }
 }

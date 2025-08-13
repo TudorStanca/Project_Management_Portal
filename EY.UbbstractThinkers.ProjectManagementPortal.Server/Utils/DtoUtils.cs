@@ -110,5 +110,35 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils
                 ChangedByUserEmail = approval.ModifiedByUserEmail,
             };
         }
+
+        public static TaskDto ToDto(ProjectTask task)
+        {
+            return new TaskDto()
+            {
+                Uid = task.Uid,
+                Name = task.Name,
+                Description = task.Description,
+                Status = task.Status,
+                StartDate = task.StartDate,
+                EndDate = task.EndDate,
+                ProjectUid = task.ProjectUid,
+                ResourceId = task.ResourceId,
+            };
+        }
+
+        public static ProjectTask FromDto(TaskDto task)
+        {
+            return new ProjectTask()
+            {
+                Uid = task.Uid,
+                Name = task.Name,
+                Description = task.Description,
+                Status = task.Status,
+                StartDate = task.StartDate,
+                EndDate = task.EndDate,
+                ProjectUid = task.ProjectUid,
+                ResourceId = task.ResourceId,
+            };
+        }
     }
 }

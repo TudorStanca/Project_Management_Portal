@@ -2,7 +2,7 @@ import type { Stage } from "@models/Stage";
 import axios, { type AxiosResponse } from "axios";
 
 const api = axios.create({
-  baseURL: "/api/stage",
+  baseURL: "/api/stages",
   headers: {
     "Content-Type": "application/json",
   },

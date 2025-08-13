@@ -21,6 +21,9 @@
         public const string OnlyPendingApprovalRequests = "Only pending approval requests can be approved or rejected.";
         public const string CantChangeStateToPending = "Can't change the state to Pending.";
         public const string NotAValidStatusType = "Status must be have valid value.";
-
+        public const string InvalidTaskTimeline = "Task timeline must be inside project timeline.";
+        public const string InvalidProjectTimeline = "Project timeline must include all task timelines.";
+        public const string InvalidResource = "Resource does not exist for this project.";
+        public const string CantChangeProjectTask = "Cannot change project for a task.";
     }
 }

@@ -83,20 +83,73 @@ Content-Type: application/json
 
 ###
 
-POST {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/project
+POST {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/projects
 Content-Type: application/json
 
 {
   "name":"jhhjgj",
   "description":"sadadsadsa",
   "startDate":"2025-08-30",
-  "endDate":null,
+  "endDate":"2025-09-01",
   "ownerId":"aa743b20-8824-4367-89c3-27a78313078b",
-  "templateUid":"0FFABD40-C206-4702-9E6D-DBDD06B5BDED"
+  "templateUid":"5BDB3E2B-5C74-4931-94A7-1327C4279490"
 }
 
 ### 
 
-GET {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/project
+GET {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/projects
 
 ###
+
+PUT {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/projects/6685AEDF-5E2D-4CDC-B553-762E7A143B17
+Content-Type: application/json
+
+{
+  "name": "qqqqqqqqq",
+  "startDate": "2025-07-30",
+  "endDate": "2025-08-01",
+  "ownerId": "aa743b20-8824-4367-89c3-27a78313078b",
+  "templateUid": "5BDB3E2B-5C74-4931-94A7-1327C4279490",
+  "currentStageUid": "2CDE6B5E-3B53-4535-B6B3-A740820C15E2"
+}
+
+###
+
+GET {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/tasks
+
+###
+
+GET {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/projects/ce038502-a4f8-4eef-957b-801136458b61/tasks
+
+###
+
+POST {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/tasks
+Content-Type: application/json
+
+{
+  "name": "dsa",
+  "description": null,
+  "status": 1,
+  "startDate": "2025-08-30",
+  "endDate": "2025-08-31",
+  "projectUid": "6685aedf-5e2d-4cdc-b553-762e7a143b17",
+  "resourceId": null
+}
+
+###
+
+DELETE {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/tasks/D9E1AC9C-D91C-4681-B698-E6CE4A065700
+
+###
+
+PUT {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/tasks/dcd0ee8e-8fe7-4852-a79e-6e9ee2243d9c
+Content-Type: application/json
+
+{
+  "name": "fffffffffffffffff",
+  "description": "bla",
+  "status": 2,
+  "startDate": "2025-08-30",
+  "endDate": "2025-10-01",
+  "projectUid": "6685aedf-5e2d-4cdc-b553-762e7a143b17"
+}

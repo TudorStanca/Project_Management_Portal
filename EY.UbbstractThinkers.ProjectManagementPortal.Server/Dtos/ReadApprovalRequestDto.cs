@@ -9,7 +9,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Dtos
         public string ProjectName { get; set; }
         public string StageFromName { get; set; }
         public string StageToName { get; set; }
-        public Status Status { get; set; }
+        public ApprovalStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime ModifiedAt { get; set; }
         public string ChangedByUserEmail { get; set; }

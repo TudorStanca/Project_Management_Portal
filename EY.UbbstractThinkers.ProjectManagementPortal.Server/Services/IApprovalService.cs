@@ -7,9 +7,9 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
 {
     public interface IApprovalService
     {
-        Task<ApprovalRequest> CreateApprovalRequest(ApprovalRequest approval);
-        Task UpdateApprovalRequest(ApprovalRequest approval, Status status);
+        Task<ApprovalRequest> SaveApprovalRequest(ApprovalRequest approval);
+        Task UpdateApprovalRequest(ApprovalRequest approval, ApprovalStatus status);
         Task<ApprovalRequest> GetApprovalRequest(Guid id);
-        Task<IEnumerable<ApprovalRequest>> GetApprovalRequestsForUser(string id);
+        Task<List<ApprovalRequest>> GetApprovalRequestsForUser(string id);
     }
 }

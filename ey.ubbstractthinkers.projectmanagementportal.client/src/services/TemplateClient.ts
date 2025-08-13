@@ -2,7 +2,7 @@ import type { Template } from "@models/Template";
 import axios, { type AxiosResponse } from "axios";
 
 const api = axios.create({
-  baseURL: "/api/template",
+  baseURL: "/api/templates",
   headers: {
     "Content-Type": "application/json",
   },
