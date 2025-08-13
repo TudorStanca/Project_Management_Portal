@@ -14,6 +14,12 @@ export async function getTemplates(): Promise<Template[]> {
   return response.data;
 }
 
+export async function getTemplate(id: string): Promise<Template> {
+  const response: AxiosResponse<Template> = await api.get("/" + id);
+
+  return response.data;
+}
+
 export async function saveTemplate(template: Template): Promise<void> {
   await api.post("", template);
 }

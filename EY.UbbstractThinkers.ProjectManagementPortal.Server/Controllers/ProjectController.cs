@@ -116,6 +116,21 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
             return Ok();
         }
 
+        [HttpGet("{id}/approvals/open")]
+        public async Task<ActionResult<bool>> IsPendingApprovalRequestOpen(Guid id)
+        {
+            var project = await _projectService.GetProject(id);
+
+            if (project == null)
+            {
+                return NotFound();
+            }
+
+            var isOpen = _projectService.IsPendingApprovalRequestOpen(project);
+
+            return Ok(isOpen);
+        }
+
         [HttpPost("{id}/resources")]
         public async Task<IActionResult> SaveResources(Guid id, List<string> resourceIds)
         {

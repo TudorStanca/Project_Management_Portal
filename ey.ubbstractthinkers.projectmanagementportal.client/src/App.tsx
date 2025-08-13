@@ -15,6 +15,7 @@ import ProjectStakeholdersPage from "./pages/projects/projectPage/ProjectStakeho
 import ProjectResourcesPage from "./pages/projects/projectPage/ProjectResourcesPage";
 import ProjectTasksPage from "./pages/projects/projectPage/ProjectTasksPage";
 import AddTemplatePage from "./pages/templates/AddTemplatePage";
+import ApprovalsPage from "./pages/approvals/ApprovalsPage";
 
 function App() {
   const [open, setOpen] = useState(true);
@@ -78,6 +79,7 @@ function App() {
             path="/projects/:projectId/tasks"
             element={<ProjectTasksPage open={open} />}
           />
+          <Route path="/approvals" element={<ApprovalsPage open={open} />} />
         </Routes>
         <Footer ref={footerRef} />
       </BrowserRouter>

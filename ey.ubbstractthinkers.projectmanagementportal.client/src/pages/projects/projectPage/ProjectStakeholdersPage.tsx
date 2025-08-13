@@ -37,6 +37,7 @@ import {
 import LetterAvatar from "../../../components/avatar/LetterAvatar";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { AddCircleOutline } from "@mui/icons-material";
+import StageStepper from "../../../components/stepper/StageStepper";
 
 interface ProjectStakeholdersPageProps {
   open: boolean;
@@ -235,110 +236,116 @@ const ProjectStakeholdersPage = (props: ProjectStakeholdersPageProps) => {
           <CircularProgress />
         </Box>
       ) : (
-        <TableContainer
-          component={Paper}
-          className={styles.projectStakeholdersTableContainer}
-        >
-          <Box className={styles.projectStakeholdersButtonsBox}>
-            <Button
-              variant="outlined"
-              startIcon={<AddCircleOutline />}
-              className={styles.projectStakeholdersAddButton}
-              disabled={loggedUser.id !== project.ownerId}
-              onClick={handleAddClick}
-            >
-              Add
-            </Button>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={handleDeleteClick}
-              disabled={
-                selectedStakeholderIds.length === 0 ||
-                loggedUser.id !== project.ownerId
-              }
-              startIcon={<DeleteIcon />}
-            >
-              Delete
-            </Button>
-          </Box>
+        <>
+          <StageStepper project={project} />
 
-          <Table className={styles.projectStakeholdersTable}>
-            <TableHead>
-              <TableRow>
-                <TableCell padding="checkbox">
-                  <Checkbox
-                    indeterminate={
-                      selectedStakeholderIds.length > 0 &&
-                      selectedStakeholderIds.length < stakeholders.length
-                    }
-                    checked={
-                      stakeholders.length > 0 &&
-                      selectedStakeholderIds.length === stakeholders.length
-                    }
-                    onChange={handleSelectAllClick}
-                  />
-                </TableCell>
-                <TableCell></TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>First Name</TableCell>
-                <TableCell>Last Name</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {stakeholders
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((stakeholder) => (
-                  <TableRow
-                    key={stakeholder.id}
-                    hover
-                    onClick={() => handleClick(stakeholder.id!)}
-                    role="checkbox"
-                    aria-checked={selectedStakeholderIds.includes(
-                      stakeholder.id!,
-                    )}
-                    selected={selectedStakeholderIds.includes(stakeholder.id!)}
-                  >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        checked={selectedStakeholderIds.includes(
-                          stakeholder.id!,
-                        )}
-                        onChange={() => handleClick(stakeholder.id!)}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      {stakeholder.photo ? (
-                        <Avatar
-                          alt={
-                            stakeholder.firstName + " " + stakeholder.lastName
-                          }
-                          src={`user.photo instanceof Blob ? URL.createObjectURL(user.photo) : undefined`}
-                        />
-                      ) : (
-                        <LetterAvatar
-                          firstName={stakeholder.firstName!}
-                          lastName={stakeholder.lastName!}
-                        />
+          <TableContainer
+            component={Paper}
+            className={styles.projectStakeholdersTableContainer}
+          >
+            <Box className={styles.projectStakeholdersButtonsBox}>
+              <Button
+                variant="outlined"
+                startIcon={<AddCircleOutline />}
+                className={styles.projectStakeholdersAddButton}
+                disabled={loggedUser.id !== project.ownerId}
+                onClick={handleAddClick}
+              >
+                Add
+              </Button>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={handleDeleteClick}
+                disabled={
+                  selectedStakeholderIds.length === 0 ||
+                  loggedUser.id !== project.ownerId
+                }
+                startIcon={<DeleteIcon />}
+              >
+                Delete
+              </Button>
+            </Box>
+
+            <Table className={styles.projectStakeholdersTable}>
+              <TableHead>
+                <TableRow>
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      indeterminate={
+                        selectedStakeholderIds.length > 0 &&
+                        selectedStakeholderIds.length < stakeholders.length
+                      }
+                      checked={
+                        stakeholders.length > 0 &&
+                        selectedStakeholderIds.length === stakeholders.length
+                      }
+                      onChange={handleSelectAllClick}
+                    />
+                  </TableCell>
+                  <TableCell></TableCell>
+                  <TableCell>Email</TableCell>
+                  <TableCell>First Name</TableCell>
+                  <TableCell>Last Name</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {stakeholders
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((stakeholder) => (
+                    <TableRow
+                      key={stakeholder.id}
+                      hover
+                      onClick={() => handleClick(stakeholder.id!)}
+                      role="checkbox"
+                      aria-checked={selectedStakeholderIds.includes(
+                        stakeholder.id!,
                       )}
-                    </TableCell>
-                    <TableCell>{stakeholder.email}</TableCell>
-                    <TableCell>{stakeholder.firstName}</TableCell>
-                    <TableCell>{stakeholder.lastName}</TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={stakeholders.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </TableContainer>
+                      selected={selectedStakeholderIds.includes(
+                        stakeholder.id!,
+                      )}
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          checked={selectedStakeholderIds.includes(
+                            stakeholder.id!,
+                          )}
+                          onChange={() => handleClick(stakeholder.id!)}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        {stakeholder.photo ? (
+                          <Avatar
+                            alt={
+                              stakeholder.firstName + " " + stakeholder.lastName
+                            }
+                            src={`user.photo instanceof Blob ? URL.createObjectURL(user.photo) : undefined`}
+                          />
+                        ) : (
+                          <LetterAvatar
+                            firstName={stakeholder.firstName!}
+                            lastName={stakeholder.lastName!}
+                          />
+                        )}
+                      </TableCell>
+                      <TableCell>{stakeholder.email}</TableCell>
+                      <TableCell>{stakeholder.firstName}</TableCell>
+                      <TableCell>{stakeholder.lastName}</TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={stakeholders.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </TableContainer>
+        </>
       )}
       <Dialog open={openAddDialog} onClose={handleCloseDialog}>
         <DialogTitle>Add Stakeholders</DialogTitle>

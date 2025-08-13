@@ -1,0 +1,26 @@
+.colorlibStepIcon {
+  background-color: #ccc;
+  z-index: 1;
+  color: #fff;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+}
+
+.colorlibStepIcon.active,
+.colorlibStepIcon.completed {
+  background-image: linear-gradient(
+    136deg,
+    #8994e1 0%,
+    #5b2287 50%,
+    #8994e1 100%
+  );
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.25);
+}
+
+.stepper {
+  margin-bottom: 20px;
+}

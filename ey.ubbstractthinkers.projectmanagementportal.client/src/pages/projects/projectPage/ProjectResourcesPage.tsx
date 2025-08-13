@@ -37,6 +37,7 @@ import { handleApiError } from "@services/ErrorHandler";
 import { AddCircleOutline } from "@mui/icons-material";
 import LetterAvatar from "../../../components/avatar/LetterAvatar";
 import DeleteIcon from "@mui/icons-material/Delete";
+import StageStepper from "../../../components/stepper/StageStepper";
 
 interface ProjectResourcesPageProps {
   open: boolean;
@@ -233,104 +234,108 @@ const ProjectResourcesPage = (props: ProjectResourcesPageProps) => {
           <CircularProgress />
         </Box>
       ) : (
-        <TableContainer
-          component={Paper}
-          className={styles.projectResourcesTableContainer}
-        >
-          <Box className={styles.projectResourcesButtonsBox}>
-            <Button
-              variant="outlined"
-              startIcon={<AddCircleOutline />}
-              className={styles.projectResourcesAddButton}
-              disabled={loggedUser.id !== project.ownerId}
-              onClick={handleAddClick}
-            >
-              Add
-            </Button>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={handleDeleteClick}
-              disabled={
-                selectedResourceIds.length === 0 ||
-                loggedUser.id !== project.ownerId
-              }
-              startIcon={<DeleteIcon />}
-            >
-              Delete
-            </Button>
-          </Box>
+        <>
+          <StageStepper project={project} />
 
-          <Table className={styles.projectResourcesTable}>
-            <TableHead>
-              <TableRow>
-                <TableCell padding="checkbox">
-                  <Checkbox
-                    indeterminate={
-                      selectedResourceIds.length > 0 &&
-                      selectedResourceIds.length < resources.length
-                    }
-                    checked={
-                      resources.length > 0 &&
-                      selectedResourceIds.length === resources.length
-                    }
-                    onChange={handleSelectAllClick}
-                  />
-                </TableCell>
-                <TableCell></TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>First Name</TableCell>
-                <TableCell>Last Name</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {resources
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((resource) => (
-                  <TableRow
-                    key={resource.id}
-                    hover
-                    onClick={() => handleClick(resource.id!)}
-                    role="checkbox"
-                    aria-checked={selectedResourceIds.includes(resource.id!)}
-                    selected={selectedResourceIds.includes(resource.id!)}
-                  >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        checked={selectedResourceIds.includes(resource.id!)}
-                        onChange={() => handleClick(resource.id!)}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      {resource.photo ? (
-                        <Avatar
-                          alt={resource.firstName + " " + resource.lastName}
-                          src={`user.photo instanceof Blob ? URL.createObjectURL(user.photo) : undefined`}
+          <TableContainer
+            component={Paper}
+            className={styles.projectResourcesTableContainer}
+          >
+            <Box className={styles.projectResourcesButtonsBox}>
+              <Button
+                variant="outlined"
+                startIcon={<AddCircleOutline />}
+                className={styles.projectResourcesAddButton}
+                disabled={loggedUser.id !== project.ownerId}
+                onClick={handleAddClick}
+              >
+                Add
+              </Button>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={handleDeleteClick}
+                disabled={
+                  selectedResourceIds.length === 0 ||
+                  loggedUser.id !== project.ownerId
+                }
+                startIcon={<DeleteIcon />}
+              >
+                Delete
+              </Button>
+            </Box>
+
+            <Table className={styles.projectResourcesTable}>
+              <TableHead>
+                <TableRow>
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      indeterminate={
+                        selectedResourceIds.length > 0 &&
+                        selectedResourceIds.length < resources.length
+                      }
+                      checked={
+                        resources.length > 0 &&
+                        selectedResourceIds.length === resources.length
+                      }
+                      onChange={handleSelectAllClick}
+                    />
+                  </TableCell>
+                  <TableCell></TableCell>
+                  <TableCell>Email</TableCell>
+                  <TableCell>First Name</TableCell>
+                  <TableCell>Last Name</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {resources
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((resource) => (
+                    <TableRow
+                      key={resource.id}
+                      hover
+                      onClick={() => handleClick(resource.id!)}
+                      role="checkbox"
+                      aria-checked={selectedResourceIds.includes(resource.id!)}
+                      selected={selectedResourceIds.includes(resource.id!)}
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          checked={selectedResourceIds.includes(resource.id!)}
+                          onChange={() => handleClick(resource.id!)}
                         />
-                      ) : (
-                        <LetterAvatar
-                          firstName={resource.firstName!}
-                          lastName={resource.lastName!}
-                        />
-                      )}
-                    </TableCell>
-                    <TableCell>{resource.email}</TableCell>
-                    <TableCell>{resource.firstName}</TableCell>
-                    <TableCell>{resource.lastName}</TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={resources.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </TableContainer>
+                      </TableCell>
+                      <TableCell>
+                        {resource.photo ? (
+                          <Avatar
+                            alt={resource.firstName + " " + resource.lastName}
+                            src={`user.photo instanceof Blob ? URL.createObjectURL(user.photo) : undefined`}
+                          />
+                        ) : (
+                          <LetterAvatar
+                            firstName={resource.firstName!}
+                            lastName={resource.lastName!}
+                          />
+                        )}
+                      </TableCell>
+                      <TableCell>{resource.email}</TableCell>
+                      <TableCell>{resource.firstName}</TableCell>
+                      <TableCell>{resource.lastName}</TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={resources.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </TableContainer>
+        </>
       )}
       <Dialog open={openAddDialog} onClose={handleCloseDialog}>
         <DialogTitle>Add Resources</DialogTitle>

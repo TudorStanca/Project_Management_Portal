@@ -15,5 +15,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Models
         public DateTime CreatedAt { get; set; }
         public DateTime ModifiedAt { get; set; }
         public string ModifiedByUserEmail { get; set; }
+        public string CreatedByUserEmail { get; set; }
     }
 }

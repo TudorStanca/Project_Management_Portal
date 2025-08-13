@@ -26,6 +26,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories
                 .Include(x => x.Tasks)
                 .Include(x => x.Template)
                 .Include(x => x.CurrentStage)
+                .Include(x => x.Approvals)
                 .FirstOrDefaultAsync(x => x.Uid == id);
         }
 

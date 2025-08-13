@@ -19,7 +19,11 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories
 
         public Task<ApprovalRequest> GetApprovalRequest(Guid id)
         {
-            return _context.ApprovalRequests.Include(x => x.Project).FirstOrDefaultAsync(x => x.Uid == id);
+            return _context.ApprovalRequests
+                .Include(x => x.Project)
+                .Include(x => x.FromStage)
+                .Include(x => x.ToStage)
+                .FirstOrDefaultAsync(x => x.Uid == id);
         }
 
         public Task<List<ApprovalRequest>> GetApprovalRequestsForUser(string id)

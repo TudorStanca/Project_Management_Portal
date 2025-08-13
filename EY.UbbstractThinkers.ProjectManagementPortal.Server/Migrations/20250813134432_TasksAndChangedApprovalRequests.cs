@@ -6,17 +6,23 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class TaskEntity : Migration
+    public partial class TasksAndChangedApprovalRequests : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "ChangedByUserEmail",
-                table: "ApprovalRequests");
+            migrationBuilder.AlterColumn<string>(
+                name: "ModifiedByUserEmail",
+                table: "ApprovalRequests",
+                type: "nvarchar(256)",
+                maxLength: 256,
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)",
+                oldNullable: true);
 
             migrationBuilder.AddColumn<string>(
-                name: "ModifiedByUserEmail",
+                name: "CreatedByUserEmail",
                 table: "ApprovalRequests",
                 type: "nvarchar(256)",
                 maxLength: 256,
@@ -59,14 +65,18 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
                 name: "ProjectTasks");
 
             migrationBuilder.DropColumn(
-                name: "ModifiedByUserEmail",
+                name: "CreatedByUserEmail",
                 table: "ApprovalRequests");
 
-            migrationBuilder.AddColumn<string>(
-                name: "ChangedByUserEmail",
+            migrationBuilder.AlterColumn<string>(
+                name: "ModifiedByUserEmail",
                 table: "ApprovalRequests",
                 type: "nvarchar(max)",
-                nullable: true);
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(256)",
+                oldMaxLength: 256,
+                oldNullable: true);
         }
     }
 }

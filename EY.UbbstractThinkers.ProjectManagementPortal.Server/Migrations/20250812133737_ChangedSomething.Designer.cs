@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250813090213_TaskEntity")]
-    partial class TaskEntity
+    [Migration("20250812133737_ChangedSomething")]
+    partial class ChangedSomething
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,8 +42,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ModifiedByUserEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("ProjectId")
                         .HasColumnType("uniqueidentifier");
@@ -134,44 +133,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
                     b.HasKey("ProjectId", "UserId");
 
                     b.ToTable("ProjectStakeholders");
-                });
-
-            modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.ProjectTask", b =>
-                {
-                    b.Property<Guid>("Uid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("NEWID()");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateOnly?>("EndDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<Guid>("ProjectUid")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ResourceId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateOnly>("StartDate")
-                        .HasColumnType("date");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("Uid");
-
-                    b.HasIndex("ProjectUid");
-
-                    b.ToTable("ProjectTasks");
                 });
 
             modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Stage", b =>
@@ -301,17 +262,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.ProjectTask", b =>
-                {
-                    b.HasOne("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Project", "Project")
-                        .WithMany("Tasks")
-                        .HasForeignKey("ProjectUid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Project");
-                });
-
             modelBuilder.Entity("TemplateStages", b =>
                 {
                     b.HasOne("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Stage", null)
@@ -334,8 +284,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
                     b.Navigation("Resources");
 
                     b.Navigation("Stakeholders");
-
-                    b.Navigation("Tasks");
                 });
 
             modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Stage", b =>

@@ -12,6 +12,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Dtos
         public ApprovalStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime ModifiedAt { get; set; }
-        public string ChangedByUserEmail { get; set; }
+        public string ModifiedByUserEmail { get; set; }
+        public string CreatedByUserEmail { get; set; }
     }
 }

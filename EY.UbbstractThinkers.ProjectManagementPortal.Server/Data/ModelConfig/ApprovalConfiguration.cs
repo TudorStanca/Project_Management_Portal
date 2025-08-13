@@ -34,6 +34,9 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Data.ModelConfig
 
             builder.Property(x => x.ModifiedByUserEmail)
                 .HasMaxLength(256);
+
+            builder.Property(x => x.CreatedByUserEmail)
+                .HasMaxLength(256);
         }
     }
 }

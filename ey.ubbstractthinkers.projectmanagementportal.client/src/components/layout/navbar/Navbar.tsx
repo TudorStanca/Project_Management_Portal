@@ -35,6 +35,7 @@ const Navbar = (props: NavbarProps) => {
     { text: "Home", path: "/" },
     { text: "Projects", path: "/projects" },
     { text: "Templates", path: "/add-template" },
+    { text: "Approvals", path: "/approvals" },
   ];
 
   if (location.pathname === "/login" || location.pathname === "/register") {

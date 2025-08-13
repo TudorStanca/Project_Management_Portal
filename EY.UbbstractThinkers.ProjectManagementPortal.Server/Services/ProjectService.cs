@@ -214,13 +214,17 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
                     throw new ApiException(ErrorMessageConstants.OwnerIsStakeholder);
                 }
 
-                var stakeholderProject = new ProjectStakeholder
+                if (project.Stakeholders.Any(x => x.UserId == id))
+                {
+                    throw new ApiException(ErrorMessageConstants.UniqueStakeholder);
+                }
+
+                var projectStakeholder = new ProjectStakeholder
                 {
                     ProjectId = project.Uid,
                     UserId = id
                 };
-
-                _context.ProjectStakeholders.Add(stakeholderProject);
+                project.Stakeholders.Add(projectStakeholder);
             }
 
             await _context.SaveChangesAsync();
@@ -234,13 +238,18 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
 
             foreach (var id in resourceIds)
             {
-                var stakeholderResource = new ProjectResources
+                if (project.Resources.Any(x => x.UserId == id))
+                {
+                    throw new ApiException(ErrorMessageConstants.UniqueResource);
+                }
+
+                var projectResource = new ProjectResources
                 {
                     ProjectId = project.Uid,
                     UserId = id
                 };
 
-                _context.ProjectResources.Add(stakeholderResource);
+                project.Resources.Add(projectResource);
             }
 
             await _context.SaveChangesAsync();
@@ -356,6 +365,11 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
             await _context.SaveChangesAsync();
 
             return task;
+        }
+
+        public bool IsPendingApprovalRequestOpen(Project project)
+        {
+            return project.Approvals.Any(x => x.Status == ApprovalStatus.Pending);
         }
     }
 }

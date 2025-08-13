@@ -107,7 +107,8 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils
                 Status = approval.Status,
                 CreatedAt = approval.CreatedAt,
                 ModifiedAt = approval.ModifiedAt,
-                ChangedByUserEmail = approval.ModifiedByUserEmail,
+                ModifiedByUserEmail = approval.ModifiedByUserEmail,
+                CreatedByUserEmail = approval.CreatedByUserEmail
             };
         }
 

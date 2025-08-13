@@ -13,6 +13,7 @@ import styles from "./ProjectPage.module.css";
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import {
   deleteProject,
+  hasPendingApprovalRequestOpen,
   getProject,
   updateProject,
 } from "@services/ProjectClient";
@@ -24,6 +25,13 @@ import { DefaultProject, type Project } from "@models/Project";
 import { handleApiError } from "@services/ErrorHandler";
 import AlertDialog from "../../../components/AlertDialog";
 import type { SnackbarSeverity } from "@models/SnackbarSeverity";
+import StageStepper from "../../../components/stepper/StageStepper";
+import { DefaultUser, type User } from "@models/Auth";
+import { getUser } from "@services/AuthClient";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import { advanceToNextStage } from "../../../services/ProjectClient";
+import { DefaultTemplate, type Template } from "@models/Template";
+import { getTemplate } from "@services/TemplateClient";
 
 interface ProjectPageProps {
   open: boolean;
@@ -40,11 +48,14 @@ const ProjectPage = (props: ProjectPageProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [isProjectDeleted, setIsProjectDeleted] = useState<boolean>(false);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
+  const [isPendingRequestOpen, setIsPendingRequestOpen] =
+    useState<boolean>(false);
 
   const [successMessage, setSuccessMessage] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [snackbarSeverity, setSnackbarSeverity] =
     useState<SnackbarSeverity>("success");
+  const [loggedUser, setLoggedUser] = useState<User>(DefaultUser);
 
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string | null>(null);
@@ -52,6 +63,7 @@ const ProjectPage = (props: ProjectPageProps) => {
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
 
   const [project, setProject] = useState<Project>(DefaultProject);
+  const [template, setTemplate] = useState<Template>(DefaultTemplate);
 
   const navigate = useNavigate();
 
@@ -84,8 +96,18 @@ const ProjectPage = (props: ProjectPageProps) => {
 
     const fetchProject = async () => {
       try {
-        const project = await getProject(projectId!);
+        const [project, user, isOpen] = await Promise.all([
+          getProject(projectId!),
+          getUser(),
+          hasPendingApprovalRequestOpen(projectId!),
+        ]);
         setProject(project);
+        setLoggedUser(user);
+        setIsPendingRequestOpen(isOpen);
+
+        const template = await getTemplate(project.templateUid);
+
+        setTemplate(template);
 
         setName(project.name);
         setDescription(project.description);
@@ -180,6 +202,23 @@ const ProjectPage = (props: ProjectPageProps) => {
     }
   };
 
+  const handleAdvanceToNextStage = async () => {
+    try {
+      await advanceToNextStage(projectId!);
+
+      setSuccessMessage("Approval Request was sent successfuly");
+      setSnackbarSeverity("success");
+      setIsSnackbarOpen(true);
+      setIsPendingRequestOpen(true);
+    } catch (error) {
+      console.error(error);
+
+      setErrorMessage(handleApiError(error));
+      setSnackbarSeverity("error");
+      setIsSnackbarOpen(true);
+    }
+  };
+
   return (
     <Box
       className={`${styles.projectContent} ${props.open ? styles.open : ""}`}
@@ -194,101 +233,123 @@ const ProjectPage = (props: ProjectPageProps) => {
           <CircularProgress />
         </Box>
       ) : (
-        <Box
-          component="form"
-          onSubmit={handleSubmit}
-          className={styles.projectForm}
-        >
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                label="Name"
-                variant="outlined"
-                value={name}
-                onChange={handleChangeName}
-                className={styles.projectAttribute}
-                required
-              />
-            </Grid>
+        <>
+          <StageStepper project={project} />
 
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                label="Description"
-                variant="outlined"
-                value={description}
-                onChange={handleChangeDescription}
-                className={styles.projectAttribute}
-                multiline
-                rows={4}
-              />
-            </Grid>
-
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <LocalizationProvider
-                dateAdapter={AdapterDayjs}
-                adapterLocale="en"
-              >
-                <DatePicker
-                  label="Start Date"
-                  value={startDate}
-                  onChange={handleStartDateChange}
-                  className={styles.projectAttribute}
-                />
-              </LocalizationProvider>
-            </Grid>
-
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <LocalizationProvider
-                dateAdapter={AdapterDayjs}
-                adapterLocale="en"
-              >
-                <DatePicker
-                  label="End Date"
-                  value={endDate}
-                  onChange={handleEndDateChange}
-                  className={styles.projectAttribute}
-                />
-              </LocalizationProvider>
-            </Grid>
-          </Grid>
-
-          <Grid
-            container
-            spacing={1}
-            justifyContent="flex-end"
-            className={styles.projectFormButtons}
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            className={styles.projectForm}
           >
-            <Grid size={{ xs: 1 }}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                disabled={!isFormChanged || isUpdating}
-                className={styles.projectFormButton}
-              >
-                {isUpdating ? <CircularProgress /> : "Update"}
-              </Button>
+            <Grid container spacing={2}>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField
+                  label="Name"
+                  variant="outlined"
+                  value={name}
+                  onChange={handleChangeName}
+                  className={styles.projectAttribute}
+                  required
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField
+                  label="Description"
+                  variant="outlined"
+                  value={description}
+                  onChange={handleChangeDescription}
+                  className={styles.projectAttribute}
+                  multiline
+                  rows={4}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <LocalizationProvider
+                  dateAdapter={AdapterDayjs}
+                  adapterLocale="en"
+                >
+                  <DatePicker
+                    label="Start Date"
+                    value={startDate}
+                    onChange={handleStartDateChange}
+                    className={styles.projectAttribute}
+                  />
+                </LocalizationProvider>
+              </Grid>
+
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <LocalizationProvider
+                  dateAdapter={AdapterDayjs}
+                  adapterLocale="en"
+                >
+                  <DatePicker
+                    label="End Date"
+                    value={endDate}
+                    onChange={handleEndDateChange}
+                    className={styles.projectAttribute}
+                  />
+                </LocalizationProvider>
+              </Grid>
             </Grid>
-            <Grid size={{ xs: 1 }}>
-              <Button
-                variant="contained"
-                color="primary"
-                disabled={isDeleting}
-                className={styles.projectFormButton}
-                onClick={() => setIsDialogOpen(true)}
+
+            <Box className={styles.projectButtonsBox}>
+              <Grid className={styles.projectAdvancePageButtonGrid}>
+                <Button
+                  variant="outlined"
+                  disabled={
+                    loggedUser.id !== project.ownerId ||
+                    isPendingRequestOpen ||
+                    project.currentStageUid ===
+                      template.stageUids.at(template.stageUids.length - 1)
+                  }
+                  className={styles.projectAdvanceStageButton}
+                  startIcon={<ArrowForwardIosIcon />}
+                  onClick={handleAdvanceToNextStage}
+                >
+                  Advance Stage
+                </Button>
+              </Grid>
+              <Grid
+                container
+                spacing={1}
+                justifyContent="flex-end"
+                className={styles.projectFormButtons}
               >
-                {isDeleting ? <CircularProgress /> : "Delete"}
-              </Button>
-            </Grid>
-          </Grid>
-          <AlertDialog
-            open={isDialogOpen}
-            title="Delete confirmation"
-            description={`Are you sure you want to delete this project ${project.name}?`}
-            handleCancel={() => setIsDialogOpen(false)}
-            handleConfirm={handleDelete}
-          />
-        </Box>
+                <Grid size={{ xs: 6 }}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    disabled={!isFormChanged || isUpdating}
+                    className={styles.projectFormButton}
+                  >
+                    {isUpdating ? <CircularProgress /> : "Update"}
+                  </Button>
+                </Grid>
+                <Grid size={{ xs: 6 }}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    disabled={isDeleting}
+                    className={styles.projectFormButton}
+                    onClick={() => setIsDialogOpen(true)}
+                  >
+                    {isDeleting ? <CircularProgress /> : "Delete"}
+                  </Button>
+                </Grid>
+              </Grid>
+            </Box>
+            <AlertDialog
+              open={isDialogOpen}
+              title="Delete confirmation"
+              description={`Are you sure you want to delete this project ${project.name}?`}
+              handleCancel={() => setIsDialogOpen(false)}
+              handleConfirm={handleDelete}
+            />
+          </Box>
+        </>
       )}
 
       <Snackbar

@@ -24,5 +24,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
         Task<ProjectTask> SaveTask(ProjectTask task);
         Task DeleteTask(Models.ProjectTask task);
         Task<ProjectTask> UpdateTask(Guid id, ProjectTask task);
+        bool IsPendingApprovalRequestOpen(Project project);
     }
 }

@@ -44,6 +44,24 @@
   padding: 1em;
 }
 
+.projectAdvanceStageButton:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
 .projectFormButton {
   width: 100%;
+}
+
+.projectButtonsBox {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding-left: 1em;
+}
+
+.projectAdvancePageButtonGrid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

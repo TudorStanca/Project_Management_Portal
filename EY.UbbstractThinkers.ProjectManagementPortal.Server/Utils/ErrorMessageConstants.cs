@@ -25,5 +25,8 @@
         public const string InvalidProjectTimeline = "Project timeline must include all task timelines.";
         public const string InvalidResource = "Resource does not exist for this project.";
         public const string CantChangeProjectTask = "Cannot change project for a task.";
+        public const string UniqueResource = "Can't add the same resource more than one time.";
+        public const string UniqueStakeholder = "Can't add the same stakeholder more than one time.";
+
     }
 }

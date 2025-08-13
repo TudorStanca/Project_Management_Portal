@@ -59,7 +59,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
             var projectStages = projectTemplate.Stages.OrderBy(x => x.OrderNumber).ToList();
             var currentIndex = projectStages.FindIndex(stage => stage == approval.FromStage);
 
-            if (currentIndex == projectStages.Count || currentIndex == -1)
+            if (currentIndex == projectStages.Count - 1 || currentIndex == -1)
             {
                 throw new ApiException(ErrorMessageConstants.UnableToChangeStage);
             }
@@ -67,6 +67,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
             approval.ToStage = projectStages[currentIndex + 1];
             approval.CreatedAt = DateTime.Now;
             approval.ModifiedAt = DateTime.Now;
+            approval.CreatedByUserEmail = loggedUser.Email;
 
             _context.ApprovalRequests.Add(approval);
             await _context.SaveChangesAsync();

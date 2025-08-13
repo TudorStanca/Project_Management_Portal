@@ -60,3 +60,15 @@ export async function deleteResources(uid: string, resourceIds: string[]) {
     data: resourceIds,
   });
 }
+
+export async function advanceToNextStage(uid: string) {
+  await api.post("/" + uid + "/approvals");
+}
+
+export async function hasPendingApprovalRequestOpen(uid: string) {
+  const response: AxiosResponse<boolean> = await api.get(
+    "/" + uid + "/approvals/open",
+  );
+
+  return response.data;
+}
