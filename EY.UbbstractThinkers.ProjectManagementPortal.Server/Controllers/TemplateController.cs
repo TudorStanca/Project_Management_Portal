@@ -50,5 +50,18 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
 
             return CreatedAtAction(nameof(GetTemplate), new { id = template.Uid }, DtoUtils.ToDto(template));
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateTemplate(Guid id, TemplateDto templateDto)
+        {
+            var template = await _templateService.UpdateTemplate(id, DtoUtils.FromDto(templateDto));
+
+            if (template == null)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+        }
     }
 }

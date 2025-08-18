@@ -1,13 +1,4 @@
-import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  Grid,
-  Snackbar,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, CircularProgress, Grid, TextField } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "./ProjectPage.module.css";
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
@@ -24,14 +15,16 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DefaultProject, type Project } from "@models/Project";
 import { handleApiError } from "@services/ErrorHandler";
 import AlertDialog from "../../../components/AlertDialog";
-import type { SnackbarSeverity } from "@models/SnackbarSeverity";
 import StageStepper from "../../../components/stepper/StageStepper";
 import { DefaultUser, type User } from "@models/Auth";
 import { getUser } from "@services/AuthClient";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import { advanceToNextStage } from "../../../services/ProjectClient";
+import { advanceToNextStage } from "@services/ProjectClient";
 import { DefaultTemplate, type Template } from "@models/Template";
 import { getTemplate } from "@services/TemplateClient";
+import BoxContent from "../../../components/layout/background/BoxContent";
+import useSnackbar from "../../../hooks/useSnackbar";
+import CustomSnackbar from "../../../components/snackbar/CustomSnackbar";
 
 interface ProjectPageProps {
   open: boolean;
@@ -47,15 +40,20 @@ const ProjectPage = (props: ProjectPageProps) => {
   const [isDeleting, setIdDeleting] = useState<boolean>(false);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [isProjectDeleted, setIsProjectDeleted] = useState<boolean>(false);
-  const [isSnackbarOpen, setIsSnackbarOpen] = useState<boolean>(false);
   const [isPendingRequestOpen, setIsPendingRequestOpen] =
     useState<boolean>(false);
 
-  const [successMessage, setSuccessMessage] = useState<string>("");
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  const [snackbarSeverity, setSnackbarSeverity] =
-    useState<SnackbarSeverity>("success");
+  const {
+    showSnackbar,
+    isSnackbarOpen,
+    message,
+    snackbarSeverity,
+    handleSnackbarClose,
+  } = useSnackbar();
+
   const [loggedUser, setLoggedUser] = useState<User>(DefaultUser);
+
+  const navigate = useNavigate();
 
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string | null>(null);
@@ -64,8 +62,6 @@ const ProjectPage = (props: ProjectPageProps) => {
 
   const [project, setProject] = useState<Project>(DefaultProject);
   const [template, setTemplate] = useState<Template>(DefaultTemplate);
-
-  const navigate = useNavigate();
 
   const { projectId } = useParams();
 
@@ -91,6 +87,14 @@ const ProjectPage = (props: ProjectPageProps) => {
     setEndDate(date);
   };
 
+  const handleProjectSnackbarClose = () => {
+    handleSnackbarClose();
+
+    if (isProjectDeleted) {
+      navigate("/projects");
+    }
+  };
+
   useEffect(() => {
     setIsLoading(true);
 
@@ -114,9 +118,7 @@ const ProjectPage = (props: ProjectPageProps) => {
         setStartDate(convertToDayjsOrNull(project.startDate));
         setEndDate(convertToDayjsOrNull(project.endDate));
       } catch (error) {
-        setErrorMessage(handleApiError(error));
-        setSnackbarSeverity("error");
-        setIsSnackbarOpen(true);
+        showSnackbar(handleApiError(error), "error");
       } finally {
         setIsLoading(false);
       }
@@ -127,13 +129,9 @@ const ProjectPage = (props: ProjectPageProps) => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setErrorMessage("");
-    setSuccessMessage("");
 
     if (!startDate) {
-      setErrorMessage("Start Date is required");
-      setSnackbarSeverity("error");
-      setIsSnackbarOpen(true);
+      showSnackbar(handleApiError("Start Date is required."), "error");
 
       return;
     }
@@ -156,13 +154,9 @@ const ProjectPage = (props: ProjectPageProps) => {
     try {
       await updateProject(formattedProject);
 
-      setSuccessMessage("Project updated successfully");
-      setSnackbarSeverity("success");
-      setIsSnackbarOpen(true);
+      showSnackbar("Project updated successfully", "success");
     } catch (error) {
-      setErrorMessage(handleApiError(error));
-      setSnackbarSeverity("error");
-      setIsSnackbarOpen(true);
+      showSnackbar(handleApiError(error), "error");
     } finally {
       setIsUpdating(false);
     }
@@ -173,32 +167,18 @@ const ProjectPage = (props: ProjectPageProps) => {
   const handleDelete = async () => {
     setIsDialogOpen(false);
     setIdDeleting(true);
-    setErrorMessage("");
-    setSuccessMessage("");
 
     try {
       await deleteProject(projectId!);
 
-      setSuccessMessage("Project deleted successfully");
-      setSnackbarSeverity("success");
-      setIsSnackbarOpen(true);
+      showSnackbar("Project deleted successfully", "success");
       setIsProjectDeleted(true);
     } catch (error) {
       console.error(error);
 
-      setErrorMessage(handleApiError(error));
-      setSnackbarSeverity("error");
-      setIsSnackbarOpen(true);
+      showSnackbar(handleApiError(error), "error");
     } finally {
       setIdDeleting(false);
-    }
-  };
-
-  const handleSnackbarClose = () => {
-    setIsSnackbarOpen(false);
-
-    if (isProjectDeleted) {
-      navigate("/projects");
     }
   };
 
@@ -206,26 +186,21 @@ const ProjectPage = (props: ProjectPageProps) => {
     try {
       await advanceToNextStage(projectId!);
 
-      setSuccessMessage("Approval Request was sent successfuly");
-      setSnackbarSeverity("success");
-      setIsSnackbarOpen(true);
+      showSnackbar("Approval Request was sent successfuly", "success");
       setIsPendingRequestOpen(true);
     } catch (error) {
       console.error(error);
 
-      setErrorMessage(handleApiError(error));
-      setSnackbarSeverity("error");
-      setIsSnackbarOpen(true);
+      showSnackbar(handleApiError(error), "error");
     }
   };
 
   return (
-    <Box
-      className={`${styles.projectContent} ${props.open ? styles.open : ""}`}
+    <BoxContent
+      isOpen={props.open}
+      pageName={project.name}
+      className={styles.projectBoxContent}
     >
-      <Typography variant="h2" className={styles.projectHeader}>
-        Project
-      </Typography>
       <ProjectNavBar projectUid={projectId!} activeLink="overview" />
 
       {isLoading ? (
@@ -352,16 +327,13 @@ const ProjectPage = (props: ProjectPageProps) => {
         </>
       )}
 
-      <Snackbar
-        open={isSnackbarOpen}
-        autoHideDuration={4000}
-        onClose={handleSnackbarClose}
-      >
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
-          {successMessage || errorMessage}
-        </Alert>
-      </Snackbar>
-    </Box>
+      <CustomSnackbar
+        isOpen={isSnackbarOpen}
+        message={message}
+        snackbarSeverity={snackbarSeverity}
+        handleSnackbarClose={handleProjectSnackbarClose}
+      />
+    </BoxContent>
   );
 };
 

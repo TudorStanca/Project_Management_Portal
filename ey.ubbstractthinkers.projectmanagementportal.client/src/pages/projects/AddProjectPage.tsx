@@ -1,5 +1,4 @@
 import {
-  Alert,
   Avatar,
   Box,
   Button,
@@ -9,7 +8,6 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Snackbar,
   TextField,
   Typography,
   type SelectChangeEvent,
@@ -22,13 +20,15 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { saveProject } from "@services/ProjectClient";
 import { handleApiError } from "@services/ErrorHandler";
 import type { Project } from "@models/Project";
-import type { SnackbarSeverity } from "@models/SnackbarSeverity";
 import type { User } from "@models/Auth";
 import { getUser, getUsers } from "@services/AuthClient";
 import LetterAvatar from "../../components/avatar/LetterAvatar";
 import type { Template } from "@models/Template";
 import { getTemplates } from "@services/TemplateClient";
 import { useNavigate } from "react-router-dom";
+import BoxContent from "../../components/layout/background/BoxContent";
+import useSnackbar from "../../hooks/useSnackbar";
+import CustomSnackbar from "../../components/snackbar/CustomSnackbar";
 
 interface ProjectFormProps {
   open: boolean;
@@ -48,12 +48,13 @@ const AddProjectPage = (props: ProjectFormProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
-  const [successMessage, setSuccessMessage] = useState<string>("");
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  const [snackbarSeverity, setSnackbarSeverity] =
-    useState<SnackbarSeverity>("success");
-
-  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+  const {
+    showSnackbar,
+    isSnackbarOpen,
+    message,
+    snackbarSeverity,
+    handleSnackbarClose,
+  } = useSnackbar();
 
   const navigate = useNavigate();
 
@@ -83,13 +84,9 @@ const AddProjectPage = (props: ProjectFormProps) => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setErrorMessage("");
-    setSuccessMessage("");
 
     if (!startDate) {
-      setErrorMessage("Start Date is required");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      showSnackbar("Start Date is required.", "error");
 
       return;
     }
@@ -110,15 +107,11 @@ const AddProjectPage = (props: ProjectFormProps) => {
     try {
       await saveProject(formattedProject);
 
-      setSuccessMessage("Project added successfully");
-      setSnackbarSeverity("success");
-      setSnackbarOpen(true);
+      showSnackbar("Project added successfully", "success");
     } catch (error) {
       console.error(error);
 
-      setErrorMessage(handleApiError(error));
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      showSnackbar(handleApiError(error), "error");
     } finally {
       setIsSaving(false);
     }
@@ -144,9 +137,7 @@ const AddProjectPage = (props: ProjectFormProps) => {
         setOwnerId(loggedUser.id!);
         setTemplates(templates);
       } catch (error) {
-        setErrorMessage(handleApiError(error));
-        setSnackbarSeverity("error");
-        setSnackbarOpen(true);
+        showSnackbar(handleApiError(error), "error");
       } finally {
         setIsLoading(false);
       }
@@ -155,17 +146,8 @@ const AddProjectPage = (props: ProjectFormProps) => {
     fetchData();
   }, []);
 
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
-
   return (
-    <Box
-      className={`${styles.addProjectContent} ${props.open ? styles.open : ""}`}
-    >
-      <Typography variant="h2" className={styles.addProjectHeader}>
-        Add Project
-      </Typography>
+    <BoxContent isOpen={props.open} pageName="Add Project">
       {isLoading ? (
         <Box className={styles.addProjectMessageBox}>
           <CircularProgress />
@@ -318,18 +300,15 @@ const AddProjectPage = (props: ProjectFormProps) => {
             </Grid>
           </form>
 
-          <Snackbar
-            open={snackbarOpen}
-            autoHideDuration={4000}
-            onClose={handleSnackbarClose}
-          >
-            <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
-              {successMessage || errorMessage}
-            </Alert>
-          </Snackbar>
+          <CustomSnackbar
+            isOpen={isSnackbarOpen}
+            message={message}
+            snackbarSeverity={snackbarSeverity}
+            handleSnackbarClose={handleSnackbarClose}
+          />
         </>
       )}
-    </Box>
+    </BoxContent>
   );
 };
 

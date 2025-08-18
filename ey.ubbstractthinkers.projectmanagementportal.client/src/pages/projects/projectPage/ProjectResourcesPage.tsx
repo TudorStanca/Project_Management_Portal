@@ -1,5 +1,4 @@
 import {
-  Alert,
   Avatar,
   Box,
   Button,
@@ -10,7 +9,6 @@ import {
   DialogContent,
   DialogTitle,
   Paper,
-  Snackbar,
   Table,
   TableBody,
   TableCell,
@@ -26,7 +24,6 @@ import ProjectNavBar from "../../../components/layout/projectNavBar/ProjectNavBa
 import { useEffect, useState } from "react";
 import { DefaultUser, type User } from "@models/Auth";
 import { DefaultProject, type Project } from "@models/Project";
-import type { SnackbarSeverity } from "@models/SnackbarSeverity";
 import {
   addResources,
   deleteResources,
@@ -38,6 +35,9 @@ import { AddCircleOutline } from "@mui/icons-material";
 import LetterAvatar from "../../../components/avatar/LetterAvatar";
 import DeleteIcon from "@mui/icons-material/Delete";
 import StageStepper from "../../../components/stepper/StageStepper";
+import BoxContent from "../../../components/layout/background/BoxContent";
+import useSnackbar from "../../../hooks/useSnackbar";
+import CustomSnackbar from "../../../components/snackbar/CustomSnackbar";
 
 interface ProjectResourcesPageProps {
   open: boolean;
@@ -53,10 +53,13 @@ const ProjectResourcesPage = (props: ProjectResourcesPageProps) => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const [successMessage, setSuccessMessage] = useState<string>("");
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  const [snackbarSeverity, setSnackbarSeverity] =
-    useState<SnackbarSeverity>("success");
+  const {
+    showSnackbar,
+    isSnackbarOpen,
+    message,
+    snackbarSeverity,
+    handleSnackbarClose,
+  } = useSnackbar();
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -64,7 +67,6 @@ const ProjectResourcesPage = (props: ProjectResourcesPageProps) => {
   const [selectedResourceIds, setSelectedResourceIds] = useState<string[]>([]);
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
 
-  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
   const [openAddDialog, setOpenAddDialog] = useState<boolean>(false);
   const [openConfirmDialog, setOpenConfirmDialog] = useState<boolean>(false);
 
@@ -95,9 +97,7 @@ const ProjectResourcesPage = (props: ProjectResourcesPageProps) => {
       } catch (error) {
         console.error(error);
 
-        setErrorMessage(handleApiError(error));
-        setSnackbarSeverity("error");
-        setSnackbarOpen(true);
+        showSnackbar(handleApiError(error), "error");
       } finally {
         setIsLoading(false);
       }
@@ -105,10 +105,6 @@ const ProjectResourcesPage = (props: ProjectResourcesPageProps) => {
 
     fetchAll();
   }, [projectId]);
-
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -135,10 +131,6 @@ const ProjectResourcesPage = (props: ProjectResourcesPageProps) => {
     try {
       await deleteResources(projectId!, selectedResourceIds);
 
-      setSuccessMessage("Resources deleted successfully");
-      setSnackbarSeverity("success");
-      setSnackbarOpen(true);
-
       setResources((prevResources) =>
         prevResources.filter(
           (resource) => !selectedResourceIds.includes(resource.id!),
@@ -150,12 +142,12 @@ const ProjectResourcesPage = (props: ProjectResourcesPageProps) => {
           selectedResourceIds.includes(resource.id!),
         ),
       ]);
+
+      showSnackbar("Resources deleted successfully", "success");
     } catch (error) {
       console.error(error);
 
-      setErrorMessage(handleApiError(error));
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      showSnackbar(handleApiError(error), "error");
     }
 
     setSelectedResourceIds([]);
@@ -187,10 +179,6 @@ const ProjectResourcesPage = (props: ProjectResourcesPageProps) => {
     try {
       await addResources(projectId!, selectedUserIds);
 
-      setSuccessMessage("Resources added successfully");
-      setSnackbarSeverity("success");
-      setSnackbarOpen(true);
-
       const addedUsers = users.filter((user) =>
         selectedUserIds.includes(user.id!),
       );
@@ -198,12 +186,12 @@ const ProjectResourcesPage = (props: ProjectResourcesPageProps) => {
       setUsers((prevUsers) =>
         prevUsers.filter((user) => !selectedUserIds.includes(user.id!)),
       );
+
+      showSnackbar("Resources added successfully", "success");
     } catch (error) {
       console.error(error);
 
-      setErrorMessage(handleApiError(error));
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      showSnackbar(handleApiError(error), "error");
     }
 
     setSelectedUserIds([]);
@@ -222,12 +210,11 @@ const ProjectResourcesPage = (props: ProjectResourcesPageProps) => {
   };
 
   return (
-    <Box
-      className={`${styles.projectResourcesContent} ${props.open ? styles.open : ""}`}
+    <BoxContent
+      isOpen={props.open}
+      pageName={`${project.name}'s Resources`}
+      className={styles.projectBoxContent}
     >
-      <Typography variant="h2" className={styles.projectResourcesHeader}>
-        Resources
-      </Typography>
       <ProjectNavBar projectUid={projectId!} activeLink="resources" />
       {isLoading ? (
         <Box className={styles.projectsMessageBox}>
@@ -404,16 +391,13 @@ const ProjectResourcesPage = (props: ProjectResourcesPageProps) => {
         </DialogActions>
       </Dialog>
 
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={4000}
-        onClose={handleSnackbarClose}
-      >
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
-          {successMessage || errorMessage}
-        </Alert>
-      </Snackbar>
-    </Box>
+      <CustomSnackbar
+        isOpen={isSnackbarOpen}
+        message={message}
+        snackbarSeverity={snackbarSeverity}
+        handleSnackbarClose={handleSnackbarClose}
+      />
+    </BoxContent>
   );
 };
 

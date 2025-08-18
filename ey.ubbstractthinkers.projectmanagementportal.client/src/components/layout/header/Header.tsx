@@ -17,6 +17,7 @@ import { useAuth } from "../../context/auth/AuthFunction";
 import { getUser, logout } from "@services/AuthClient";
 import { DefaultUser, type User } from "@models/Auth";
 import LetterAvatar from "../../avatar/LetterAvatar";
+import { isAuthPage } from "../../../utils/LocationFunctions";
 
 const Header = () => {
   const [user, setUser] = useState<User>(DefaultUser);
@@ -60,7 +61,7 @@ const Header = () => {
     fetchUser();
   }, [isAuthenticated]);
 
-  if (location.pathname === "/login" || location.pathname === "/register") {
+  if (isAuthPage(location)) {
     return null;
   }
 
@@ -95,8 +96,8 @@ const Header = () => {
                 />
               ) : (
                 <LetterAvatar
-                  firstName={user.firstName ?? ""}
-                  lastName={user.lastName ?? ""}
+                  firstName={user.firstName!}
+                  lastName={user.lastName!}
                 />
               )}
             </div>

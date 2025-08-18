@@ -1,5 +1,4 @@
 import {
-  Alert,
   Box,
   Button,
   Chip,
@@ -10,12 +9,10 @@ import {
   MenuItem,
   OutlinedInput,
   Select,
-  Snackbar,
   TextField,
-  Typography,
   type SelectChangeEvent,
 } from "@mui/material";
-import styles from "./AddTemplatePage.module.css";
+import styles from "./TemplatePage.module.css";
 import {
   useEffect,
   useMemo,
@@ -23,33 +20,43 @@ import {
   type ChangeEvent,
   type FormEvent,
 } from "react";
-import type { SnackbarSeverity } from "@models/SnackbarSeverity";
 import type { Stage } from "@models/Stage";
 import { getStages } from "@services/StageClient";
 import { handleApiError } from "@services/ErrorHandler";
 import { ExecuteStageName } from "../../utils/AppConstants";
 import type { Template } from "@models/Template";
-import { saveTemplate } from "@services/TemplateClient";
+import {
+  getTemplate,
+  saveTemplate,
+  updateTemplate,
+} from "@services/TemplateClient";
+import { useParams } from "react-router-dom";
+import BoxContent from "../../components/layout/background/BoxContent";
+import useSnackbar from "../../hooks/useSnackbar";
+import CustomSnackbar from "../../components/snackbar/CustomSnackbar";
 
-interface AddTemplatePageProps {
+interface TemplatePageProps {
   open: boolean;
 }
 
-const AddTemplatePage = (props: AddTemplatePageProps) => {
+const TemplatePage = (props: TemplatePageProps) => {
   const [stages, setStages] = useState<Stage[]>([]);
 
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [stageUids, setStageUids] = useState<string[]>([]);
+  const { templateId } = useParams();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
-  const [successMessage, setSuccessMessage] = useState<string>("");
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
-  const [snackbarSeverity, setSnackbarSeverity] =
-    useState<SnackbarSeverity>("success");
+  const {
+    showSnackbar,
+    isSnackbarOpen,
+    message,
+    snackbarSeverity,
+    handleSnackbarClose,
+  } = useSnackbar();
 
   const stageDictionary = useMemo(() => {
     return Object.fromEntries(stages.map((x) => [x.uid, x.name]));
@@ -58,7 +65,7 @@ const AddTemplatePage = (props: AddTemplatePageProps) => {
   useEffect(() => {
     setIsLoading(true);
 
-    const fetchStages = async () => {
+    const fetchAll = async () => {
       try {
         const stages = await getStages();
 
@@ -66,17 +73,23 @@ const AddTemplatePage = (props: AddTemplatePageProps) => {
         setStageUids([executeStage!.uid]);
 
         setStages(stages);
+
+        if (templateId) {
+          const template = await getTemplate(templateId);
+
+          setName(template.name);
+          setDescription(template.description);
+          setStageUids(template.stageUids);
+        }
       } catch (error) {
-        setErrorMessage(handleApiError(error));
-        setSnackbarSeverity("error");
-        setSnackbarOpen(true);
+        showSnackbar(handleApiError(error), "error");
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchStages();
-  }, []);
+    fetchAll();
+  }, [templateId]);
 
   const handleChange = (event: SelectChangeEvent<typeof stageUids>) => {
     const value = event.target.value;
@@ -94,13 +107,9 @@ const AddTemplatePage = (props: AddTemplatePageProps) => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setErrorMessage("");
-    setSuccessMessage("");
 
     if (stageUids.length === 0) {
-      setErrorMessage("Stages can't be empty.");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      showSnackbar("Stages can't be empty.", "error");
 
       return;
     }
@@ -114,31 +123,22 @@ const AddTemplatePage = (props: AddTemplatePageProps) => {
     setIsSaving(true);
 
     try {
-      await saveTemplate(formatedTemplate);
-
-      setSuccessMessage("Template added successfully.");
-      setSnackbarSeverity("success");
-      setSnackbarOpen(true);
+      if (templateId) {
+        await updateTemplate(templateId, formatedTemplate);
+        showSnackbar("Template updated successfully.", "success");
+      } else {
+        await saveTemplate(formatedTemplate);
+        showSnackbar("Template added successfully.", "success");
+      }
     } catch (error) {
-      setErrorMessage(handleApiError(error));
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      showSnackbar(handleApiError(error), "error");
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
-
   return (
-    <Box
-      className={`${styles.addTemplateContent} ${props.open ? styles.open : ""}`}
-    >
-      <Typography variant="h2" className={styles.addTemplateHeader}>
-        Add Template
-      </Typography>
+    <BoxContent isOpen={props.open} pageName="Template">
       {isLoading ? (
         <Box className={styles.templateMessageBox}>
           <CircularProgress />
@@ -221,19 +221,17 @@ const AddTemplatePage = (props: AddTemplatePageProps) => {
               </Grid>
             </Grid>
           </Box>
-          <Snackbar
-            open={snackbarOpen}
-            autoHideDuration={4000}
-            onClose={handleSnackbarClose}
-          >
-            <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
-              {successMessage || errorMessage}
-            </Alert>
-          </Snackbar>
+
+          <CustomSnackbar
+            isOpen={isSnackbarOpen}
+            message={message}
+            snackbarSeverity={snackbarSeverity}
+            handleSnackbarClose={handleSnackbarClose}
+          />
         </>
       )}
-    </Box>
+    </BoxContent>
   );
 };
 
-export default AddTemplatePage;
+export default TemplatePage;

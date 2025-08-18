@@ -12,6 +12,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories
         Task<Project> GetProject(Guid id);
         Task<Project> GetProjectByName(string name);
         Task<List<ProjectStakeholder>> GetProjectStakeholdersByProjectUid(Guid projectId);
+        Task<List<Project>> GetProjectsByTemplateId(Guid templateId);
         Task<List<Project>> GetProjectsVisibleToUser(string userId);
         Task<List<ProjectTask>> GetTasks(TaskFilter filter);
         Task<ProjectTask> GetTask(Guid id);

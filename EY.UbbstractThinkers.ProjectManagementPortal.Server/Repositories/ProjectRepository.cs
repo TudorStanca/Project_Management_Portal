@@ -103,5 +103,10 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories
         {
             return _context.ProjectResources.FirstOrDefaultAsync(x => x.ProjectId == projectId && x.UserId == userId);
         }
+
+        public Task<List<Project>> GetProjectsByTemplateId(Guid templateId)
+        {
+            return _context.Projects.Where(x => x.TemplateUid == templateId).ToListAsync();
+        }
     }
 }

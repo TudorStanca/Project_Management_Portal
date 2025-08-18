@@ -1,13 +1,9 @@
 import type { ApprovalRequest } from "@models/ApprovalRequest";
-import { DefaultUser, type User } from "@models/Auth";
-import type { SnackbarSeverity } from "@models/SnackbarSeverity";
 import {
-  Alert,
   Box,
   Button,
   CircularProgress,
   Paper,
-  Snackbar,
   Table,
   TableBody,
   TableCell,
@@ -33,23 +29,29 @@ import {
   Pending,
   Rejected,
 } from "@models/ApprovalStatus";
+import BoxContent from "../../components/layout/background/BoxContent";
+import useSnackbar from "../../hooks/useSnackbar";
+import CustomSnackbar from "../../components/snackbar/CustomSnackbar";
 
 interface ApprovalsPageProps {
   open: boolean;
 }
 
 const ApprovalsPage = (props: ApprovalsPageProps) => {
-  const [loggedUser, setLoggedUser] = useState<User>(DefaultUser);
   const [approvalRequests, setApprovalRequests] = useState<ApprovalRequest[]>(
     [],
   );
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
-  const [snackbarSeverity, setSnackbarSeverity] =
-    useState<SnackbarSeverity>("success");
+  const {
+    showSnackbar,
+    isSnackbarOpen,
+    message,
+    snackbarSeverity,
+    handleSnackbarClose,
+  } = useSnackbar();
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -78,11 +80,8 @@ const ApprovalsPage = (props: ApprovalsPageProps) => {
         );
 
         setApprovalRequests(fetchedApprovalRequests);
-        setLoggedUser(fetchedUser);
       } catch (error) {
-        setErrorMessage(handleApiError(error));
-        setSnackbarSeverity("error");
-        setSnackbarOpen(true);
+        showSnackbar(handleApiError(error), "error");
       } finally {
         setIsLoading(false);
       }
@@ -101,9 +100,7 @@ const ApprovalsPage = (props: ApprovalsPageProps) => {
         ),
       );
     } catch (error) {
-      setErrorMessage(handleApiError(error));
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      showSnackbar(handleApiError(error), "error");
     }
   };
 
@@ -117,9 +114,7 @@ const ApprovalsPage = (props: ApprovalsPageProps) => {
         ),
       );
     } catch (error) {
-      setErrorMessage(handleApiError(error));
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      showSnackbar(handleApiError(error), "error");
     }
   };
 
@@ -153,17 +148,8 @@ const ApprovalsPage = (props: ApprovalsPageProps) => {
     setPage(0);
   };
 
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
-
   return (
-    <Box
-      className={`${styles.approvalsContent} ${props.open ? styles.open : ""}`}
-    >
-      <Typography variant="h2" className={styles.approvalsHeader}>
-        Approvals
-      </Typography>
+    <BoxContent isOpen={props.open} pageName="Approvals">
       {isLoading ? (
         <Box className={styles.approvalsMessageBox}>
           <CircularProgress />
@@ -308,16 +294,14 @@ const ApprovalsPage = (props: ApprovalsPageProps) => {
           </div>
         </>
       )}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={4000}
-        onClose={handleSnackbarClose}
-      >
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
-          {errorMessage}
-        </Alert>
-      </Snackbar>
-    </Box>
+
+      <CustomSnackbar
+        isOpen={isSnackbarOpen}
+        message={message}
+        snackbarSeverity={snackbarSeverity}
+        handleSnackbarClose={handleSnackbarClose}
+      />
+    </BoxContent>
   );
 };
 

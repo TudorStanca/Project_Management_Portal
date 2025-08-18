@@ -20,6 +20,12 @@ const Theme = createTheme({
       main: "#b15dd5",
     },
   },
+  typography: {
+    fontFamily: '"Inter", "Arial", sans-serif',
+    h2: {
+      fontWeight: "bold",
+    },
+  },
 });
 
 export default Theme;

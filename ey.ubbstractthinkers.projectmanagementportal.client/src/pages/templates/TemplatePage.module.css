@@ -1,0 +1,27 @@
+.templateMessageBox {
+  position: absolute;
+  width: 100%;
+  height: 40%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.addTemplateForm {
+  margin: 0.25em 0.5em;
+}
+
+.addTemplateMultipleSelect {
+  width: 300px;
+  display: flex !important;
+}
+
+.addTemplateChip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+}
+
+.addTemplateSubmitButton:hover {
+  background-color: var(--color-accent);
+}

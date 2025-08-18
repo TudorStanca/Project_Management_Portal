@@ -8,6 +8,7 @@ interface AuthProviderProps {
 
 const AuthProvider = (props: AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchIsUserLogged = async () => {
@@ -16,6 +17,8 @@ const AuthProvider = (props: AuthProviderProps) => {
         setIsAuthenticated(loggedIn != null);
       } catch (error) {
         console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -27,7 +30,7 @@ const AuthProvider = (props: AuthProviderProps) => {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, handleLogin, handleLogout }}
+      value={{ isAuthenticated, handleLogin, handleLogout, isLoading }}
     >
       {props.children}
     </AuthContext.Provider>

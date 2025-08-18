@@ -9,6 +9,7 @@ import {
 import styles from "./HomePage.module.css";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../components/context/auth/AuthFunction";
+import BoxContent from "../../components/layout/background/BoxContent";
 
 interface HomePageProps {
   open: boolean;
@@ -38,10 +39,7 @@ const HomePage = (props: HomePageProps) => {
   const { isAuthenticated } = useAuth();
 
   return (
-    <Box className={`${styles.mainContent} ${props.open ? styles.open : ""}`}>
-      <Typography variant="h2" className={styles.mainHeader}>
-        Home
-      </Typography>
+    <BoxContent isOpen={props.open} pageName="Home">
       <Typography variant="body1" className={styles.description}>
         Welcome to the page! This powerful Project Management tool allows you to
         check in with your stakeholders, view tasks and assign tasks to
@@ -83,7 +81,7 @@ const HomePage = (props: HomePageProps) => {
           Get Started
         </Button>
       </Box>
-    </Box>
+    </BoxContent>
   );
 };
 

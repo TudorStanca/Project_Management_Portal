@@ -14,8 +14,10 @@ import LoginPage from "./pages/auth/LoginPage";
 import ProjectStakeholdersPage from "./pages/projects/projectPage/ProjectStakeholdersPage";
 import ProjectResourcesPage from "./pages/projects/projectPage/ProjectResourcesPage";
 import ProjectTasksPage from "./pages/projects/projectPage/ProjectTasksPage";
-import AddTemplatePage from "./pages/templates/AddTemplatePage";
 import ApprovalsPage from "./pages/approvals/ApprovalsPage";
+import ProtectedRoute from "./components/context/auth/ProtectedRoute";
+import TemplatesPage from "./pages/templates/TemplatesPage";
+import TemplatePage from "./pages/templates/TemplatePage";
 
 function App() {
   const [open, setOpen] = useState(true);
@@ -27,7 +29,7 @@ function App() {
       ([entry]) => {
         setFooterVisible(entry.isIntersecting);
       },
-      { threshold: 0.8 },
+      { threshold: 0.7 },
     );
 
     const currentFooterRef = footerRef.current;
@@ -57,29 +59,86 @@ function App() {
           <Route path="/" element={<HomePage open={open} />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/projects" element={<ProjectsPage open={open} />} />
+          <Route
+            path="/projects"
+            element={
+              <ProtectedRoute>
+                <ProjectsPage open={open} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/edit-template/:templateId"
+            element={
+              <ProtectedRoute>
+                <TemplatePage open={open} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/templates"
+            element={
+              <ProtectedRoute>
+                <TemplatesPage open={open} />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/add-template"
-            element={<AddTemplatePage open={open} />}
+            element={
+              <ProtectedRoute>
+                <TemplatePage open={open} />
+              </ProtectedRoute>
+            }
           />
-          <Route path="/add-project" element={<AddProjectPage open={open} />} />
+          <Route
+            path="/add-project"
+            element={
+              <ProtectedRoute>
+                <AddProjectPage open={open} />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/projects/:projectId"
-            element={<ProjectPage open={open} />}
+            element={
+              <ProtectedRoute>
+                <ProjectPage open={open} />
+              </ProtectedRoute>
+            }
           />
           <Route
             path="/projects/:projectId/stakeholders"
-            element={<ProjectStakeholdersPage open={open} />}
+            element={
+              <ProtectedRoute>
+                <ProjectStakeholdersPage open={open} />
+              </ProtectedRoute>
+            }
           />
           <Route
             path="/projects/:projectId/resources"
-            element={<ProjectResourcesPage open={open} />}
+            element={
+              <ProtectedRoute>
+                <ProjectResourcesPage open={open} />
+              </ProtectedRoute>
+            }
           />
           <Route
             path="/projects/:projectId/tasks"
-            element={<ProjectTasksPage open={open} />}
+            element={
+              <ProtectedRoute>
+                <ProjectTasksPage open={open} />
+              </ProtectedRoute>
+            }
           />
-          <Route path="/approvals" element={<ApprovalsPage open={open} />} />
+          <Route
+            path="/approvals"
+            element={
+              <ProtectedRoute>
+                <ApprovalsPage open={open} />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
         <Footer ref={footerRef} />
       </BrowserRouter>

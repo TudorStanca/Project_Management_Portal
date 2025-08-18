@@ -23,3 +23,10 @@ export async function getTemplate(id: string): Promise<Template> {
 export async function saveTemplate(template: Template): Promise<void> {
   await api.post("", template);
 }
+
+export async function updateTemplate(
+  id: string,
+  template: Template,
+): Promise<void> {
+  await api.put("/" + id, template);
+}

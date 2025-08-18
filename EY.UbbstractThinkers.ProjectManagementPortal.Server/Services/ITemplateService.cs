@@ -11,5 +11,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
         Task<List<Template>> GetTemplates();
         Task<Template> GetTemplate(Guid id);
         Task<Template> SaveTemplate(Template template);
+        Task<Template> UpdateTemplate(Guid id, Template template);
     }
 }

@@ -1,12 +1,10 @@
 import {
-  Alert,
   Box,
   Button,
   Card,
   CardContent,
   CircularProgress,
   Grid,
-  Snackbar,
   Typography,
 } from "@mui/material";
 import styles from "./ProjectsPage.module.css";
@@ -20,7 +18,10 @@ import dayjs from "dayjs";
 import { DefaultUser, type User } from "@models/Auth";
 import { getUser } from "@services/AuthClient";
 import { handleApiError } from "@services/ErrorHandler";
-import type { SnackbarSeverity } from "@models/SnackbarSeverity";
+import BoxContent from "../../components/layout/background/BoxContent";
+import useSnackbar from "../../hooks/useSnackbar";
+import CustomSnackbar from "../../components/snackbar/CustomSnackbar";
+import { truncateDescription } from "../../utils/StringFunctions";
 
 interface ProjectsPageProps {
   open: boolean;
@@ -32,16 +33,15 @@ const ProjectsPage = (props: ProjectsPageProps) => {
 
   const navigate = useNavigate();
 
+  const {
+    showSnackbar,
+    isSnackbarOpen,
+    message,
+    snackbarSeverity,
+    handleSnackbarClose,
+  } = useSnackbar();
+
   const [isLoading, setIsLoading] = useState(false);
-
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
-  const [snackbarSeverity, setSnackbarSeverity] =
-    useState<SnackbarSeverity>("success");
-
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -54,9 +54,7 @@ const ProjectsPage = (props: ProjectsPageProps) => {
         setUser(user);
         setProjects(projects);
       } catch (error) {
-        setErrorMessage(handleApiError(error));
-        setSnackbarSeverity("error");
-        setSnackbarOpen(true);
+        showSnackbar(handleApiError(error), "error");
       } finally {
         setIsLoading(false);
       }
@@ -64,20 +62,6 @@ const ProjectsPage = (props: ProjectsPageProps) => {
 
     fetchUserWithProjects();
   }, []);
-
-  const truncateDescription = (description: string) => {
-    const words = description.split(" ");
-    let truncated = "";
-
-    for (const word of words) {
-      if ((truncated + word).length <= 100) {
-        truncated += word + " ";
-
-        if (word.endsWith(".")) break;
-      }
-    }
-    return truncated.trim();
-  };
 
   const formatFriendlyDate = (isoDate: string | Dayjs) => {
     let date: Date;
@@ -96,12 +80,7 @@ const ProjectsPage = (props: ProjectsPageProps) => {
   };
 
   return (
-    <Box
-      className={`${styles.projectsContent} ${props.open ? styles.open : ""}`}
-    >
-      <Typography variant="h2" className={styles.projectsHeader}>
-        Projects
-      </Typography>
+    <BoxContent isOpen={props.open} pageName="Projects">
       {isLoading ? (
         <Box className={styles.projectsMessageBox}>
           <CircularProgress />
@@ -167,16 +146,13 @@ const ProjectsPage = (props: ProjectsPageProps) => {
         Add
       </Button>
 
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={4000}
-        onClose={handleSnackbarClose}
-      >
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
-          {errorMessage}
-        </Alert>
-      </Snackbar>
-    </Box>
+      <CustomSnackbar
+        isOpen={isSnackbarOpen}
+        message={message}
+        snackbarSeverity={snackbarSeverity}
+        handleSnackbarClose={handleSnackbarClose}
+      />
+    </BoxContent>
   );
 };
 

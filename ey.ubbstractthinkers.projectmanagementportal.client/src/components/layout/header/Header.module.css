@@ -1,5 +1,10 @@
 .headerAppbar {
   position: "static";
+  background: linear-gradient(
+    180deg,
+    var(--color-bg) 0%,
+    #141637 100%
+  ) !important;
 }
 
 .headerToolbar {

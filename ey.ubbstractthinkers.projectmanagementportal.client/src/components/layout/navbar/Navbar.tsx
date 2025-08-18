@@ -6,12 +6,18 @@ import {
   ListItemText,
   ListItem,
   Tooltip,
+  ListItemIcon,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import styles from "./Navbar.module.css";
 import { NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/auth/AuthFunction";
+import HomeIcon from "@mui/icons-material/Home";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import ClassIcon from "@mui/icons-material/Class";
+import ApprovalIcon from "@mui/icons-material/Approval";
+import { isAuthPage } from "../../../utils/LocationFunctions";
 
 interface NavbarProps {
   open: boolean;
@@ -32,13 +38,29 @@ const Navbar = (props: NavbarProps) => {
   })`;
 
   const navbarOptions = [
-    { text: "Home", path: "/" },
-    { text: "Projects", path: "/projects" },
-    { text: "Templates", path: "/add-template" },
-    { text: "Approvals", path: "/approvals" },
+    {
+      text: "Home",
+      path: "/",
+      icon: <HomeIcon className={styles.navbarListItemIcon} />,
+    },
+    {
+      text: "Projects",
+      path: "/projects",
+      icon: <AssignmentIcon className={styles.navbarListItemIcon} />,
+    },
+    {
+      text: "Templates",
+      path: "/templates",
+      icon: <ClassIcon className={styles.navbarListItemIcon} />,
+    },
+    {
+      text: "Approvals",
+      path: "/approvals",
+      icon: <ApprovalIcon className={styles.navbarListItemIcon} />,
+    },
   ];
 
-  if (location.pathname === "/login" || location.pathname === "/register") {
+  if (isAuthPage(location)) {
     return null;
   }
 
@@ -56,6 +78,7 @@ const Navbar = (props: NavbarProps) => {
         variant="persistent"
         anchor="left"
         open={props.open}
+        className={styles.navbarContainer}
         sx={{
           "& .MuiDrawer-paper": {
             top: headerHeight,
@@ -63,6 +86,8 @@ const Navbar = (props: NavbarProps) => {
             transition: "max-height 0.1 ease-in-out",
             width: drawerWidth,
             boxSizing: "border-box",
+            background:
+              "linear-gradient(270deg, var(--color-bg) 0%, #141637 100%)",
           },
         }}
       >
@@ -75,7 +100,7 @@ const Navbar = (props: NavbarProps) => {
           </IconButton>
         </div>
         <List>
-          {navbarOptions.map(({ text, path }) => (
+          {navbarOptions.map(({ text, path, icon }) => (
             <NavLink
               to={path}
               className={({ isActive }) =>
@@ -95,8 +120,16 @@ const Navbar = (props: NavbarProps) => {
                 arrow
                 disableHoverListener={isAuthenticated}
               >
-                <ListItem key={text} disablePadding>
-                  <ListItemButton disabled={!isAuthenticated}>
+                <ListItem
+                  key={text}
+                  disablePadding
+                  className={styles.navbarListItem}
+                >
+                  <ListItemButton
+                    disabled={!isAuthenticated}
+                    className={styles.navbarListItemButton}
+                  >
+                    <ListItemIcon>{icon}</ListItemIcon>
                     <ListItemText
                       className={styles.navbarListItemText}
                       primary={text}

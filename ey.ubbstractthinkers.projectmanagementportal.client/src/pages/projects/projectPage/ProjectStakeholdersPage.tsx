@@ -1,5 +1,4 @@
 import {
-  Alert,
   Avatar,
   Box,
   Button,
@@ -10,7 +9,6 @@ import {
   DialogContent,
   DialogTitle,
   Paper,
-  Snackbar,
   Table,
   TableBody,
   TableCell,
@@ -27,7 +25,6 @@ import { DefaultUser, type User } from "@models/Auth";
 import { useEffect, useState } from "react";
 import { DefaultProject, type Project } from "@models/Project";
 import { getUser, getUsers } from "@services/AuthClient";
-import type { SnackbarSeverity } from "@models/SnackbarSeverity";
 import { handleApiError } from "@services/ErrorHandler";
 import {
   addStakeholders,
@@ -38,6 +35,9 @@ import LetterAvatar from "../../../components/avatar/LetterAvatar";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { AddCircleOutline } from "@mui/icons-material";
 import StageStepper from "../../../components/stepper/StageStepper";
+import BoxContent from "../../../components/layout/background/BoxContent";
+import useSnackbar from "../../../hooks/useSnackbar";
+import CustomSnackbar from "../../../components/snackbar/CustomSnackbar";
 
 interface ProjectStakeholdersPageProps {
   open: boolean;
@@ -51,11 +51,15 @@ const ProjectStakeholdersPage = (props: ProjectStakeholdersPageProps) => {
   const [loggedUser, setLoggedUser] = useState<User>(DefaultUser);
   const [project, setProject] = useState<Project>(DefaultProject);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [successMessage, setSuccessMessage] = useState<string>("");
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
-  const [snackbarSeverity, setSnackbarSeverity] =
-    useState<SnackbarSeverity>("success");
+
+  const {
+    showSnackbar,
+    isSnackbarOpen,
+    message,
+    snackbarSeverity,
+    handleSnackbarClose,
+  } = useSnackbar();
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedStakeholderIds, setSelectedStakeholderIds] = useState<
@@ -94,9 +98,7 @@ const ProjectStakeholdersPage = (props: ProjectStakeholdersPageProps) => {
       } catch (error) {
         console.error(error);
 
-        setErrorMessage(handleApiError(error));
-        setSnackbarSeverity("error");
-        setSnackbarOpen(true);
+        showSnackbar(handleApiError(error), "error");
       } finally {
         setIsLoading(false);
       }
@@ -104,10 +106,6 @@ const ProjectStakeholdersPage = (props: ProjectStakeholdersPageProps) => {
 
     fetchAll();
   }, [projectId]);
-
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -134,10 +132,6 @@ const ProjectStakeholdersPage = (props: ProjectStakeholdersPageProps) => {
     try {
       await deleteStakeholders(projectId!, selectedStakeholderIds);
 
-      setSuccessMessage("Stakeholders deleted successfully");
-      setSnackbarSeverity("success");
-      setSnackbarOpen(true);
-
       setStakeholders((prevStakeholders) =>
         prevStakeholders.filter(
           (stakeholder) => !selectedStakeholderIds.includes(stakeholder.id!),
@@ -149,12 +143,12 @@ const ProjectStakeholdersPage = (props: ProjectStakeholdersPageProps) => {
           selectedStakeholderIds.includes(stakeholder.id!),
         ),
       ]);
+
+      showSnackbar("Stakeholders deleted successfully", "success");
     } catch (error) {
       console.error(error);
 
-      setErrorMessage(handleApiError(error));
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      showSnackbar(handleApiError(error), "error");
     }
 
     setSelectedStakeholderIds([]);
@@ -186,10 +180,6 @@ const ProjectStakeholdersPage = (props: ProjectStakeholdersPageProps) => {
     try {
       await addStakeholders(projectId!, selectedUserIds);
 
-      setSuccessMessage("Stakeholders added successfully");
-      setSnackbarSeverity("success");
-      setSnackbarOpen(true);
-
       const addedUsers = users.filter((user) =>
         selectedUserIds.includes(user.id!),
       );
@@ -200,12 +190,12 @@ const ProjectStakeholdersPage = (props: ProjectStakeholdersPageProps) => {
       setUsers((prevUsers) =>
         prevUsers.filter((user) => !selectedUserIds.includes(user.id!)),
       );
+
+      showSnackbar("Stakeholders added successfully", "success");
     } catch (error) {
       console.error(error);
 
-      setErrorMessage(handleApiError(error));
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      showSnackbar(handleApiError(error), "error");
     }
 
     setSelectedUserIds([]);
@@ -224,12 +214,11 @@ const ProjectStakeholdersPage = (props: ProjectStakeholdersPageProps) => {
   };
 
   return (
-    <Box
-      className={`${styles.projectStakeholdersContent} ${props.open ? styles.open : ""}`}
+    <BoxContent
+      isOpen={props.open}
+      pageName={`${project.name}'s Stakeholders`}
+      className={styles.projectBoxContent}
     >
-      <Typography variant="h2" className={styles.projectStakeholdersHeader}>
-        Stakeholders
-      </Typography>
       <ProjectNavBar projectUid={projectId!} activeLink="stakeholders" />
       {isLoading ? (
         <Box className={styles.projectsMessageBox}>
@@ -414,16 +403,13 @@ const ProjectStakeholdersPage = (props: ProjectStakeholdersPageProps) => {
         </DialogActions>
       </Dialog>
 
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={4000}
-        onClose={handleSnackbarClose}
-      >
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
-          {successMessage || errorMessage}
-        </Alert>
-      </Snackbar>
-    </Box>
+      <CustomSnackbar
+        isOpen={isSnackbarOpen}
+        message={message}
+        snackbarSeverity={snackbarSeverity}
+        handleSnackbarClose={handleSnackbarClose}
+      />
+    </BoxContent>
   );
 };
 

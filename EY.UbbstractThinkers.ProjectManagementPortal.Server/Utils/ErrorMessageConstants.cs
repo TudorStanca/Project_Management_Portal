@@ -27,6 +27,6 @@
         public const string CantChangeProjectTask = "Cannot change project for a task.";
         public const string UniqueResource = "Can't add the same resource more than one time.";
         public const string UniqueStakeholder = "Can't add the same stakeholder more than one time.";
-
+        public const string TemplateHasExistingProjects = "Can't change templates that have active projects.";
     }
 }

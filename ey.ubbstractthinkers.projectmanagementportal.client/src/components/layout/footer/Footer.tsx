@@ -3,11 +3,12 @@ import styles from "./Footer.module.css";
 import CopyrightIcon from "@mui/icons-material/Copyright";
 import { forwardRef, type Ref } from "react";
 import { useLocation } from "react-router-dom";
+import { isAuthPage } from "../../../utils/LocationFunctions";
 
 const Footer = forwardRef((_, ref: Ref<HTMLDivElement>) => {
   const location = useLocation();
 
-  if (location.pathname === "/login" || location.pathname === "/register") {
+  if (isAuthPage(location)) {
     return null;
   }
 

@@ -5,8 +5,6 @@ import {
   Button,
   Typography,
   IconButton,
-  Snackbar,
-  Alert,
   CircularProgress,
 } from "@mui/material";
 import styles from "./LoginPage.module.css";
@@ -15,8 +13,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { handleApiError } from "@services/ErrorHandler";
 import { register } from "@services/AuthClient";
 import AuthBackground from "../../components/layout/background/AuthBackground";
-import type { SnackbarSeverity } from "@models/SnackbarSeverity";
 import type { User } from "@models/Auth";
+import useSnackbar from "../../hooks/useSnackbar";
+import CustomSnackbar from "../../components/snackbar/CustomSnackbar";
 
 const RegisterPage = () => {
   const [email, setEmail] = useState<string>("");
@@ -25,11 +24,14 @@ const RegisterPage = () => {
   const [lastName, setLastName] = useState<string>("");
   const [navigateToLogin, setNavigateToLogin] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [successMessage, setSuccessMessage] = useState<string>("");
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
-  const [snackbarSeverity, setSnackbarSeverity] =
-    useState<SnackbarSeverity>("success");
+
+  const {
+    showSnackbar,
+    isSnackbarOpen,
+    message,
+    snackbarSeverity,
+    handleSnackbarClose,
+  } = useSnackbar();
 
   const navigate = useNavigate();
 
@@ -52,9 +54,6 @@ const RegisterPage = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    setErrorMessage("");
-    setSuccessMessage("");
-
     const user: User = {
       id: null,
       email,
@@ -67,23 +66,19 @@ const RegisterPage = () => {
     try {
       await register(user);
 
-      setSuccessMessage("User registered successfully");
-      setSnackbarSeverity("success");
-      setSnackbarOpen(true);
+      showSnackbar("User registered successfully", "success");
       setNavigateToLogin(true);
     } catch (error) {
       console.error(error);
 
-      setErrorMessage(handleApiError(error));
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      showSnackbar(handleApiError(error), "error");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
+  const handleRegisterSnackbarClose = () => {
+    handleSnackbarClose();
 
     if (navigateToLogin) {
       navigate("/login");
@@ -168,15 +163,12 @@ const RegisterPage = () => {
         </Box>
       </Box>
 
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={1500}
-        onClose={handleSnackbarClose}
-      >
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
-          {successMessage || errorMessage}
-        </Alert>
-      </Snackbar>
+      <CustomSnackbar
+        isOpen={isSnackbarOpen}
+        message={message}
+        snackbarSeverity={snackbarSeverity}
+        handleSnackbarClose={handleRegisterSnackbarClose}
+      />
     </Box>
   );
 };

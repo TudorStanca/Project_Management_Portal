@@ -6,8 +6,6 @@ import {
   Typography,
   IconButton,
   CircularProgress,
-  Snackbar,
-  Alert,
 } from "@mui/material";
 import styles from "./LoginPage.module.css";
 import logo from "../../assets/logo.svg";
@@ -16,8 +14,9 @@ import AuthBackground from "../../components/layout/background/AuthBackground";
 import { login } from "@services/AuthClient";
 import { handleApiError } from "@services/ErrorHandler";
 import { useAuth } from "../../components/context/auth/AuthFunction";
-import type { SnackbarSeverity } from "@models/SnackbarSeverity";
 import type { User } from "@models/Auth";
+import useSnackbar from "../../hooks/useSnackbar";
+import CustomSnackbar from "../../components/snackbar/CustomSnackbar";
 
 const LoginPage = () => {
   const [email, setEmail] = useState<string>("");
@@ -25,11 +24,15 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [navigateToLandingPage, setNavigateToLandingPage] =
     useState<boolean>(false);
-  const [successMessage, setSuccessMessage] = useState<string>("");
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
-  const [snackbarSeverity, setSnackbarSeverity] =
-    useState<SnackbarSeverity>("success");
+
+  const {
+    showSnackbar,
+    isSnackbarOpen,
+    message,
+    snackbarSeverity,
+    handleSnackbarClose,
+  } = useSnackbar();
+
   const { handleLogin } = useAuth();
 
   const navigate = useNavigate();
@@ -45,8 +48,6 @@ const LoginPage = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    setErrorMessage("");
-    setSuccessMessage("");
 
     const user: User = {
       id: null,
@@ -61,23 +62,19 @@ const LoginPage = () => {
       await login(user);
       handleLogin();
 
-      setSuccessMessage("User logged in successfully");
-      setSnackbarSeverity("success");
-      setSnackbarOpen(true);
+      showSnackbar("User logged in successfully", "success");
       setNavigateToLandingPage(true);
     } catch (error) {
       console.error(error);
 
-      setErrorMessage(handleApiError(error));
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      showSnackbar(handleApiError(error), "error");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
+  const handleLoginSnackbarClose = () => {
+    handleSnackbarClose();
 
     if (navigateToLandingPage) {
       navigate("/");
@@ -144,15 +141,12 @@ const LoginPage = () => {
         </Box>
       </Box>
 
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={1500}
-        onClose={handleSnackbarClose}
-      >
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
-          {successMessage || errorMessage}
-        </Alert>
-      </Snackbar>
+      <CustomSnackbar
+        isOpen={isSnackbarOpen}
+        message={message}
+        snackbarSeverity={snackbarSeverity}
+        handleSnackbarClose={handleLoginSnackbarClose}
+      />
     </Box>
   );
 };
