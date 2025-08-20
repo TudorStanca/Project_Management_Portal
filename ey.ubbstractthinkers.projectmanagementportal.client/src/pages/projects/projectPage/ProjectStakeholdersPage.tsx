@@ -96,8 +96,6 @@ const ProjectStakeholdersPage = (props: ProjectStakeholdersPageProps) => {
         );
         setUsers(filteredUsers);
       } catch (error) {
-        console.error(error);
-
         showSnackbar(handleApiError(error), "error");
       } finally {
         setIsLoading(false);
@@ -146,8 +144,6 @@ const ProjectStakeholdersPage = (props: ProjectStakeholdersPageProps) => {
 
       showSnackbar("Stakeholders deleted successfully", "success");
     } catch (error) {
-      console.error(error);
-
       showSnackbar(handleApiError(error), "error");
     }
 

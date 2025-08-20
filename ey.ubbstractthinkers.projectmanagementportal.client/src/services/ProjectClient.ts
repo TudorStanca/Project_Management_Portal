@@ -1,5 +1,6 @@
 import axios, { type AxiosResponse } from "axios";
 import type { Project } from "@models/Project";
+import type { ProjectTask } from "@models/ProjectTask";
 
 const api = axios.create({
   baseURL: "/api/projects",
@@ -68,6 +69,16 @@ export async function advanceToNextStage(uid: string) {
 export async function hasPendingApprovalRequestOpen(uid: string) {
   const response: AxiosResponse<boolean> = await api.get(
     "/" + uid + "/approvals/open",
+  );
+
+  return response.data;
+}
+
+export async function getTasksForProject(
+  projectId: string,
+): Promise<ProjectTask[]> {
+  const response: AxiosResponse<ProjectTask[]> = await api.get(
+    `/${projectId}/tasks`,
   );
 
   return response.data;

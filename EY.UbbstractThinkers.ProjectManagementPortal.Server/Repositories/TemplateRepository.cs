@@ -3,6 +3,7 @@ using EY.UbbstractThinkers.ProjectManagementPortal.Server.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories
@@ -29,14 +30,14 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories
         public Task<Template> GetTemplate(Guid id)
         {
             return _context.Templates
-                .Include(x => x.Stages)
+                .Include(x => x.Stages.OrderBy(x => x.OrderNumber))
                 .FirstOrDefaultAsync(x => x.Uid == id);
         }
 
         public Task<List<Template>> GetTemplates()
         {
             return _context.Templates
-                .Include(x => x.Stages)
+                .Include(x => x.Stages.OrderBy(x => x.OrderNumber))
                 .ToListAsync();
         }
     }

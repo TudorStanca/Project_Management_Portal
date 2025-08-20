@@ -4,7 +4,6 @@ import SlideshowIcon from "@mui/icons-material/Slideshow"; // execute
 import MonitorIcon from "@mui/icons-material/Monitor"; // monitor
 import FlutterDashIcon from "@mui/icons-material/FlutterDash"; // initiate
 import { useEffect, useState } from "react";
-import { DefaultTemplate, type Template } from "@models/Template";
 import type { Stage } from "@models/Stage";
 import { getStages } from "@services/StageClient";
 import { handleApiError } from "@services/ErrorHandler";
@@ -17,7 +16,6 @@ import {
   stepConnectorClasses,
   StepLabel,
   Stepper,
-  styled,
   type StepConnectorProps,
   type StepIconProps,
 } from "@mui/material";
@@ -113,7 +111,7 @@ const StageStepper = (props: StageStepperProps) => {
     };
 
     fetchAll();
-  }, []);
+  }, [props.project.templateUid]);
 
   const currentStageIndex = stages.findIndex(
     (stage) => stage.uid === props.project.currentStageUid,

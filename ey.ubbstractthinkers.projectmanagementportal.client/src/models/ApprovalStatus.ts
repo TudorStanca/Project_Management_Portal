@@ -13,10 +13,10 @@ const approvalStatusMapping: { [key in ApprovalStatus]: number } = {
 };
 
 const approvalStatusNumberMapping: { [key: number]: ApprovalStatus } = {
-  1: "Pending",
-  2: "Approved",
-  3: "Rejected",
-  0: "Default",
+  1: Pending,
+  2: Approved,
+  3: Rejected,
+  0: Default,
 };
 
 export const getApprovalStatusValue = (status: ApprovalStatus) => {

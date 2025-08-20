@@ -13,22 +13,20 @@ import { useEffect, useState } from "react";
 import { AddCircleOutline } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import type { Project } from "@models/Project";
-import type { Dayjs } from "dayjs";
-import dayjs from "dayjs";
-import { DefaultUser, type User } from "@models/Auth";
+import { type User } from "@models/Auth";
 import { getUser } from "@services/AuthClient";
 import { handleApiError } from "@services/ErrorHandler";
 import BoxContent from "../../components/layout/background/BoxContent";
 import useSnackbar from "../../hooks/useSnackbar";
 import CustomSnackbar from "../../components/snackbar/CustomSnackbar";
 import { truncateDescription } from "../../utils/StringFunctions";
+import { formatDayjsToString } from "../../utils/DateFunctions";
 
 interface ProjectsPageProps {
   open: boolean;
 }
 
 const ProjectsPage = (props: ProjectsPageProps) => {
-  const [user, setUser] = useState<User>(DefaultUser);
   const [projects, setProjects] = useState<Project[]>([]);
 
   const navigate = useNavigate();
@@ -51,7 +49,6 @@ const ProjectsPage = (props: ProjectsPageProps) => {
         const user: User = await getUser();
         const projects = await getProjectsForUser(user.id ?? "");
 
-        setUser(user);
         setProjects(projects);
       } catch (error) {
         showSnackbar(handleApiError(error), "error");
@@ -62,22 +59,6 @@ const ProjectsPage = (props: ProjectsPageProps) => {
 
     fetchUserWithProjects();
   }, []);
-
-  const formatFriendlyDate = (isoDate: string | Dayjs) => {
-    let date: Date;
-
-    if (dayjs.isDayjs(isoDate)) {
-      date = isoDate.toDate();
-    } else {
-      date = new Date(isoDate);
-    }
-
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
 
   return (
     <BoxContent isOpen={props.open} pageName="Projects">
@@ -118,7 +99,7 @@ const ProjectsPage = (props: ProjectsPageProps) => {
                         variant="body2"
                         className={styles.projectsCardTypography}
                       >
-                        {`Start Date: ${formatFriendlyDate(project.startDate)}`}
+                        {`Start Date: ${formatDayjsToString(project.startDate)}`}
                       </Typography>
                       <Typography
                         variant="body2"

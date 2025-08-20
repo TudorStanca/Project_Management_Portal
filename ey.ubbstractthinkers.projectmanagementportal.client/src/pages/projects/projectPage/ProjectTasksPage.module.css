@@ -17,6 +17,19 @@
   text-align: left;
 }
 
+.projectTasksDataGridContainer {
+  max-width: 95%;
+  box-sizing: border-box;
+  margin: 0 auto 12px;
+  padding-right: 10px;
+  padding-top: 10px;
+  border: 1px solid var(--color-secondary);
+}
+
+.resourceCellSpan {
+  margin: 0 auto;
+}
+
 .addProjectAvatarDiv {
   display: inline-block;
 }

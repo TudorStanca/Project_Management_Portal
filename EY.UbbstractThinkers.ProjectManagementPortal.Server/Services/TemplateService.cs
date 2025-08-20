@@ -105,7 +105,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
             }
 
             var projects = await _projectRepository.GetProjectsByTemplateId(id);
-            bool isStagesChanged = !existingTemplate.Stages.Select(x => x.Uid).SequenceEqual(template.Stages.Select(s => s.Uid));
+            bool isStagesChanged = !existingTemplate.Stages.OrderBy(x => x.OrderNumber).Select(x => x.Uid).SequenceEqual(template.Stages.OrderBy(x => x.OrderNumber).Select(s => s.Uid));
 
             if (isStagesChanged && projects.Count != 0)
             {

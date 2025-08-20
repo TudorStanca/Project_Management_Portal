@@ -8,7 +8,7 @@ export interface User {
 }
 
 export const DefaultUser: User = {
-  id: null,
+  id: "",
   email: "",
   password: "",
   firstName: "",

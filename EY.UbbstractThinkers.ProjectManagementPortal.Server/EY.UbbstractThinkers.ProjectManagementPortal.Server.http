@@ -9,10 +9,10 @@ POST {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/aut
 Content-Type: application/json
 
 {
-  "email": "daria@ro.ey.com",
+  "email": "david@ro.ey.com",
   "password": "12345aA!",
-  "firstName": "Daria",
-  "lastName": "dsadsa"
+  "firstName": "David",
+  "lastName": "Blajan"
 }
 
 ###
@@ -119,7 +119,7 @@ GET {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/task
 
 ###
 
-GET {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/projects/ce038502-a4f8-4eef-957b-801136458b61/tasks
+GET {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/projects/1C32F1A6-4817-4A32-8CC2-26A19F3DDA72/tasks
 
 ###
 
@@ -127,18 +127,18 @@ POST {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/tas
 Content-Type: application/json
 
 {
-  "name": "dsa",
-  "description": null,
+  "name": "Task 1",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin id sapien maximus, feugiat neque a, sollicitudin mi. Aliquam ut sagittis ex, ut vulputate ex. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Curabitur ut ornare elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
   "status": 1,
   "startDate": "2025-08-30",
-  "endDate": "2025-08-31",
-  "projectUid": "6685aedf-5e2d-4cdc-b553-762e7a143b17",
+  "endDate": null,
+  "projectUid": "1C32F1A6-4817-4A32-8CC2-26A19F3DDA72",
   "resourceId": null
 }
 
 ###
 
-DELETE {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/tasks/D9E1AC9C-D91C-4681-B698-E6CE4A065700
+DELETE {{EY.UbbstractThinkers.ProjectManagementPortal.Server_HostAddress}}/api/tasks/1C32F1A6-4817-4A32-8CC2-26A19F3DDA72
 
 ###
 

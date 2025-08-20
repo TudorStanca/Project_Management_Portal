@@ -1,0 +1,11 @@
+.addProjectSpanEmail {
+  margin-left: 8px;
+}
+
+.addProjectAvatarDiv {
+  display: inline-block;
+}
+
+.formControl {
+  flex: 1;
+}

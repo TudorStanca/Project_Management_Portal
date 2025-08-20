@@ -105,6 +105,7 @@ const ProjectPage = (props: ProjectPageProps) => {
           getUser(),
           hasPendingApprovalRequestOpen(projectId!),
         ]);
+
         setProject(project);
         setLoggedUser(user);
         setIsPendingRequestOpen(isOpen);

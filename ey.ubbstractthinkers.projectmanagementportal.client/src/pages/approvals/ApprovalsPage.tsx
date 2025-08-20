@@ -23,6 +23,9 @@ import { useEffect, useMemo, useState } from "react";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import styles from "./ApprovalsPage.module.css";
+import useSnackbar from "../../hooks/useSnackbar";
+import CustomSnackbar from "../../components/snackbar/CustomSnackbar";
+import { formatDateToString } from "../../utils/DateFunctions";
 import {
   Approved,
   getApprovalStatusFromValue,
@@ -30,8 +33,6 @@ import {
   Rejected,
 } from "@models/ApprovalStatus";
 import BoxContent from "../../components/layout/background/BoxContent";
-import useSnackbar from "../../hooks/useSnackbar";
-import CustomSnackbar from "../../components/snackbar/CustomSnackbar";
 
 interface ApprovalsPageProps {
   open: boolean;
@@ -118,25 +119,6 @@ const ApprovalsPage = (props: ApprovalsPageProps) => {
     }
   };
 
-  const formatFriendlyDate = (isoDate: Date | null) => {
-    if (isoDate == null) {
-      return "";
-    }
-
-    const date = new Date(isoDate);
-    if (isNaN(date.getTime())) {
-      return "";
-    }
-
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -194,7 +176,7 @@ const ApprovalsPage = (props: ApprovalsPageProps) => {
                           <TableCell>{request.stageFromName}</TableCell>
                           <TableCell>{request.stageToName}</TableCell>
                           <TableCell>
-                            {formatFriendlyDate(request.createdAt)}
+                            {formatDateToString(request.createdAt)}
                           </TableCell>
                           <TableCell>{request.createdByUserEmail}</TableCell>
                           <TableCell>
@@ -270,10 +252,10 @@ const ApprovalsPage = (props: ApprovalsPageProps) => {
                             {getApprovalStatusFromValue(Number(request.status))}
                           </TableCell>
                           <TableCell>
-                            {formatFriendlyDate(request.createdAt)}
+                            {formatDateToString(request.createdAt)}
                           </TableCell>
                           <TableCell>
-                            {formatFriendlyDate(request.modifiedAt)}
+                            {formatDateToString(request.modifiedAt)}
                           </TableCell>
                           <TableCell>{request.modifiedByUserEmail}</TableCell>
                         </TableRow>

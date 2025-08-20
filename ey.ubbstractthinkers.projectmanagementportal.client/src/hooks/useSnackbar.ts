@@ -1,5 +1,5 @@
 import type { SnackbarSeverity } from "@models/SnackbarSeverity";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 interface IUseSnackbar {
   showSnackbar: (message: string, snackbarSeverity: SnackbarSeverity) => void;
@@ -15,15 +15,18 @@ const useSnackbar = (): IUseSnackbar => {
   const [snackbarSeverity, setSnackbarSeverity] =
     useState<SnackbarSeverity>("success");
 
-  const handleSnackbarClose = () => {
+  const handleSnackbarClose = useCallback(() => {
     setIsSnackbarOpen(false);
-  };
+  }, []);
 
-  const showSnackbar = (message: string, severity: SnackbarSeverity) => {
-    setMessage(message);
-    setSnackbarSeverity(severity);
-    setIsSnackbarOpen(true);
-  };
+  const showSnackbar = useCallback(
+    (message: string, severity: SnackbarSeverity) => {
+      setMessage(message);
+      setSnackbarSeverity(severity);
+      setIsSnackbarOpen(true);
+    },
+    [],
+  );
 
   return {
     showSnackbar,
