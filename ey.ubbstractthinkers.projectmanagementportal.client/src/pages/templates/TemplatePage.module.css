@@ -22,6 +22,24 @@
   gap: 0.5em;
 }
 
+.customFieldsTypography {
+  text-align: left;
+  padding-bottom: 10px;
+}
+
 .addTemplateSubmitButton:hover {
   background-color: var(--color-accent);
+}
+
+.customFieldsContainer {
+  padding: 16px;
+  margin: 20px 10px;
+}
+
+.customFieldsBox {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 3px 0;
 }

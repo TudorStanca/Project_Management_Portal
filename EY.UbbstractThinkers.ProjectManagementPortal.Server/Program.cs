@@ -71,6 +71,9 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server
             builder.Services.AddScoped<ITemplateService, TemplateService>();
             builder.Services.AddScoped<IApprovalRepository, ApprovalRepository>();
             builder.Services.AddScoped<IApprovalService, ApprovalService>();
+            builder.Services.AddScoped<ICustomFieldRepository, CustomFieldRepository>();
+            builder.Services.AddScoped<ICustomFieldService, CustomFieldService>();
+            builder.Services.AddScoped<ICustomFieldValidator, CustomFieldValidator>();
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddProblemDetails();
 

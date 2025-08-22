@@ -138,6 +138,8 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
 
         public async Task DeleteProject(Project project)
         {
+            var itemsToRemove = _context.CustomFieldValues.Where(x => x.ProjectId == project.Uid).ToList();
+            _context.CustomFieldValues.RemoveRange(itemsToRemove);
 
             _context.Projects.Remove(project);
             await _context.SaveChangesAsync();

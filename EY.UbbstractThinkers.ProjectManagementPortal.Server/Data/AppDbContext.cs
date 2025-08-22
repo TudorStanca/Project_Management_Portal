@@ -13,6 +13,10 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Data
         public DbSet<Stage> Stages { get; set; }
         public DbSet<Template> Templates { get; set; }
         public DbSet<ApprovalRequest> ApprovalRequests { get; set; }
+        public DbSet<CustomField> CustomFields { get; set; }
+        public DbSet<Models.TemplateStageCustomField> TemplateStageCustomField { get; set; }
+        public DbSet<TemplateStage> TemplateStage { get; set; }
+        public DbSet<CustomFieldValue> CustomFieldValues { get; set; }
 
         private string _connectionString;
 
@@ -42,6 +46,10 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Data
             modelBuilder.ApplyConfiguration(new StageConfiguration());
             modelBuilder.ApplyConfiguration(new TemplateConfiguration());
             modelBuilder.ApplyConfiguration(new ApprovalConfiguration());
+            modelBuilder.ApplyConfiguration(new CustomFieldConfiguration());
+            modelBuilder.ApplyConfiguration(new TemplateStageConfiguration());
+            modelBuilder.ApplyConfiguration(new TemplateStageCustomFieldConfiguration());
+            modelBuilder.ApplyConfiguration(new CustomFieldValueConfiguration());
         }
     }
 }

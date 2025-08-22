@@ -11,5 +11,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Models
 
         public List<Stage> Stages { get; set; } = [];
         public List<Project> Projects { get; set; } = [];
+        public List<CustomField> CustomFields { get; set; } = [];
     }
 }

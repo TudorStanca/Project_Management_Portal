@@ -1,5 +1,8 @@
-﻿using EY.UbbstractThinkers.ProjectManagementPortal.Server.Dtos;
+﻿using EY.David.FileImportTool.Utils;
+using EY.UbbstractThinkers.ProjectManagementPortal.Server.Dtos;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Models;
+using System;
+using System.Globalization;
 using System.Linq;
 
 namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils
@@ -82,6 +85,70 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils
                 Name = stage.Name,
                 Description = stage.Description,
                 OrderNumber = stage.OrderNumber
+            };
+        }
+
+        public static CustomFieldDto ToDto(CustomField customField)
+        {
+            return new CustomFieldDto()
+            {
+                Uid = customField.Uid,
+                Name = customField.Name,
+                Description = customField.Description,
+                Type = customField.Type,
+                TemplateId = customField.TemplateId,
+                VisibleOnStageIds = customField.TemplateStages.Select(x => x.StageId).ToList(),
+                CustomFieldValue = customField.CustomFieldValue != null ? new CustomFieldValueDto()
+                {
+                    Value = ConvertStringToType(customField.CustomFieldValue),
+                    ProjectId = customField.CustomFieldValue.ProjectId,
+                    CustomFieldId = customField.Uid
+                } : null
+            };
+        }
+
+        public static CustomFieldValue FromDto(CustomFieldValueDto customFieldValueDto, CustomField customField)
+        {
+            return new CustomFieldValue()
+            {
+                ProjectId = customFieldValueDto.ProjectId,
+                CustomFieldId = customFieldValueDto.CustomFieldId,
+                Value = customFieldValueDto.Value != null ? ConvertTypeToString(customFieldValueDto.Value, customField.Type) : null
+            };
+        }
+
+        private static string ConvertTypeToString(object value, CustomFieldType type)
+        {
+            return type switch
+            {
+                CustomFieldType.Text => value.ToString(),
+                CustomFieldType.Date => ((DateOnly)value).ToString(ValidationConstants.DateFormat, CultureInfo.InvariantCulture),
+                _ => throw new ArgumentException("Invalid custom field type.")
+            };
+        }
+
+        private static object ConvertStringToType(CustomFieldValue value)
+        {
+            return value.CustomField.Type switch
+            {
+                CustomFieldType.Text => value.Value,
+                CustomFieldType.Date => DateOnly.ParseExact(value.Value, ValidationConstants.DateFormat, CultureInfo.InvariantCulture),
+                _ => throw new ArgumentException("Invalid custom field type.")
+            };
+        }
+
+        public static CustomField FromDto(CustomFieldDto customField)
+        {
+            return new CustomField()
+            {
+                Uid = customField.Uid,
+                Name = customField.Name,
+                Description = customField.Description,
+                Type = customField.Type,
+                TemplateId = customField.TemplateId,
+                TemplateStages = customField.VisibleOnStageIds
+                    .Select(x => new TemplateStage() { StageId = x })
+                    .ToList()
             };
         }
 

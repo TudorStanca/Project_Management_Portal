@@ -86,9 +86,10 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
             }
 
             var allStages = await _templateRepository.GetStages();
-
             var validStages = allStages.Where(x => template.Stages.Select(s => s.Uid).Contains(x.Uid)).ToList();
             var inexistentStages = template.Stages.Select(x => x.Uid).Except(validStages.Select(s => s.Uid)).ToList();
+
+            var visibleCustomFieldStages = _context.TemplateStageCustomField.Where(x => x.TemplateId == id).ToList();
 
             if (inexistentStages.Count != 0)
             {
@@ -105,9 +106,21 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
             }
 
             var projects = await _projectRepository.GetProjectsByTemplateId(id);
-            bool isStagesChanged = !existingTemplate.Stages.OrderBy(x => x.OrderNumber).Select(x => x.Uid).SequenceEqual(template.Stages.OrderBy(x => x.OrderNumber).Select(s => s.Uid));
 
-            if (isStagesChanged && projects.Count != 0)
+            //TO DO: Delete custom fields associtation instead of throwing error
+            var oldStageIds = existingTemplate.Stages.Select(x => x.Uid).ToList();
+            var newStageIds = template.Stages.Select(x => x.Uid).ToList();
+            var removedStages = oldStageIds.Except(newStageIds).ToList();
+
+            var usedStages = visibleCustomFieldStages.Select(x => x.StageId).Distinct().ToList();
+
+            if (removedStages.Intersect(usedStages).Any())
+            {
+                throw new ApiException(ErrorMessageConstants.TemplateHasExistingCustomFields);
+
+            }
+
+            if (removedStages.Count != 0 && projects.Count != 0)
             {
                 throw new ApiException(ErrorMessageConstants.TemplateHasExistingProjects);
             }

@@ -27,11 +27,9 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Data.ModelConfig
 
             builder.HasMany(x => x.Templates)
                 .WithMany(x => x.Stages)
-                .UsingEntity(
-                    "TemplateStages",
-                    r => r.HasOne(typeof(Template)).WithMany().HasForeignKey("TemplateId").HasPrincipalKey(nameof(Template.Uid)),
-                    l => l.HasOne(typeof(Stage)).WithMany().HasForeignKey("StageId").HasPrincipalKey(nameof(Stage.Uid)),
-                    j => j.HasKey("StageId", "TemplateId"));
+                .UsingEntity<TemplateStage>(
+                    r => r.HasOne<Template>().WithMany().HasForeignKey(x => x.TemplateId),
+                    l => l.HasOne<Stage>().WithMany().HasForeignKey(x => x.StageId));
         }
     }
 }

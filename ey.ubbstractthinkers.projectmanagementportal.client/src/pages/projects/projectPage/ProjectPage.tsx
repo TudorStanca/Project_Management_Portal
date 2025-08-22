@@ -25,6 +25,12 @@ import { getTemplate } from "@services/TemplateClient";
 import BoxContent from "../../../components/layout/background/BoxContent";
 import useSnackbar from "../../../hooks/useSnackbar";
 import CustomSnackbar from "../../../components/snackbar/CustomSnackbar";
+import type { CustomField } from "@models/CustomField";
+import {
+  getCustomFieldsByProjectId,
+  updateCustomFieldValue,
+} from "@services/CustomFieldClient";
+import { getCustomFieldTypeFromValue, Text } from "@models/CustomFieldType";
 
 interface ProjectPageProps {
   open: boolean;
@@ -62,8 +68,14 @@ const ProjectPage = (props: ProjectPageProps) => {
 
   const [project, setProject] = useState<Project>(DefaultProject);
   const [template, setTemplate] = useState<Template>(DefaultTemplate);
+  const [customFields, setCustomFields] = useState<CustomField[]>([]);
+  const [customFieldEdits, setCustomFieldEdits] = useState<
+    { customFieldId: string; value: unknown }[]
+  >([]);
 
   const { projectId } = useParams();
+
+  const isCustomFieldChanged = customFieldEdits.length > 0;
 
   const isFormChanged =
     name !== project.name ||
@@ -100,18 +112,19 @@ const ProjectPage = (props: ProjectPageProps) => {
 
     const fetchProject = async () => {
       try {
-        const [project, user, isOpen] = await Promise.all([
+        const [project, user, isOpen, fields] = await Promise.all([
           getProject(projectId!),
           getUser(),
           hasPendingApprovalRequestOpen(projectId!),
+          getCustomFieldsByProjectId(projectId!),
         ]);
 
         setProject(project);
         setLoggedUser(user);
         setIsPendingRequestOpen(isOpen);
+        setCustomFields(fields);
 
         const template = await getTemplate(project.templateUid);
-
         setTemplate(template);
 
         setName(project.name);
@@ -127,6 +140,29 @@ const ProjectPage = (props: ProjectPageProps) => {
 
     fetchProject();
   }, [projectId]);
+
+  const handleCustomFieldChange = (fieldId: string, value: unknown) => {
+    setCustomFieldEdits((prev) =>
+      prev.find((f) => f.customFieldId === fieldId)
+        ? prev.map((f) => (f.customFieldId === fieldId ? { ...f, value } : f))
+        : [...prev, { customFieldId: fieldId, value }],
+    );
+
+    setCustomFields((prev) =>
+      prev.map((f) =>
+        f.uid === fieldId
+          ? {
+              ...f,
+              customFieldValue: {
+                projectId: projectId!,
+                customFieldId: fieldId,
+                value,
+              },
+            }
+          : f,
+      ),
+    );
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -155,7 +191,19 @@ const ProjectPage = (props: ProjectPageProps) => {
     try {
       await updateProject(formattedProject);
 
+      if (isCustomFieldChanged) {
+        await updateCustomFieldValue(
+          projectId!,
+          customFieldEdits.map((f) => ({
+            projectId: projectId!,
+            customFieldId: f.customFieldId,
+            value: f.value,
+          })),
+        );
+      }
+
       showSnackbar("Project updated successfully", "success");
+      setCustomFieldEdits([]);
     } catch (error) {
       showSnackbar(handleApiError(error), "error");
     } finally {
@@ -268,6 +316,45 @@ const ProjectPage = (props: ProjectPageProps) => {
                   />
                 </LocalizationProvider>
               </Grid>
+
+              {customFields.map((field) => (
+                <Grid key={field.uid} size={{ xs: 16, sm: 6 }}>
+                  {getCustomFieldTypeFromValue(Number(field.type)) === Text ? (
+                    <TextField
+                      label={field.name}
+                      variant="outlined"
+                      value={field.customFieldValue?.value ?? ""}
+                      multiline
+                      rows={4}
+                      className={styles.projectAttribute}
+                      onChange={(e) =>
+                        handleCustomFieldChange(field.uid!, e.target.value)
+                      }
+                    />
+                  ) : (
+                    <LocalizationProvider
+                      dateAdapter={AdapterDayjs}
+                      adapterLocale="en"
+                    >
+                      <DatePicker
+                        label={field.name}
+                        value={
+                          field.customFieldValue?.value
+                            ? dayjs(field.customFieldValue.value as string)
+                            : null
+                        }
+                        onChange={(date) =>
+                          handleCustomFieldChange(
+                            field.uid!,
+                            date ? date.format("YYYY-MM-DD") : null,
+                          )
+                        }
+                        className={styles.projectAttribute}
+                      />
+                    </LocalizationProvider>
+                  )}
+                </Grid>
+              ))}
             </Grid>
 
             <Box className={styles.projectButtonsBox}>
@@ -298,7 +385,9 @@ const ProjectPage = (props: ProjectPageProps) => {
                     type="submit"
                     variant="contained"
                     color="primary"
-                    disabled={!isFormChanged || isUpdating}
+                    disabled={
+                      (!isFormChanged && !isCustomFieldChanged) || isUpdating
+                    }
                     className={styles.projectFormButton}
                   >
                     {isUpdating ? <CircularProgress /> : "Update"}

@@ -18,14 +18,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Data.ModelConfig
 
             builder.Property(x => x.Description)
                 .HasMaxLength(500);
-
-            builder.HasMany(x => x.Stages)
-            .WithMany(x => x.Templates)
-            .UsingEntity(
-                "TemplateStages",
-                r => r.HasOne(typeof(Stage)).WithMany().HasForeignKey("StageId").HasPrincipalKey(nameof(Stage.Uid)),
-                l => l.HasOne(typeof(Template)).WithMany().HasForeignKey("TemplateId").HasPrincipalKey(nameof(Template.Uid)),
-                j => j.HasKey("StageId", "TemplateId"));
         }
     }
 }

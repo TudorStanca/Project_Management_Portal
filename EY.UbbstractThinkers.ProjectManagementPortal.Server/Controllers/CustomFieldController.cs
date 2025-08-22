@@ -1,0 +1,111 @@
+﻿using EY.UbbstractThinkers.ProjectManagementPortal.Server.Dtos;
+using EY.UbbstractThinkers.ProjectManagementPortal.Server.Exceptions;
+using EY.UbbstractThinkers.ProjectManagementPortal.Server.Models;
+using EY.UbbstractThinkers.ProjectManagementPortal.Server.Services;
+using EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
+{
+    [ApiController]
+    [Route("/api/[controller]s")]
+    [Authorize]
+    public class CustomFieldController : ControllerBase
+    {
+        private readonly ICustomFieldService _customFieldService;
+
+        public CustomFieldController(ICustomFieldService customFieldService)
+        {
+            _customFieldService = customFieldService;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<CustomFieldDto>>> GetCustomFields()
+        {
+            var customFields = await _customFieldService.GetCustomFields();
+
+            if (customFields == null || customFields.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return Ok(customFields.Select(x => DtoUtils.ToDto(x)));
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CustomFieldDto>> GetCustomField(Guid id)
+        {
+            var customField = await _customFieldService.GetCustomField(id);
+
+            if (customField == null)
+            {
+                return NotFound();
+            }
+
+            return DtoUtils.ToDto(customField);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<CustomFieldDto>> SaveCustomField(CustomFieldDto customFieldDto)
+        {
+            var customField = await _customFieldService.SaveCustomField(DtoUtils.FromDto(customFieldDto));
+
+            return CreatedAtAction(nameof(GetCustomField), new { id = customField.Uid }, DtoUtils.ToDto(customField));
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProject(Guid id)
+        {
+            var customField = await _customFieldService.GetCustomField(id);
+
+            if (customField == null)
+            {
+                return NotFound();
+            }
+
+            await _customFieldService.DeleteCustomField(customField);
+
+            return NoContent();
+        }
+
+        [HttpGet("templates/{id}")]
+        public async Task<ActionResult<IEnumerable<CustomFieldDto>>> GetCustomFieldsByTemplateId(Guid id)
+        {
+            var customFields = await _customFieldService.GetCustomFieldsByTemplateId(id);
+
+            return Ok(customFields.Select(x => DtoUtils.ToDto(x)));
+        }
+
+        [HttpGet("projects/{id}")]
+        public async Task<ActionResult<IEnumerable<CustomFieldDto>>> GetCustomFieldsByProjectId(Guid id)
+        {
+            var customFields = await _customFieldService.GetCustomFieldsByProjectId(id);
+
+            return Ok(customFields.Select(x => DtoUtils.ToDto(x)));
+        }
+
+        [HttpPut("projects/{id}")]
+        public async Task<IActionResult> SaveCustomFieldValue(List<CustomFieldValueDto> customFieldValueDtos)
+        {
+            var customFieldValues = new List<CustomFieldValue>();
+
+            foreach (var x in customFieldValueDtos)
+            {
+                var customField = await _customFieldService.GetCustomField(x.CustomFieldId)
+                    ?? throw new ApiException(ErrorMessageConstants.InexistentCustomField);
+
+                var dto = DtoUtils.FromDto(x, customField);
+                customFieldValues.Add(dto);
+            }
+
+            await _customFieldService.SaveCustomFieldValues(customFieldValues);
+
+            return NoContent();
+        }
+    }
+}

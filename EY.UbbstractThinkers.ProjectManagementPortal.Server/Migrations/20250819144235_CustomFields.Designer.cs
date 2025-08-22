@@ -4,6 +4,7 @@ using EY.UbbstractThinkers.ProjectManagementPortal.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250819144235_CustomFields")]
+    partial class CustomFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -95,25 +98,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
                     b.HasIndex("TemplateId");
 
                     b.ToTable("CustomFields");
-                });
-
-            modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.CustomFieldValue", b =>
-                {
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CustomFieldId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Value")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ProjectId", "CustomFieldId");
-
-                    b.HasIndex("CustomFieldId")
-                        .IsUnique();
-
-                    b.ToTable("CustomFieldValues");
                 });
 
             modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Project", b =>
@@ -342,25 +326,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
                     b.Navigation("Template");
                 });
 
-            modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.CustomFieldValue", b =>
-                {
-                    b.HasOne("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.CustomField", "CustomField")
-                        .WithOne("CustomFieldValue")
-                        .HasForeignKey("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.CustomFieldValue", "CustomFieldId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Project", "Project")
-                        .WithMany()
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("CustomField");
-
-                    b.Navigation("Project");
-                });
-
             modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Project", b =>
                 {
                     b.HasOne("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Stage", "CurrentStage")
@@ -441,11 +406,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
                     b.Navigation("CustomField");
 
                     b.Navigation("TemplateStage");
-                });
-
-            modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.CustomField", b =>
-                {
-                    b.Navigation("CustomFieldValue");
                 });
 
             modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Project", b =>

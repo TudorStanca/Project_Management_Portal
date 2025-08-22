@@ -28,5 +28,12 @@
         public const string UniqueResource = "Can't add the same resource more than one time.";
         public const string UniqueStakeholder = "Can't add the same stakeholder more than one time.";
         public const string TemplateHasExistingProjects = "Can't change templates that have active projects.";
+        public const string InexistentCustomField = "Can't use a inexistent custom field.";
+        public const string TextValueError = "Field Text Value can't more than 500 characters.";
+        public const string DateValueError = "Field Date Value must be in correct format.";
+        public const string TemplateNotMatching = "Project and Custom Field must have the same template.";
+        public const string CustomFieldValueVisibleStages = "Can't change value on project's current stage.";
+        public const string NoVisibleStages = "Custom Field must have at least one visible stage.";
+        public const string TemplateHasExistingCustomFields = "Can't change templates that have active custom fields visible to stage.";
     }
 }

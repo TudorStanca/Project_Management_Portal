@@ -31,6 +31,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories
         {
             return _context.Templates
                 .Include(x => x.Stages.OrderBy(x => x.OrderNumber))
+                .Include(x => x.CustomFields)
                 .FirstOrDefaultAsync(x => x.Uid == id);
         }
 
@@ -38,6 +39,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories
         {
             return _context.Templates
                 .Include(x => x.Stages.OrderBy(x => x.OrderNumber))
+                .Include(x => x.CustomFields)
                 .ToListAsync();
         }
     }
