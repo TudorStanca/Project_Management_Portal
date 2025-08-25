@@ -1,5 +1,5 @@
 ﻿using EY.UbbstractThinkers.ProjectManagementPortal.Server.Dtos;
-using EY.UbbstractThinkers.ProjectManagementPortal.Server.Services;
+using EY.UbbstractThinkers.ProjectManagementPortal.Server.Services.Interfaces;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,10 +16,12 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
     public class TemplateController : ControllerBase
     {
         private ITemplateService _templateService;
+        private IProjectService _projectService;
 
-        public TemplateController(ITemplateService templateService)
+        public TemplateController(ITemplateService templateService, IProjectService projectService)
         {
             _templateService = templateService;
+            _projectService = projectService;
         }
 
         [HttpGet]
@@ -41,6 +43,14 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
             }
 
             return DtoUtils.ToDto(template);
+        }
+
+        [HttpGet("{id}/projects")]
+        public async Task<ActionResult<IEnumerable<ProjectDto>>> GetProjectsWithAssignedTemplate(Guid id)
+        {
+            var projects = await _projectService.GetProjectsWithAssignedTemplate(id);
+
+            return Ok(projects.Select(DtoUtils.ToDto));
         }
 
         [HttpPost]

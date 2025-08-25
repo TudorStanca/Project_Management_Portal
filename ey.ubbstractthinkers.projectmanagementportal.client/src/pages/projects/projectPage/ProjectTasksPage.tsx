@@ -23,7 +23,7 @@ import GridCellExpand from "../../../components/dataGridComponents/GridCellExpan
 import {
   Blocked,
   Done,
-  getTaskStatusValue,
+  getTaskStatusUiValue,
   InProgress,
   NotStarted,
   type TaskStatus,
@@ -35,7 +35,6 @@ import {
 } from "../../../utils/DateFunctions";
 import { getUsers } from "@services/AuthClient";
 import { type User } from "@models/Auth";
-import RenderAvatar from "../../../components/dataGridComponents/RenderAvatar";
 import GridEditDateCell from "../../../components/dataGridComponents/GridEditDateCell";
 import dayjs from "dayjs";
 import GridEditResourceCell from "../../../components/dataGridComponents/GridEditResourceCell";
@@ -49,6 +48,7 @@ import { deleteTask, saveTask, updateTask } from "@services/TaskClient";
 import CustomSnackbar from "../../../components/snackbar/CustomSnackbar";
 import useSnackbar from "../../../hooks/useSnackbar";
 import BoxContent from "../../../components/layout/background/BoxContent";
+import UserAvatar from "../../../components/avatar/UserAvatar";
 
 interface ProjectTasksPageProps {
   open: boolean;
@@ -172,6 +172,7 @@ const ProjectTasksPage = (props: ProjectTasksPageProps) => {
 
       showSnackbar("Task added successfully.", "success");
 
+      // Replacing the auto-generated id (for rendering purposes) with the real one from the database
       const updatedRow = {
         ...newRow,
         uid: newId,
@@ -221,7 +222,7 @@ const ProjectTasksPage = (props: ProjectTasksPageProps) => {
     return (
       <Tooltip title={user.email}>
         <span className={styles.resourceCellSpan}>
-          <RenderAvatar value={user} />
+          <UserAvatar user={user} />
         </span>
       </Tooltip>
     );
@@ -261,7 +262,8 @@ const ProjectTasksPage = (props: ProjectTasksPageProps) => {
         );
       },
       editable: true,
-      valueFormatter: (value: TaskStatus) => value && getTaskStatusValue(value),
+      valueFormatter: (value: TaskStatus) =>
+        value && getTaskStatusUiValue(value),
     },
     {
       field: "startDate",

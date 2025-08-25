@@ -1,6 +1,5 @@
 import type { User } from "@models/Auth";
 import {
-  Avatar,
   FormControl,
   MenuItem,
   Select,
@@ -8,8 +7,8 @@ import {
 } from "@mui/material";
 import { useGridApiContext, type GridRenderCellParams } from "@mui/x-data-grid";
 import styles from "./GridEditResourceCell.module.css";
-import LetterAvatar from "../../components/avatar/LetterAvatar";
 import { useState } from "react";
+import UserAvatar from "../avatar/UserAvatar";
 
 interface GridEditResourceCell extends GridRenderCellParams {
   resources: User[];
@@ -42,20 +41,8 @@ const GridEditResourceCell = (props: GridEditResourceCell) => {
         <MenuItem value="">No resource selected</MenuItem>
         {props.resources.map((user) => (
           <MenuItem key={user.id} value={user.id!}>
-            <div className={styles.addProjectAvatarDiv}>
-              {user.photo ? (
-                <Avatar
-                  alt={user.firstName + " " + user.lastName}
-                  src={`user.photo instanceof Blob ? URL.createObjectURL(user.photo) : undefined`}
-                />
-              ) : (
-                <LetterAvatar
-                  firstName={user.firstName ? user.firstName : ""}
-                  lastName={user.lastName ? user.lastName : ""}
-                />
-              )}
-            </div>
-            <span className={styles.addProjectSpanEmail}>{user.email}</span>
+            <UserAvatar user={user} />
+            <span className={styles.spanEmail}>{user.email}</span>
           </MenuItem>
         ))}
       </Select>

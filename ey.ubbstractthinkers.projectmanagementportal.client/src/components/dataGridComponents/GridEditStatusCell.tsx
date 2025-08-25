@@ -1,4 +1,4 @@
-import { getTaskStatusValue, type TaskStatus } from "@models/TaskStatus";
+import { getTaskStatusUiValue, type TaskStatus } from "@models/TaskStatus";
 import {
   FormControl,
   MenuItem,
@@ -40,7 +40,7 @@ const GridEditStatusCell = (props: GridEditStatusProps) => {
       >
         {props.options.map((status) => (
           <MenuItem key={status} value={status}>
-            {getTaskStatusValue(status)}
+            {getTaskStatusUiValue(status)}
           </MenuItem>
         ))}
       </Select>

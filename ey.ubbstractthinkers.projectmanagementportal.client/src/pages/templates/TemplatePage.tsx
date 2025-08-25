@@ -31,6 +31,7 @@ import { handleApiError } from "@services/ErrorHandler";
 import { ExecuteStageName } from "../../utils/AppConstants";
 import type { Template } from "@models/Template";
 import {
+  getProjectsWithTemplate,
   getTemplate,
   saveTemplate,
   updateTemplate,
@@ -53,6 +54,7 @@ import {
   type CustomFieldType,
 } from "@models/CustomFieldType";
 import AlertDialog from "../../components/AlertDialog";
+import { type Project } from "@models/Project";
 
 interface TemplatePageProps {
   open: boolean;
@@ -67,7 +69,9 @@ const TemplatePage = (props: TemplatePageProps) => {
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [stageUids, setStageUids] = useState<string[]>([]);
+
   const { templateId } = useParams();
+  const [templateProjects, setTemplateProjects] = useState<Project[]>([]);
 
   const [newFieldName, setNewFieldName] = useState<string>("");
   const [newFieldDescription, setNewFieldDescription] = useState<string>("");
@@ -103,11 +107,15 @@ const TemplatePage = (props: TemplatePageProps) => {
         setStages(stages);
 
         if (templateId) {
-          const template = await getTemplate(templateId);
+          const [template, projects] = await Promise.all([
+            getTemplate(templateId),
+            getProjectsWithTemplate(templateId),
+          ]);
 
           setName(template.name);
           setDescription(template.description);
           setStageUids(template.stageUids);
+          setTemplateProjects(projects);
 
           const templateStages = stages.filter((stage) =>
             template.stageUids.includes(stage.uid),
@@ -266,6 +274,7 @@ const TemplatePage = (props: TemplatePageProps) => {
                   multiple
                   value={stageUids}
                   onChange={handleChange}
+                  disabled={templateProjects.length !== 0}
                   input={
                     <OutlinedInput
                       id="stages-select-multiple-chip"
@@ -302,7 +311,13 @@ const TemplatePage = (props: TemplatePageProps) => {
                   disabled={isSaving}
                   className={styles.addTemplateSubmitButton}
                 >
-                  {isSaving ? <CircularProgress /> : "Save"}
+                  {isSaving ? (
+                    <CircularProgress />
+                  ) : templateId ? (
+                    "Update"
+                  ) : (
+                    "Save"
+                  )}
                 </Button>
               </Grid>
             </Grid>

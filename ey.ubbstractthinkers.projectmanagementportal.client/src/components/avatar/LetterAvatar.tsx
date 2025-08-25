@@ -3,6 +3,7 @@ import { Avatar } from "@mui/material";
 interface LetterAvatarProps {
   firstName: string;
   lastName: string;
+  className?: string;
 }
 
 const LetterAvatar = (props: LetterAvatarProps) => {
@@ -38,7 +39,12 @@ const LetterAvatar = (props: LetterAvatarProps) => {
     };
   };
 
-  return <Avatar {...getAvatarProps(props.firstName + " " + props.lastName)} />;
+  return (
+    <Avatar
+      className={`${props.className ?? ""}`}
+      {...getAvatarProps(props.firstName + " " + props.lastName)}
+    />
+  );
 };
 
 export default LetterAvatar;

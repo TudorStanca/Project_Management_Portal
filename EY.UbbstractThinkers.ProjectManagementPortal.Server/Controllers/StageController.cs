@@ -1,5 +1,5 @@
 ﻿using EY.UbbstractThinkers.ProjectManagementPortal.Server.Dtos;
-using EY.UbbstractThinkers.ProjectManagementPortal.Server.Services;
+using EY.UbbstractThinkers.ProjectManagementPortal.Server.Services.Interfaces;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

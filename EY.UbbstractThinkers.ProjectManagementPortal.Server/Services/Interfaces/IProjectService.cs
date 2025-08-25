@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
+namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services.Interfaces
 {
     public interface IProjectService
     {
@@ -22,8 +22,9 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
         Task<List<ProjectTask>> GetTasks(TaskFilter filter);
         Task<ProjectTask> GetTask(Guid id);
         Task<ProjectTask> SaveTask(ProjectTask task);
-        Task DeleteTask(Models.ProjectTask task);
+        Task DeleteTask(ProjectTask task);
         Task<ProjectTask> UpdateTask(Guid id, ProjectTask task);
         bool IsPendingApprovalRequestOpen(Project project);
+        Task<List<Project>> GetProjectsWithAssignedTemplate(Guid templateId);
     }
 }

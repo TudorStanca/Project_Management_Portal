@@ -48,10 +48,23 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils
         {
             return new UserDto()
             {
-                Uid = user.Id,
+                Id = user.Id,
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
+                ProfileImage = user.ProfileImage != null ? ImageUtils.ConvertBlobToBase64(user.ProfileImage) : null
+            };
+        }
+
+        public static User FromDto(UserDto userDto)
+        {
+            return new User()
+            {
+                Id = userDto.Id,
+                Email = userDto.Email,
+                FirstName = userDto.FirstName,
+                LastName = userDto.LastName,
+                ProfileImage = userDto.ProfileImage != null ? ImageUtils.ConvertBase64ToBlob(userDto.ProfileImage) : null
             };
         }
 

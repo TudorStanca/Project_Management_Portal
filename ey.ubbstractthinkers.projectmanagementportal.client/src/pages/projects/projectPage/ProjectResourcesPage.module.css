@@ -31,10 +31,6 @@
   justify-content: space-between;
 }
 
-.projectResourcesAvatarDiv {
-  display: inline-block;
-}
-
 .projectResourcesDialogBox {
   padding: 10px 20px;
 }
@@ -45,4 +41,16 @@
 
 .projectResourcesEmailTypography {
   padding-left: 10px;
+}
+
+.formControl {
+  width: 400px;
+  display: flex !important;
+  margin-top: 5px !important;
+}
+
+.chip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
 }

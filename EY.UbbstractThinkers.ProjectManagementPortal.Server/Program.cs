@@ -5,6 +5,7 @@ using EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Validators;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Validators.Interfaces;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Services;
+using EY.UbbstractThinkers.ProjectManagementPortal.Server.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -67,6 +68,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server
             builder.Services.AddScoped<IProjectValidator, ProjectValidator>();
             builder.Services.AddScoped<ITemplateValidator, TemplateValidator>();
             builder.Services.AddScoped<ITaskValidator, TaskValidator>();
+            builder.Services.AddScoped<IUserValidator, UserValidator>();
             builder.Services.AddScoped<IProjectService, ProjectService>();
             builder.Services.AddScoped<ITemplateService, TemplateService>();
             builder.Services.AddScoped<IApprovalRepository, ApprovalRepository>();
@@ -74,6 +76,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server
             builder.Services.AddScoped<ICustomFieldRepository, CustomFieldRepository>();
             builder.Services.AddScoped<ICustomFieldService, CustomFieldService>();
             builder.Services.AddScoped<ICustomFieldValidator, CustomFieldValidator>();
+            builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddProblemDetails();
 

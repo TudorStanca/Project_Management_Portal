@@ -1,14 +1,19 @@
 import {
-  Avatar,
   Box,
   Button,
   Checkbox,
+  Chip,
   CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  OutlinedInput,
   Paper,
+  Select,
   Table,
   TableBody,
   TableCell,
@@ -17,11 +22,12 @@ import {
   TablePagination,
   TableRow,
   Typography,
+  type SelectChangeEvent,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import styles from "./ProjectResourcesPage.module.css";
 import ProjectNavBar from "../../../components/layout/projectNavBar/ProjectNavBar";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DefaultUser, type User } from "@models/Auth";
 import { DefaultProject, type Project } from "@models/Project";
 import {
@@ -32,12 +38,13 @@ import {
 import { getUser, getUsers } from "@services/AuthClient";
 import { handleApiError } from "@services/ErrorHandler";
 import { AddCircleOutline } from "@mui/icons-material";
-import LetterAvatar from "../../../components/avatar/LetterAvatar";
 import DeleteIcon from "@mui/icons-material/Delete";
 import StageStepper from "../../../components/stepper/StageStepper";
 import BoxContent from "../../../components/layout/background/BoxContent";
 import useSnackbar from "../../../hooks/useSnackbar";
 import CustomSnackbar from "../../../components/snackbar/CustomSnackbar";
+import UserAvatar from "../../../components/avatar/UserAvatar";
+import AlertDialog from "../../../components/AlertDialog";
 
 interface ProjectResourcesPageProps {
   open: boolean;
@@ -70,6 +77,10 @@ const ProjectResourcesPage = (props: ProjectResourcesPageProps) => {
   const [openAddDialog, setOpenAddDialog] = useState<boolean>(false);
   const [openConfirmDialog, setOpenConfirmDialog] = useState<boolean>(false);
 
+  const userDictionary = useMemo(() => {
+    return Object.fromEntries(users.map((x) => [x.id, x.email]));
+  }, [users]);
+
   useEffect(() => {
     setIsLoading(true);
 
@@ -95,8 +106,6 @@ const ProjectResourcesPage = (props: ProjectResourcesPageProps) => {
         );
         setUsers(filteredUsers);
       } catch (error) {
-        console.error(error);
-
         showSnackbar(handleApiError(error), "error");
       } finally {
         setIsLoading(false);
@@ -105,6 +114,12 @@ const ProjectResourcesPage = (props: ProjectResourcesPageProps) => {
 
     fetchAll();
   }, [projectId]);
+
+  const handleChange = (event: SelectChangeEvent<typeof selectedUserIds>) => {
+    const value = event.target.value;
+
+    setSelectedUserIds(typeof value === "string" ? value.split(",") : value);
+  };
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -145,8 +160,6 @@ const ProjectResourcesPage = (props: ProjectResourcesPageProps) => {
 
       showSnackbar("Resources deleted successfully", "success");
     } catch (error) {
-      console.error(error);
-
       showSnackbar(handleApiError(error), "error");
     }
 
@@ -189,8 +202,6 @@ const ProjectResourcesPage = (props: ProjectResourcesPageProps) => {
 
       showSnackbar("Resources added successfully", "success");
     } catch (error) {
-      console.error(error);
-
       showSnackbar(handleApiError(error), "error");
     }
 
@@ -293,17 +304,7 @@ const ProjectResourcesPage = (props: ProjectResourcesPageProps) => {
                         />
                       </TableCell>
                       <TableCell>
-                        {resource.photo ? (
-                          <Avatar
-                            alt={resource.firstName + " " + resource.lastName}
-                            src={`user.photo instanceof Blob ? URL.createObjectURL(user.photo) : undefined`}
-                          />
-                        ) : (
-                          <LetterAvatar
-                            firstName={resource.firstName!}
-                            lastName={resource.lastName!}
-                          />
-                        )}
+                        <UserAvatar user={resource} />
                       </TableCell>
                       <TableCell>{resource.email}</TableCell>
                       <TableCell>{resource.firstName}</TableCell>
@@ -324,72 +325,86 @@ const ProjectResourcesPage = (props: ProjectResourcesPageProps) => {
           </TableContainer>
         </>
       )}
+
       <Dialog open={openAddDialog} onClose={handleCloseDialog}>
         <DialogTitle>Add Resources</DialogTitle>
         <DialogContent>
-          {users.map((user) => (
-            <Box
-              key={user.id}
-              display="flex"
-              alignItems="center"
-              className={styles.projectResourcesDialogBox}
-            >
-              <Checkbox
-                checked={selectedUserIds.indexOf(user.id!) > -1}
-                onChange={() => {
-                  setSelectedUserIds((prev) =>
-                    prev.includes(user.id!)
-                      ? prev.filter((id) => id !== user.id)
-                      : [...prev, user.id!],
-                  );
-                }}
-              />
-              <div className={styles.projectResourcesAvatarDiv}>
-                {user.photo ? (
-                  <Avatar
-                    alt={user.firstName + " " + user.lastName}
-                    src={`user.photo instanceof Blob ? URL.createObjectURL(user.photo) : undefined`}
+          {users.length === 0 ? (
+            <Typography>
+              There are no more resourses available to add
+            </Typography>
+          ) : (
+            <FormControl className={styles.formControl}>
+              <InputLabel id="resources-multiple-chip-label">
+                Resources
+              </InputLabel>
+              <Select
+                labelId="resources-multiple-chip-label"
+                id="resources-multiple-chip"
+                multiple
+                value={selectedUserIds}
+                onChange={handleChange}
+                input={
+                  <OutlinedInput
+                    id="resources-select-multiple-chip"
+                    label="Resources"
                   />
-                ) : (
-                  <LetterAvatar
-                    firstName={user.firstName ? user.firstName : ""}
-                    lastName={user.lastName ? user.lastName : ""}
-                  />
+                }
+                renderValue={(selected) => (
+                  <Box className={styles.chip}>
+                    {selected.map((userId) => (
+                      <Chip key={userId} label={userDictionary[userId]} />
+                    ))}
+                  </Box>
                 )}
-              </div>
-              <Typography className={styles.projectResourcesEmailTypography}>
-                {user.email}
-              </Typography>
-            </Box>
-          ))}
+              >
+                {users.map((user) => (
+                  <MenuItem key={user.id} value={user.id!}>
+                    <Checkbox
+                      checked={selectedUserIds.indexOf(user.id!) > -1}
+                    />
+                    <UserAvatar user={user} />
+                    <Typography
+                      className={styles.projectResourcesEmailTypography}
+                    >
+                      {user.email}
+                    </Typography>
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleAddUsers} color="primary">
-            Add
-          </Button>
+          {users.length === 0 ? (
+            <Button onClick={handleCloseDialog} color="primary">
+              Ok
+            </Button>
+          ) : (
+            <>
+              <Button onClick={handleCloseDialog} color="primary">
+                Cancel
+              </Button>
+              <Button
+                onClick={handleAddUsers}
+                color="primary"
+                disabled={selectedUserIds.length === 0}
+              >
+                Add
+              </Button>
+            </>
+          )}
         </DialogActions>
       </Dialog>
 
-      <Dialog open={openConfirmDialog} onClose={handleCancelDelete}>
-        <DialogTitle>Confirm Deletion</DialogTitle>
-        <DialogContent>
-          <Typography>
-            Are you sure you want to delete the selected resources?
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCancelDelete} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleConfirmDelete} color="primary">
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <AlertDialog
+        title="Confirm Deletion"
+        description="Are you sure you want to delete the selected resources?"
+        open={openConfirmDialog}
+        handleCancel={handleCancelDelete}
+        handleConfirm={handleConfirmDelete}
+      />
 
       <CustomSnackbar
         isOpen={isSnackbarOpen}

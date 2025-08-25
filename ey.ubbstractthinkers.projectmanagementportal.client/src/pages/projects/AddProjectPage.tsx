@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Box,
   Button,
   CircularProgress,
@@ -22,13 +21,13 @@ import { handleApiError } from "@services/ErrorHandler";
 import type { Project } from "@models/Project";
 import type { User } from "@models/Auth";
 import { getUser, getUsers } from "@services/AuthClient";
-import LetterAvatar from "../../components/avatar/LetterAvatar";
 import type { Template } from "@models/Template";
 import { getTemplates } from "@services/TemplateClient";
 import { useNavigate } from "react-router-dom";
 import BoxContent from "../../components/layout/background/BoxContent";
 import useSnackbar from "../../hooks/useSnackbar";
 import CustomSnackbar from "../../components/snackbar/CustomSnackbar";
+import UserAvatar from "../../components/avatar/UserAvatar";
 
 interface ProjectFormProps {
   open: boolean;
@@ -109,8 +108,6 @@ const AddProjectPage = (props: ProjectFormProps) => {
 
       showSnackbar("Project added successfully", "success");
     } catch (error) {
-      console.error(error);
-
       showSnackbar(handleApiError(error), "error");
     } finally {
       setIsSaving(false);
@@ -244,19 +241,7 @@ const AddProjectPage = (props: ProjectFormProps) => {
                       value={user.id!}
                       className={styles.addProjectOwnerSelectMenuItem}
                     >
-                      <div className={styles.addProjectAvatarDiv}>
-                        {user.photo ? (
-                          <Avatar
-                            alt={user.firstName + " " + user.lastName}
-                            src={`user.photo instanceof Blob ? URL.createObjectURL(user.photo) : undefined`}
-                          />
-                        ) : (
-                          <LetterAvatar
-                            firstName={user.firstName ? user.firstName : ""}
-                            lastName={user.lastName ? user.lastName : ""}
-                          />
-                        )}
-                      </div>
+                      <UserAvatar user={user} />
                       <span className={styles.addProjectSpanEmail}>
                         {user.email}
                       </span>

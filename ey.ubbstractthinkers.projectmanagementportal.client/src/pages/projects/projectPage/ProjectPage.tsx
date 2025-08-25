@@ -202,15 +202,15 @@ const ProjectPage = (props: ProjectPageProps) => {
         );
       }
 
-      showSnackbar("Project updated successfully", "success");
+        showSnackbar("Project updated successfully", "success");
+
       setCustomFieldEdits([]);
+      setProject(formattedProject);
     } catch (error) {
       showSnackbar(handleApiError(error), "error");
     } finally {
       setIsUpdating(false);
     }
-
-    setProject(formattedProject);
   };
 
   const handleDelete = async () => {
@@ -223,8 +223,6 @@ const ProjectPage = (props: ProjectPageProps) => {
       showSnackbar("Project deleted successfully", "success");
       setIsProjectDeleted(true);
     } catch (error) {
-      console.error(error);
-
       showSnackbar(handleApiError(error), "error");
     } finally {
       setIdDeleting(false);
@@ -238,8 +236,6 @@ const ProjectPage = (props: ProjectPageProps) => {
       showSnackbar("Approval Request was sent successfuly", "success");
       setIsPendingRequestOpen(true);
     } catch (error) {
-      console.error(error);
-
       showSnackbar(handleApiError(error), "error");
     }
   };

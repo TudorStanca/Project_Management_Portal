@@ -69,8 +69,6 @@ const RegisterPage = () => {
       showSnackbar("User registered successfully", "success");
       setNavigateToLogin(true);
     } catch (error) {
-      console.error(error);
-
       showSnackbar(handleApiError(error), "error");
     } finally {
       setIsLoading(false);

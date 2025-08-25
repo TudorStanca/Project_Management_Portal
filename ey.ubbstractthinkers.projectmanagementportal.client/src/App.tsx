@@ -18,6 +18,7 @@ import ApprovalsPage from "./pages/approvals/ApprovalsPage";
 import ProtectedRoute from "./components/context/auth/ProtectedRoute";
 import TemplatesPage from "./pages/templates/TemplatesPage";
 import TemplatePage from "./pages/templates/TemplatePage";
+import UserProfilePage from "./pages/auth/UserProfilePage";
 
 function App() {
   const [open, setOpen] = useState(true);
@@ -60,6 +61,14 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <UserProfilePage open={open} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/projects"
             element={
               <ProtectedRoute>
@@ -68,7 +77,7 @@ function App() {
             }
           />
           <Route
-            path="/edit-template/:templateId"
+            path="/templates/:templateId"
             element={
               <ProtectedRoute>
                 <TemplatePage open={open} />

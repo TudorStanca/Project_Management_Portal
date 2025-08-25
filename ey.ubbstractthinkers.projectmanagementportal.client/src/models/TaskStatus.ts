@@ -22,10 +22,22 @@ const TaskStatusNumberMapping: { [key: string]: TaskStatus } = {
   Default: Default,
 };
 
+const TaskStatusUiMapping: { [key: number]: string } = {
+  [NotStarted]: "Not Started",
+  [InProgress]: "In Progress",
+  [Done]: "Done",
+  [Blocked]: "Blocked",
+  [Default]: "Unknown Value",
+};
+
 export const getTaskStatusValue = (status: TaskStatus) => {
   return taskStatusMapping[status];
 };
 
-export const getTaskStatusFromValue = (value: number) => {
+export const getTaskStatusFromValue = (value: string) => {
   return TaskStatusNumberMapping[value];
+};
+
+export const getTaskStatusUiValue = (status: TaskStatus) => {
+  return TaskStatusUiMapping[status];
 };

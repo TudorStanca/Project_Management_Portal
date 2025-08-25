@@ -1,3 +1,4 @@
+import type { Project } from "@models/Project";
 import type { Template } from "@models/Template";
 import axios, { type AxiosResponse } from "axios";
 
@@ -16,6 +17,12 @@ export async function getTemplates(): Promise<Template[]> {
 
 export async function getTemplate(id: string): Promise<Template> {
   const response: AxiosResponse<Template> = await api.get("/" + id);
+
+  return response.data;
+}
+
+export async function getProjectsWithTemplate(id: string): Promise<Project[]> {
+  const response: AxiosResponse<Project[]> = await api.get(`/${id}/projects`);
 
   return response.data;
 }

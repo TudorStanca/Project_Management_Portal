@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
+namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services.Interfaces
 {
     public interface ITemplateService
     {

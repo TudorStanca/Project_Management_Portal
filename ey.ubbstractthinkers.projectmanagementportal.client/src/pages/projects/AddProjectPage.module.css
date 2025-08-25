@@ -33,12 +33,8 @@
   margin-left: 8px;
 }
 
-.addProjectAvatarDiv {
-  display: inline-block;
-}
-
 .addProjectOwnerSelect {
-  min-width: 170px;
+  min-width: 250px;
 }
 
 .addProjectOwnerSelectMenuItem {

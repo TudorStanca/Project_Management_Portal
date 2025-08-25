@@ -1,20 +1,23 @@
 import { useEffect, useState, type ReactNode } from "react";
 import AuthContext from "./AuthContext";
 import { getUser } from "@services/AuthClient";
+import { DefaultUser, type User } from "@models/Auth";
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
 const AuthProvider = (props: AuthProviderProps) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [loggedUser, setLoggedUser] = useState<User>(DefaultUser);
 
   useEffect(() => {
     const fetchIsUserLogged = async () => {
       try {
         const loggedIn = await getUser();
         setIsAuthenticated(loggedIn != null);
+        setLoggedUser(loggedIn || DefaultUser);
       } catch (error) {
         console.error(error);
       } finally {
@@ -27,10 +30,18 @@ const AuthProvider = (props: AuthProviderProps) => {
 
   const handleLogin = () => setIsAuthenticated(true);
   const handleLogout = () => setIsAuthenticated(false);
+  const handleSetLoggedUser = (user: User) => setLoggedUser(user);
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, handleLogin, handleLogout, isLoading }}
+      value={{
+        isAuthenticated,
+        handleLogin,
+        handleLogout,
+        isLoading,
+        loggedUser,
+        handleSetLoggedUser,
+      }}
     >
       {props.children}
     </AuthContext.Provider>

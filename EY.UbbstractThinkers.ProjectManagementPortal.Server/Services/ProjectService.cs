@@ -4,6 +4,7 @@ using EY.UbbstractThinkers.ProjectManagementPortal.Server.Exceptions;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Models;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Validators.Interfaces;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories;
+using EY.UbbstractThinkers.ProjectManagementPortal.Server.Services.Interfaces;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -78,7 +79,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
 
             if (task.ResourceId != null)
             {
-                var resource = await _projectRepository.GetResource(task.ProjectUid, task.ResourceId);
+                var resource = await _projectRepository.GetProjectResource(task.ProjectUid, task.ResourceId);
 
                 if (resource == null)
                 {
@@ -245,7 +246,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
                     throw new ApiException(ErrorMessageConstants.UniqueResource);
                 }
 
-                var projectResource = new ProjectResources
+                var projectResource = new ProjectResource
                 {
                     ProjectId = project.Uid,
                     UserId = id
@@ -270,7 +271,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
 
             foreach (var id in stakeholderIds)
             {
-                var projectStakeholder = await _context.ProjectStakeholders.FindAsync(project.Uid, id);
+                var projectStakeholder = await _projectRepository.GetProjectStakeholder(project.Uid, id);
 
                 project.Stakeholders.Remove(projectStakeholder);
             }
@@ -284,7 +285,13 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
 
             foreach (var id in resourceIds)
             {
-                var projectResources = await _context.ProjectResources.FindAsync(project.Uid, id);
+                var projectResources = await _projectRepository.GetProjectResource(project.Uid, id);
+                var tasksWithAssignedResource = await _projectRepository.GetResourceProjectTasks(id);
+
+                foreach (var task in tasksWithAssignedResource)
+                {
+                    task.ResourceId = null;
+                }
 
                 project.Resources.Remove(projectResources);
             }
@@ -372,6 +379,11 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
         public bool IsPendingApprovalRequestOpen(Project project)
         {
             return project.Approvals.Any(x => x.Status == ApprovalStatus.Pending);
+        }
+
+        public Task<List<Project>> GetProjectsWithAssignedTemplate(Guid templateId)
+        {
+            return _projectRepository.GetProjectsByTemplateId(templateId);
         }
     }
 }

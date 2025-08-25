@@ -2,7 +2,7 @@
 
 namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Models
 {
-    public class ProjectResources
+    public class ProjectResource
     {
         public Guid ProjectId { get; set; }
         public string UserId { get; set; }

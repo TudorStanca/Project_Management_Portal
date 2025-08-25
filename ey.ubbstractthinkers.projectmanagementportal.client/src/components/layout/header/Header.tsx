@@ -6,7 +6,6 @@ import {
   Typography,
   Button,
   IconButton,
-  Avatar,
   MenuItem,
   Menu,
 } from "@mui/material";
@@ -16,18 +15,16 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth/AuthFunction";
 import { getUser, logout } from "@services/AuthClient";
 import { DefaultUser, type User } from "@models/Auth";
-import LetterAvatar from "../../avatar/LetterAvatar";
 import { isAuthPage } from "../../../utils/LocationFunctions";
+import UserAvatar from "../../avatar/UserAvatar";
 
 const Header = () => {
   const [user, setUser] = useState<User>(DefaultUser);
-  const photoUrl =
-    user.photo instanceof Blob ? URL.createObjectURL(user.photo) : undefined;
 
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { isAuthenticated, handleLogout } = useAuth();
+  const { isAuthenticated, handleLogout, loggedUser } = useAuth();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -59,7 +56,7 @@ const Header = () => {
     };
 
     fetchUser();
-  }, [isAuthenticated]);
+  }, [isAuthenticated, loggedUser]);
 
   if (isAuthPage(location)) {
     return null;
@@ -88,19 +85,11 @@ const Header = () => {
 
         {isAuthenticated ? (
           <>
-            <div className={styles.headerAvatarDiv} onClick={handleMenuClick}>
-              {user.photo ? (
-                <Avatar
-                  alt={user.firstName + " " + user.lastName}
-                  src={photoUrl}
-                />
-              ) : (
-                <LetterAvatar
-                  firstName={user.firstName!}
-                  lastName={user.lastName!}
-                />
-              )}
-            </div>
+            <UserAvatar
+              className={styles.headerAvatarDiv}
+              user={user}
+              onClick={handleMenuClick}
+            />
             <Menu
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}

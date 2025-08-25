@@ -1,5 +1,7 @@
 ﻿using EY.UbbstractThinkers.ProjectManagementPortal.Server.Dtos;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Models;
+using EY.UbbstractThinkers.ProjectManagementPortal.Server.Services.Interfaces;
+using EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,11 +18,13 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly IUserService _userService;
 
-        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IUserService userService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _userService = userService;
         }
 
         [HttpPost("register")]
@@ -78,15 +82,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
         {
             var loggedUser = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
 
-            return Ok(new
-            {
-                message = "User is logged in.",
-                loggedUser.Id,
-                loggedUser.Email,
-                loggedUser.FirstName,
-                loggedUser.LastName,
-                loggedUser.ProfileImage
-            });
+            return Ok(DtoUtils.ToDto(loggedUser));
         }
 
         [HttpPost("logout")]
@@ -108,15 +104,20 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
                 return NotFound();
             }
 
-            return Ok(users.Select(x =>
-            new
+            return Ok(users.Select(DtoUtils.ToDto));
+        }
+
+        [HttpPut("profile")]
+        public async Task<ActionResult> UpdateUser(UserDto userDto)
+        {
+            var user = await _userService.UpdateUser(userDto.Id, DtoUtils.FromDto(userDto));
+
+            if (user == null)
             {
-                x.Id,
-                x.Email,
-                x.FirstName,
-                x.LastName,
-                x.ProfileImage
-            }));
+                return NotFound();
+            }
+
+            return NoContent();
         }
     }
 }

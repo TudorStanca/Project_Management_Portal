@@ -31,3 +31,7 @@ export async function getUsers(): Promise<User[]> {
 
   return response.data;
 }
+
+export async function updateUser(user: User): Promise<void> {
+  await api.put("/profile", user);
+}

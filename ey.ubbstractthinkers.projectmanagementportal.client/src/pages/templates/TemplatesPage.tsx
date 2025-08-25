@@ -80,7 +80,7 @@ const TemplatesPage = (props: TemplatesPageProps) => {
               <div className={styles.templatesCardGlowWrapper}>
                 <Card
                   className={styles.templatesCard}
-                  onClick={() => navigate(`/edit-template/${template.uid}`)}
+                  onClick={() => navigate(`/templates/${template.uid}`)}
                 >
                   <CardContent className={styles.templatesCardContent}>
                     <Typography

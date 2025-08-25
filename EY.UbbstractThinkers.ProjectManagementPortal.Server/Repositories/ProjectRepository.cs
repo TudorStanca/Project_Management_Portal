@@ -99,14 +99,24 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories
             return _context.ProjectTasks.FirstOrDefaultAsync(x => x.Uid == id);
         }
 
-        public Task<ProjectResources> GetResource(Guid projectId, string userId)
+        public Task<List<Project>> GetProjectsByTemplateId(Guid templateId)
+        {
+            return _context.Projects.Where(x => x.TemplateUid == templateId).ToListAsync();
+        }
+
+        public Task<ProjectStakeholder> GetProjectStakeholder(Guid projectId, string userId)
+        {
+            return _context.ProjectStakeholders.FirstOrDefaultAsync(x => x.ProjectId == projectId && x.UserId == userId);
+        }
+
+        public Task<ProjectResource> GetProjectResource(Guid projectId, string userId)
         {
             return _context.ProjectResources.FirstOrDefaultAsync(x => x.ProjectId == projectId && x.UserId == userId);
         }
 
-        public Task<List<Project>> GetProjectsByTemplateId(Guid templateId)
+        public Task<List<ProjectTask>> GetResourceProjectTasks(string userId)
         {
-            return _context.Projects.Where(x => x.TemplateUid == templateId).ToListAsync();
+            return _context.ProjectTasks.Where(x => x.ResourceId == userId).ToListAsync();
         }
     }
 }

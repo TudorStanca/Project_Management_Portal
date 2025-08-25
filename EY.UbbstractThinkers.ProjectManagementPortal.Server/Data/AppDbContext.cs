@@ -9,7 +9,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Data
         public DbSet<Project> Projects { get; set; }
         public DbSet<ProjectTask> ProjectTasks { get; set; }
         public DbSet<ProjectStakeholder> ProjectStakeholders { get; set; }
-        public DbSet<ProjectResources> ProjectResources { get; set; }
+        public DbSet<ProjectResource> ProjectResources { get; set; }
         public DbSet<Stage> Stages { get; set; }
         public DbSet<Template> Templates { get; set; }
         public DbSet<ApprovalRequest> ApprovalRequests { get; set; }

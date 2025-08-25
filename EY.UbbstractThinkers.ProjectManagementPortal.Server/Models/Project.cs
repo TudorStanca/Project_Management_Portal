@@ -12,7 +12,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Models
         public DateOnly? EndDate { get; set; }
 
         public List<ProjectStakeholder> Stakeholders { get; set; } = [];
-        public List<ProjectResources> Resources { get; set; } = [];
+        public List<ProjectResource> Resources { get; set; } = [];
         public List<ProjectTask> Tasks { get; set; } = [];
         public List<ApprovalRequest> Approvals { get; set; } = [];
         public string OwnerId { get; set; }

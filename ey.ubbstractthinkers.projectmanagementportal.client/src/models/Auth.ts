@@ -4,7 +4,7 @@ export interface User {
   password: string;
   firstName: string | null;
   lastName: string | null;
-  photo: File | Blob | null;
+  profileImage: string | null;
 }
 
 export const DefaultUser: User = {
@@ -13,5 +13,5 @@ export const DefaultUser: User = {
   password: "",
   firstName: "",
   lastName: "",
-  photo: new Blob(),
+  profileImage: null,
 };

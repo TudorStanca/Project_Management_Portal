@@ -55,7 +55,7 @@ const LoginPage = () => {
       password,
       firstName: null,
       lastName: null,
-      photo: null,
+      profileImage: null,
     };
 
     try {
@@ -65,8 +65,6 @@ const LoginPage = () => {
       showSnackbar("User logged in successfully", "success");
       setNavigateToLandingPage(true);
     } catch (error) {
-      console.error(error);
-
       showSnackbar(handleApiError(error), "error");
     } finally {
       setIsLoading(false);
