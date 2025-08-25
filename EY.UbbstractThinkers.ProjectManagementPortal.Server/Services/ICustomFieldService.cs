@@ -14,5 +14,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
         Task<List<CustomField>> GetCustomFields();
         Task<List<CustomField>> GetCustomFieldsByProjectId(Guid id);
         Task SaveCustomFieldValues(List<CustomFieldValue> customFieldValues);
+        Task<CustomField> UpdateCustomField(Guid id, CustomField customField);
+
     }
 }

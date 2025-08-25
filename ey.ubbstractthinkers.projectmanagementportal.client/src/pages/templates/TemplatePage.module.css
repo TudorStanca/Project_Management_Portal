@@ -32,8 +32,8 @@
 }
 
 .customFieldsContainer {
-  padding: 16px;
-  margin: 20px 10px;
+  padding: 16px 0px;
+  margin: 20px 0.5em;
 }
 
 .customFieldsBox {
@@ -42,4 +42,26 @@
   justify-content: space-between;
   align-items: center;
   margin: 3px 0;
+}
+
+.editCustomFieldDialogContent {
+  display: flex;
+  height: 100%;
+}
+
+.addCustomFieldForm {
+  padding-top: 30px;
+}
+
+.editCustomFieldBox {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  margin: 10px 0;
+}
+
+.editFieldFormField {
+  margin: 10px 0 !important;
 }

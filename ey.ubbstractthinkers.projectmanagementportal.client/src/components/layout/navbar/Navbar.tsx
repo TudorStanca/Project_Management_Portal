@@ -17,6 +17,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import ClassIcon from "@mui/icons-material/Class";
 import ApprovalIcon from "@mui/icons-material/Approval";
+import AddIcon from "@mui/icons-material/Add";
 import { isAuthPage } from "../../../utils/LocationFunctions";
 
 interface NavbarProps {
@@ -49,9 +50,19 @@ const Navbar = (props: NavbarProps) => {
       icon: <AssignmentIcon className={styles.navbarListItemIcon} />,
     },
     {
+      text: "Add Project",
+      path: "/add-project",
+      icon: <AddIcon className={styles.navbarListItemIcon} />,
+    },
+    {
       text: "Templates",
       path: "/templates",
       icon: <ClassIcon className={styles.navbarListItemIcon} />,
+    },
+    {
+      text: "Add Template",
+      path: "/add-template",
+      icon: <AddIcon className={styles.navbarListItemIcon} />,
     },
     {
       text: "Approvals",

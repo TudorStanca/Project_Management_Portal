@@ -57,12 +57,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
                 .Where(x => customField.TemplateStages.Select(x => x.StageId).Contains(x.StageId))
                 .ToList();
 
-            //TO DO: Let user update custom field and delete this
-            if (visibleStages.Count == 0)
-            {
-                throw new ApiException(ErrorMessageConstants.NoVisibleStages);
-            }
-
             customField.Template = template;
             customField.TemplateStages = visibleStages;
 
@@ -114,11 +108,17 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
 
         public async Task SaveCustomFieldValues(List<CustomFieldValue> customFieldValues)
         {
+            var project = await _projectRepository.GetProject(customFieldValues[0].ProjectId) ?? throw new ApiException(ErrorMessageConstants.ProjectNotFoundMessage);
+            var customFields = await _customFieldRepository.GetCustomFields();
+
             foreach (var customFieldValue in customFieldValues)
             {
-                //TO DO: Refactor logic to avoid redundant reads
-                var project = await _projectRepository.GetProject(customFieldValue.ProjectId) ?? throw new ApiException(ErrorMessageConstants.ProjectNotFoundMessage);
-                var customField = await _customFieldRepository.GetCustomField(customFieldValue.CustomFieldId) ?? throw new ApiException(ErrorMessageConstants.InexistentCustomField);
+                var customField = customFields.FirstOrDefault(x => x.Uid == customFieldValue.CustomFieldId) ?? throw new ApiException(ErrorMessageConstants.InexistentCustomField);
+
+                if (project.Uid != customFieldValue.ProjectId)
+                {
+                    throw new ApiException(ErrorMessageConstants.DifferentProjectId);
+                }
 
                 if (project.TemplateUid != customField.TemplateId)
                 {
@@ -161,6 +161,54 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
             }
 
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<CustomField> UpdateCustomField(Guid id, CustomField customField)
+        {
+            var existingCustomField = await _customFieldRepository.GetCustomField(id);
+
+            if (existingCustomField == null)
+            {
+                return null;
+            }
+
+            if (existingCustomField.TemplateId != customField.TemplateId)
+            {
+                throw new ApiException(ErrorMessageConstants.TemplateChangeErrorCustomField);
+            }
+
+            if (existingCustomField.Type != customField.Type)
+            {
+                throw new ApiException(ErrorMessageConstants.TypeChangeError);
+            }
+
+            var validationResults = _customFieldValidator.Validate(new ValidationContext(customField));
+
+            if (validationResults.Any())
+            {
+                throw new ApiException(string.Join(", ", validationResults));
+            }
+
+            var visibleStages = _context.TemplateStage
+                .Where(x => x.TemplateId == customField.TemplateId)
+                .Where(x => customField.TemplateStages.Select(x => x.StageId).Contains(x.StageId))
+                .ToList();
+
+            var template = await _templateRepository.GetTemplate(existingCustomField.TemplateId);
+
+            var inexistentStages = customField.TemplateStages.Select(s => s.StageId).Except(template.Stages.Select(x => x.Uid)).ToList();
+
+            if (inexistentStages.Count != 0)
+            {
+                throw new ApiException(ErrorMessageConstants.InexistentStage);
+            }
+
+            existingCustomField.Name = customField.Name;
+            existingCustomField.Description = customField.Description;
+            existingCustomField.TemplateStages = visibleStages;
+            await _context.SaveChangesAsync();
+
+            return customField;
         }
     }
 }

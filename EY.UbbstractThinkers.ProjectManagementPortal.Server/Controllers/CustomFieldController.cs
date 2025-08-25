@@ -58,8 +58,21 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
             return CreatedAtAction(nameof(GetCustomField), new { id = customField.Uid }, DtoUtils.ToDto(customField));
         }
 
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateCustomField(Guid id, CustomFieldDto customFieldDto)
+        {
+            var customField = await _customFieldService.UpdateCustomField(id, DtoUtils.FromDto(customFieldDto));
+
+            if (customField == null)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+        }
+
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProject(Guid id)
+        public async Task<IActionResult> DeleteCustomField(Guid id)
         {
             var customField = await _customFieldService.GetCustomField(id);
 
@@ -93,13 +106,14 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
         public async Task<IActionResult> SaveCustomFieldValue(List<CustomFieldValueDto> customFieldValueDtos)
         {
             var customFieldValues = new List<CustomFieldValue>();
+            var customFields = await _customFieldService.GetCustomFields();
 
-            foreach (var x in customFieldValueDtos)
+            foreach (var customFieldValue in customFieldValueDtos)
             {
-                var customField = await _customFieldService.GetCustomField(x.CustomFieldId)
+                var customField = customFields.FirstOrDefault(x => x.Uid == customFieldValue.CustomFieldId)
                     ?? throw new ApiException(ErrorMessageConstants.InexistentCustomField);
 
-                var dto = DtoUtils.FromDto(x, customField);
+                var dto = DtoUtils.FromDto(customFieldValue, customField);
                 customFieldValues.Add(dto);
             }
 

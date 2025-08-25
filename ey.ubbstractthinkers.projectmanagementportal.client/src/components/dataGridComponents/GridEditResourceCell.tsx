@@ -37,6 +37,7 @@ const GridEditResourceCell = (props: GridEditResourceCell) => {
         id="resource_select"
         value={selectedValue}
         onChange={handleChange}
+        className={styles.gridEditResourceCellSelect}
       >
         <MenuItem value="">No resource selected</MenuItem>
         {props.resources.map((user) => (

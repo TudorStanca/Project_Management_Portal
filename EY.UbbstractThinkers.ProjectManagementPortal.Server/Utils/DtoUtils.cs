@@ -135,7 +135,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils
             return type switch
             {
                 CustomFieldType.Text => value.ToString(),
-                CustomFieldType.Date => ((DateOnly)value).ToString(ValidationConstants.DateFormat, CultureInfo.InvariantCulture),
+                CustomFieldType.Date => DateOnly.Parse(value.ToString()).ToString(ValidationConstants.DateFormat, CultureInfo.InvariantCulture),
                 _ => throw new ArgumentException("Invalid custom field type.")
             };
         }

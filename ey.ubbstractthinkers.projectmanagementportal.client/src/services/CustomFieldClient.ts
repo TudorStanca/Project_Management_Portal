@@ -1,5 +1,5 @@
 import type { CustomField } from "@models/CustomField";
-import type { customFieldValue } from "@models/CustomFieldValue";
+import type { CustomFieldValue } from "@models/CustomFieldValue";
 import axios, { type AxiosResponse } from "axios";
 
 const api = axios.create({
@@ -21,8 +21,19 @@ export async function getCustomField(id: string): Promise<CustomField> {
   return response.data;
 }
 
-export async function saveCustomField(customField: CustomField): Promise<void> {
-  await api.post("", customField);
+export async function saveCustomField(
+  customField: CustomField,
+): Promise<CustomField> {
+  const response: AxiosResponse<CustomField> = await api.post("", customField);
+
+  return response.data;
+}
+
+export async function updateCustomField(
+  uid: string,
+  customField: CustomField,
+): Promise<void> {
+  await api.put("/" + uid, customField);
 }
 
 export async function deleteCustomField(uid: string): Promise<void> {
@@ -49,9 +60,9 @@ export async function getCustomFieldsByProjectId(
   return response.data;
 }
 
-export async function updateCustomFieldValue(
+export async function saveCustomFieldValue(
   projectId: string,
-  customFieldValues: customFieldValue[],
+  customFieldValues: CustomFieldValue[],
 ): Promise<void> {
   await api.put("/projects/" + projectId, customFieldValues);
 }

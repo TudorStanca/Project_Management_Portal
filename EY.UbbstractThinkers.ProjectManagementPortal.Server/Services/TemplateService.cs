@@ -108,22 +108,26 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
 
             var projects = await _projectRepository.GetProjectsByTemplateId(id);
 
-            //TO DO: Delete custom fields associtation instead of throwing error
             var oldStageIds = existingTemplate.Stages.Select(x => x.Uid).ToList();
             var newStageIds = template.Stages.Select(x => x.Uid).ToList();
             var removedStages = oldStageIds.Except(newStageIds).ToList();
 
             var usedStages = visibleCustomFieldStages.Select(x => x.StageId).Distinct().ToList();
 
-            if (removedStages.Intersect(usedStages).Any())
-            {
-                throw new ApiException(ErrorMessageConstants.TemplateHasExistingCustomFields);
-
-            }
-
             if (removedStages.Count != 0 && projects.Count != 0)
             {
                 throw new ApiException(ErrorMessageConstants.TemplateHasExistingProjects);
+            }
+
+            var stagesToDelete = usedStages.Intersect(removedStages).ToList();
+
+            if (stagesToDelete.Any())
+            {
+                var customFieldVisibleStagesToDelete = _context.TemplateStageCustomField
+                    .Where(x => stagesToDelete.Contains(x.StageId) && x.TemplateId == id)
+                    .ToList();
+
+                _context.TemplateStageCustomField.RemoveRange(customFieldVisibleStagesToDelete);
             }
 
             existingTemplate.Name = template.Name;

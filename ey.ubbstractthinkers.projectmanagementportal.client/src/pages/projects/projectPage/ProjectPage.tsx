@@ -28,7 +28,7 @@ import CustomSnackbar from "../../../components/snackbar/CustomSnackbar";
 import type { CustomField } from "@models/CustomField";
 import {
   getCustomFieldsByProjectId,
-  updateCustomFieldValue,
+  saveCustomFieldValue,
 } from "@services/CustomFieldClient";
 import { getCustomFieldTypeFromValue, Text } from "@models/CustomFieldType";
 
@@ -192,7 +192,7 @@ const ProjectPage = (props: ProjectPageProps) => {
       await updateProject(formattedProject);
 
       if (isCustomFieldChanged) {
-        await updateCustomFieldValue(
+        await saveCustomFieldValue(
           projectId!,
           customFieldEdits.map((f) => ({
             projectId: projectId!,

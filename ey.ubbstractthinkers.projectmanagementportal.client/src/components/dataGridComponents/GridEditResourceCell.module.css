@@ -5,3 +5,8 @@
 .formControl {
   flex: 1;
 }
+
+.gridEditResourceCellSelect div {
+  display: flex;
+  align-items: center;
+}

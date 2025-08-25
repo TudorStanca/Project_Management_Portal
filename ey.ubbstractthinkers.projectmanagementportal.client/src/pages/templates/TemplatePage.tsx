@@ -6,6 +6,10 @@ import {
   CardContent,
   Chip,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
   FormControl,
   Grid,
@@ -45,6 +49,7 @@ import {
   deleteCustomField,
   getCustomFieldsByTemplateId,
   saveCustomField,
+  updateCustomField,
 } from "@services/CustomFieldClient";
 import {
   Date,
@@ -77,10 +82,15 @@ const TemplatePage = (props: TemplatePageProps) => {
   const [newFieldDescription, setNewFieldDescription] = useState<string>("");
   const [newFieldType, setNewFieldType] = useState<CustomFieldType>(Text);
   const [newFieldVisibleOn, setNewFieldVisibleOn] = useState<string[]>([]);
-  const [fieldToDelete, setFieldToDelete] = useState<string | null>(null); // New state for the field to delete
+  const [fieldToDelete, setFieldToDelete] = useState<string | null>(null);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [isCustomFieldSaving, setIsCustomFieldSaving] =
+    useState<boolean>(false);
+
+  const [fieldToEdit, setFieldToEdit] = useState<CustomField | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
 
   const {
     showSnackbar,
@@ -135,6 +145,11 @@ const TemplatePage = (props: TemplatePageProps) => {
     fetchAll();
   }, [templateId]);
 
+  const handleEditDialogCancel = () => {
+    setIsEditDialogOpen(false);
+    setFieldToEdit(null);
+  };
+
   const handleChange = (event: SelectChangeEvent<typeof stageUids>) => {
     const value = event.target.value;
 
@@ -161,10 +176,12 @@ const TemplatePage = (props: TemplatePageProps) => {
       customFieldValue: null,
     };
 
-    try {
-      await saveCustomField(newCustomField);
+    setIsCustomFieldSaving(true);
 
-      setCustomFields([...customFields, newCustomField]);
+    try {
+      const customFieldAdded = await saveCustomField(newCustomField);
+
+      setCustomFields([...customFields, customFieldAdded]);
       showSnackbar("Custom field added successfuly", "success");
       setNewFieldName("");
       setNewFieldDescription("");
@@ -174,6 +191,8 @@ const TemplatePage = (props: TemplatePageProps) => {
       console.error(error);
 
       showSnackbar(handleApiError(error), "error");
+    } finally {
+      setIsCustomFieldSaving(false);
     }
   };
 
@@ -219,6 +238,9 @@ const TemplatePage = (props: TemplatePageProps) => {
         );
         setTemplateStages(templateStages);
 
+        const fields = await getCustomFieldsByTemplateId(templateId);
+        setCustomFields(fields);
+
         showSnackbar("Template updated successfully.", "success");
       } else {
         await saveTemplate(formatedTemplate);
@@ -228,6 +250,25 @@ const TemplatePage = (props: TemplatePageProps) => {
       showSnackbar(handleApiError(error), "error");
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleEditCustomField = async () => {
+    if (fieldToEdit) {
+      try {
+        await updateCustomField(fieldToEdit.uid!, fieldToEdit);
+        setCustomFields(
+          customFields.map((field) =>
+            field.uid === fieldToEdit.uid ? fieldToEdit : field,
+          ),
+        );
+        showSnackbar("Custom field updated successfully", "success");
+      } catch (error) {
+        showSnackbar(handleApiError(error), "error");
+      } finally {
+        setIsEditDialogOpen(false);
+        setFieldToEdit(null);
+      }
     }
   };
 
@@ -358,6 +399,17 @@ const TemplatePage = (props: TemplatePageProps) => {
                           size="small"
                           variant="outlined"
                           onClick={() => {
+                            setFieldToEdit(field);
+                            setIsEditDialogOpen(true);
+                          }}
+                          disabled={!field.uid}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          onClick={() => {
                             setFieldToDelete(field.uid!);
                             setIsDialogOpen(true);
                           }}
@@ -377,6 +429,98 @@ const TemplatePage = (props: TemplatePageProps) => {
                       }}
                       handleConfirm={() => handleDeleteCustomFields()}
                     />
+                    <Dialog
+                      open={isEditDialogOpen}
+                      onClose={handleEditDialogCancel}
+                      aria-labelledby="alert-dialog-title"
+                      aria-describedby="alert-dialog-description"
+                      sx={{
+                        "& .MuiDialog-paper": {
+                          minHeight: "500px",
+                        },
+                      }}
+                    >
+                      <DialogTitle>Edit Custom Field</DialogTitle>
+                      <DialogContent
+                        className={styles.editCustomFieldDialogContent}
+                      >
+                        <Box
+                          component="form"
+                          onSubmit={handleEditCustomField}
+                          className={styles.editCustomFieldBox}
+                        >
+                          <TextField
+                            label="Field Name"
+                            value={fieldToEdit?.name || ""}
+                            onChange={(e) =>
+                              setFieldToEdit({
+                                ...fieldToEdit!,
+                                name: e.target.value,
+                              })
+                            }
+                            required
+                            className={styles.editFieldFormField}
+                          />
+                          <TextField
+                            label="Field Description"
+                            value={fieldToEdit?.description || ""}
+                            onChange={(e) =>
+                              setFieldToEdit({
+                                ...fieldToEdit!,
+                                description: e.target.value,
+                              })
+                            }
+                            className={styles.editFieldFormField}
+                          />
+                          <FormControl
+                            fullWidth
+                            className={styles.editFieldFormField}
+                          >
+                            <InputLabel id="visible-on-label">
+                              Visible On Stages
+                            </InputLabel>
+                            <Select
+                              labelId="visible-on-label"
+                              multiple
+                              label="Visible On Stages"
+                              value={fieldToEdit?.visibleOnStageIds || []}
+                              onChange={(event) => {
+                                const value = event.target.value;
+                                setFieldToEdit({
+                                  ...fieldToEdit!,
+                                  visibleOnStageIds:
+                                    typeof value === "string"
+                                      ? value.split(",")
+                                      : value,
+                                });
+                              }}
+                              renderValue={(selected) => (
+                                <Box className={styles.addTemplateChip}>
+                                  {selected.map((stageUid) => (
+                                    <Chip
+                                      key={stageUid}
+                                      label={stageDictionary[stageUid]}
+                                    />
+                                  ))}
+                                </Box>
+                              )}
+                            >
+                              {templateStages.map((stage) => (
+                                <MenuItem key={stage.uid} value={stage.uid}>
+                                  {stage.name}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                        </Box>
+                      </DialogContent>
+                      <DialogActions>
+                        <Button onClick={handleEditDialogCancel}>Cancel</Button>
+                        <Button onClick={handleEditCustomField}>
+                          Save Changes
+                        </Button>
+                      </DialogActions>
+                    </Dialog>
                   </Grid>
                 ))}
               </Grid>
@@ -386,9 +530,6 @@ const TemplatePage = (props: TemplatePageProps) => {
                 onSubmit={handleAddCustomField}
                 className={styles.addCustomFieldForm}
               >
-                <Typography variant="h6" gutterBottom>
-                  Add New Field
-                </Typography>
                 <Grid container spacing={2}>
                   <Grid size={{ xs: 12 }}>
                     <TextField
@@ -413,6 +554,7 @@ const TemplatePage = (props: TemplatePageProps) => {
                       <Select
                         labelId="field-type-label"
                         value={newFieldType}
+                        label="Field Type"
                         onChange={(e) => setNewFieldType(e.target.value)}
                       >
                         <MenuItem value={Text}>Text</MenuItem>
@@ -431,6 +573,7 @@ const TemplatePage = (props: TemplatePageProps) => {
                       <Select
                         labelId="visible-on-label"
                         multiple
+                        label="Visible On Stages"
                         value={newFieldVisibleOn}
                         onChange={(event) => {
                           const value = event.target.value;
@@ -460,8 +603,13 @@ const TemplatePage = (props: TemplatePageProps) => {
                     </FormControl>
                   </Grid>
                   <Grid size={{ xs: 12 }}>
-                    <Button variant="contained" type="submit" color="primary">
-                      Add Field
+                    <Button
+                      variant="contained"
+                      type="submit"
+                      color="primary"
+                      disabled={isCustomFieldSaving}
+                    >
+                      {isCustomFieldSaving ? <CircularProgress /> : "Add Field"}
                     </Button>
                   </Grid>
                 </Grid>

@@ -35,5 +35,8 @@
         public const string CustomFieldValueVisibleStages = "Can't change value on project's current stage.";
         public const string NoVisibleStages = "Custom Field must have at least one visible stage.";
         public const string TemplateHasExistingCustomFields = "Can't change templates that have active custom fields visible to stage.";
+        public const string DifferentProjectId = "Can only update values on one project.";
+        public const string TemplateChangeErrorCustomField = "Can't change custom field template.";
+        public const string TypeChangeError = "Can't change custom field type.";
     }
 }
