@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
-import { Box, Toolbar } from "@mui/material";
+import { Box } from "@mui/material";
 import Header from "./components/layout/header/Header";
 import Navbar from "./components/layout/navbar/Navbar";
 import Footer from "./components/layout/footer/Footer";
@@ -20,6 +20,7 @@ import TemplatesPage from "./pages/templates/TemplatesPage";
 import TemplatePage from "./pages/templates/TemplatePage";
 import UserProfilePage from "./pages/auth/UserProfilePage";
 import NotFoundPage from "./pages/errors/NotFoundPage";
+import CustomToolbar from "./components/layout/background/CustomToolbar";
 
 function App() {
   const [open, setOpen] = useState(true);
@@ -51,7 +52,7 @@ function App() {
     <Box className="home-box">
       <BrowserRouter>
         <Header />
-        <Toolbar />
+        <CustomToolbar />
         <Navbar
           open={open}
           setOpen={(bool: boolean) => setOpen(bool)}

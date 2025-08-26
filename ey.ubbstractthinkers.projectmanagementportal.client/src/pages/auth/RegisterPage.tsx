@@ -60,7 +60,7 @@ const RegisterPage = () => {
       password,
       firstName,
       lastName,
-      photo: null,
+      profileImage: null,
     };
 
     try {

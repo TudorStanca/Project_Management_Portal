@@ -2,6 +2,7 @@
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Exceptions;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Models;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Services;
+using EY.UbbstractThinkers.ProjectManagementPortal.Server.Services.Interfaces;
 using EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,10 +19,12 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
     public class CustomFieldController : ControllerBase
     {
         private readonly ICustomFieldService _customFieldService;
+        private readonly IProjectService _projectService;
 
-        public CustomFieldController(ICustomFieldService customFieldService)
+        public CustomFieldController(ICustomFieldService customFieldService, IProjectService projectService)
         {
             _customFieldService = customFieldService;
+            _projectService = projectService;
         }
 
         [HttpGet]
@@ -103,10 +106,11 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
         }
 
         [HttpPut("projects/{id}")]
-        public async Task<IActionResult> SaveCustomFieldValue(List<CustomFieldValueDto> customFieldValueDtos)
+        public async Task<IActionResult> SaveCustomFieldValue(Guid id, List<CustomFieldValueDto> customFieldValueDtos)
         {
             var customFieldValues = new List<CustomFieldValue>();
-            var customFields = await _customFieldService.GetCustomFields();
+            var project = await _projectService.GetProject(id) ?? throw new ApiException(ErrorMessageConstants.ProjectNotFoundMessage);
+            var customFields = await _customFieldService.GetCustomFieldsByTemplateId(project.TemplateUid);
 
             foreach (var customFieldValue in customFieldValueDtos)
             {
@@ -117,7 +121,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
                 customFieldValues.Add(dto);
             }
 
-            await _customFieldService.SaveCustomFieldValues(customFieldValues);
+            await _customFieldService.SaveCustomFieldValues(customFieldValues, project, customFields);
 
             return NoContent();
         }

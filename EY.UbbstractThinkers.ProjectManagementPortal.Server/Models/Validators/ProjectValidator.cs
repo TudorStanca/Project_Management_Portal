@@ -45,7 +45,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Validators
             {
                 if (project.EndDate.Value <= project.StartDate)
                 {
-                    results.Add(new ValidationResult("End Date can't be before start date"));
+                    results.Add(new ValidationResult("End Date can't be before or in the same day as Start Date"));
                 }
 
                 string formattedEndDate = project.EndDate.Value.ToString(ValidationConstants.DateFormat, CultureInfo.InvariantCulture);

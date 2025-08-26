@@ -13,7 +13,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
         Task<List<CustomField>> GetCustomFieldsByTemplateId(Guid id);
         Task<List<CustomField>> GetCustomFields();
         Task<List<CustomField>> GetCustomFieldsByProjectId(Guid id);
-        Task SaveCustomFieldValues(List<CustomFieldValue> customFieldValues);
+        Task SaveCustomFieldValues(List<CustomFieldValue> customFieldValues, Project project, List<CustomField> customFields);
         Task<CustomField> UpdateCustomField(Guid id, CustomField customField);
 
     }

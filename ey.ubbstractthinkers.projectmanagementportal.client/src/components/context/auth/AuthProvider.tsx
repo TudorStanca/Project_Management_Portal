@@ -27,7 +27,7 @@ const AuthProvider = (props: AuthProviderProps) => {
     const fetchIsUserLogged = async () => {
       try {
         const loggedIn = await getUser();
-        setIsAuthenticated(loggedIn != null);
+        setIsAuthenticated(String(loggedIn) !== "");
         setLoggedUser(loggedIn || DefaultUser);
       } catch (error) {
         showSnackbar(handleApiError(error), "error");

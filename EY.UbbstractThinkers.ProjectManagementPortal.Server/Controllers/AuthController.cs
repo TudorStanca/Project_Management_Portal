@@ -77,9 +77,13 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
         }
 
         [HttpGet("pingauth")]
-        [Authorize]
         public async Task<IActionResult> PingAuth()
         {
+            if (User.FindFirstValue(ClaimTypes.Email) == null)
+            {
+                return Ok(null);
+            }
+
             var loggedUser = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
 
             return Ok(DtoUtils.ToDto(loggedUser));
@@ -108,6 +112,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
         }
 
         [HttpPut("profile")]
+        [Authorize]
         public async Task<ActionResult> UpdateUser(UserDto userDto)
         {
             var user = await _userService.UpdateUser(userDto.Id, DtoUtils.FromDto(userDto));

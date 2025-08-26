@@ -106,11 +106,8 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
             return customFieldsVisibleInStage;
         }
 
-        public async Task SaveCustomFieldValues(List<CustomFieldValue> customFieldValues)
+        public async Task SaveCustomFieldValues(List<CustomFieldValue> customFieldValues, Project project, List<CustomField> customFields)
         {
-            var project = await _projectRepository.GetProject(customFieldValues[0].ProjectId) ?? throw new ApiException(ErrorMessageConstants.ProjectNotFoundMessage);
-            var customFields = await _customFieldRepository.GetCustomFields();
-
             foreach (var customFieldValue in customFieldValues)
             {
                 var customField = customFields.FirstOrDefault(x => x.Uid == customFieldValue.CustomFieldId) ?? throw new ApiException(ErrorMessageConstants.InexistentCustomField);
