@@ -40,3 +40,18 @@
   padding-left: 20px;
   padding-right: 20px;
 }
+
+.button {
+  color: var(--color-text);
+  min-width: 9.375em !important;
+}
+
+.button:hover {
+  color: var(--color-accent);
+}
+
+.icon {
+  width: 3.75em;
+  height: 3.75em;
+}
+

@@ -15,6 +15,8 @@ import { type User } from "@models/Auth";
 import styles from "./UserProfilePage.module.css";
 import UserAvatar from "../../components/avatar/UserAvatar";
 import { useAuth } from "../../components/context/auth/AuthFunction";
+import ClearIcon from "@mui/icons-material/Clear";
+import UpdateOutlinedIcon from "@mui/icons-material/UpdateOutlined";
 
 interface UserProfilePageProps {
   open: boolean;
@@ -185,8 +187,9 @@ const UserProfilePage = (props: UserProfilePageProps) => {
 
             <Grid size={{ xs: 12, sm: 4 }}>
               <Button
-                variant="contained"
-                color="primary"
+                variant="outlined"
+                className={styles.button}
+                startIcon={<ClearIcon className={styles.icon} />}
                 onClick={handleClearPhoto}
                 disabled={!isProfilePictureSet}
               >
@@ -197,8 +200,9 @@ const UserProfilePage = (props: UserProfilePageProps) => {
             <Grid size={{ xs: 12, sm: 6 }}>
               <Button
                 type="submit"
-                variant="contained"
-                color="primary"
+                variant="outlined"
+                className={styles.button}
+                startIcon={<UpdateOutlinedIcon className={styles.icon} />}
                 disabled={!isFormChanged || isUpdating}
               >
                 {isUpdating ? <CircularProgress /> : "Update"}

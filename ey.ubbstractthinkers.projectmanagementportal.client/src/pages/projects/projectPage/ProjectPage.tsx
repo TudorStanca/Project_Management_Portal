@@ -31,6 +31,8 @@ import {
   saveCustomFieldValue,
 } from "@services/CustomFieldClient";
 import { getCustomFieldTypeFromValue, Text } from "@models/CustomFieldType";
+import UpdateOutlinedIcon from "@mui/icons-material/UpdateOutlined";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 interface ProjectPageProps {
   open: boolean;
@@ -62,7 +64,7 @@ const ProjectPage = (props: ProjectPageProps) => {
   const navigate = useNavigate();
 
   const [name, setName] = useState<string>("");
-  const [description, setDescription] = useState<string | null>(null);
+  const [description, setDescription] = useState<string | null>("");
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
 
@@ -202,7 +204,7 @@ const ProjectPage = (props: ProjectPageProps) => {
         );
       }
 
-        showSnackbar("Project updated successfully", "success");
+      showSnackbar("Project updated successfully", "success");
 
       setCustomFieldEdits([]);
       setProject(formattedProject);
@@ -363,8 +365,8 @@ const ProjectPage = (props: ProjectPageProps) => {
                     project.currentStageUid ===
                       template.stageUids.at(template.stageUids.length - 1)
                   }
-                  className={styles.projectAdvanceStageButton}
-                  startIcon={<ArrowForwardIosIcon />}
+                  className={styles.projectFormButton}
+                  startIcon={<ArrowForwardIosIcon className={styles.icon} />}
                   onClick={handleAdvanceToNextStage}
                 >
                   Advance Stage
@@ -379,11 +381,11 @@ const ProjectPage = (props: ProjectPageProps) => {
                 <Grid size={{ xs: 6 }}>
                   <Button
                     type="submit"
-                    variant="contained"
-                    color="primary"
+                    variant="outlined"
                     disabled={
                       (!isFormChanged && !isCustomFieldChanged) || isUpdating
                     }
+                    startIcon={<UpdateOutlinedIcon className={styles.icon} />}
                     className={styles.projectFormButton}
                   >
                     {isUpdating ? <CircularProgress /> : "Update"}
@@ -391,9 +393,9 @@ const ProjectPage = (props: ProjectPageProps) => {
                 </Grid>
                 <Grid size={{ xs: 6 }}>
                   <Button
-                    variant="contained"
-                    color="primary"
+                    variant="outlined"
                     disabled={isDeleting}
+                    startIcon={<DeleteOutlineIcon className={styles.icon} />}
                     className={styles.projectFormButton}
                     onClick={() => setIsDialogOpen(true)}
                   >

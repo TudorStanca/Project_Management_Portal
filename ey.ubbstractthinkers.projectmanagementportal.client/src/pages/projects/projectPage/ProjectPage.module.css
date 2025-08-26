@@ -29,13 +29,13 @@
   padding: 1em;
 }
 
-.projectAdvanceStageButton:hover {
+.projectFormButton:hover {
   border-color: var(--color-accent);
   color: var(--color-accent);
 }
 
 .projectFormButton {
-  width: 100%;
+  color: var(--color-text);
 }
 
 .projectButtonsBox {
@@ -49,4 +49,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.icon {
+  width: 3.75em;
+  height: 3.75em;
 }

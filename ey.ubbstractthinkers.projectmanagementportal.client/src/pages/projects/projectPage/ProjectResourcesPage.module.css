@@ -54,3 +54,8 @@
   flex-wrap: wrap;
   gap: 0.5em;
 }
+
+.icon {
+  width: 3.75em;
+  height: 3.75em;
+}

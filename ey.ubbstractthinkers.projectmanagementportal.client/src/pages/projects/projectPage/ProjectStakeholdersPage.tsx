@@ -37,7 +37,6 @@ import {
   deleteStakeholders,
   getProject,
 } from "@services/ProjectClient";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { AddCircleOutline } from "@mui/icons-material";
 import StageStepper from "../../../components/stepper/StageStepper";
 import BoxContent from "../../../components/layout/background/BoxContent";
@@ -45,6 +44,7 @@ import useSnackbar from "../../../hooks/useSnackbar";
 import CustomSnackbar from "../../../components/snackbar/CustomSnackbar";
 import UserAvatar from "../../../components/avatar/UserAvatar";
 import AlertDialog from "../../../components/AlertDialog";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 interface ProjectStakeholdersPageProps {
   open: boolean;
@@ -257,13 +257,13 @@ const ProjectStakeholdersPage = (props: ProjectStakeholdersPageProps) => {
               </Button>
               <Button
                 variant="outlined"
-                color="primary"
                 onClick={handleDeleteClick}
+                className={styles.projectStakeholdersAddButton}
                 disabled={
                   selectedStakeholderIds.length === 0 ||
                   loggedUser.id !== project.ownerId
                 }
-                startIcon={<DeleteIcon />}
+                startIcon={<DeleteOutlineIcon className={styles.icon} />}
               >
                 Delete
               </Button>

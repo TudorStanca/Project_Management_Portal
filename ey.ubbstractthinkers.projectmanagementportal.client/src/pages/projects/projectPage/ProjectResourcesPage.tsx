@@ -38,7 +38,7 @@ import {
 import { getUser, getUsers } from "@services/AuthClient";
 import { handleApiError } from "@services/ErrorHandler";
 import { AddCircleOutline } from "@mui/icons-material";
-import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import StageStepper from "../../../components/stepper/StageStepper";
 import BoxContent from "../../../components/layout/background/BoxContent";
 import useSnackbar from "../../../hooks/useSnackbar";
@@ -251,13 +251,13 @@ const ProjectResourcesPage = (props: ProjectResourcesPageProps) => {
               </Button>
               <Button
                 variant="outlined"
-                color="primary"
+                className={styles.projectResourcesAddButton}
                 onClick={handleDeleteClick}
                 disabled={
                   selectedResourceIds.length === 0 ||
                   loggedUser.id !== project.ownerId
                 }
-                startIcon={<DeleteIcon />}
+                startIcon={<DeleteOutlineIcon className={styles.icon} />}
               >
                 Delete
               </Button>
@@ -378,17 +378,12 @@ const ProjectResourcesPage = (props: ProjectResourcesPageProps) => {
 
         <DialogActions>
           {users.length === 0 ? (
-            <Button onClick={handleCloseDialog} color="primary">
-              Ok
-            </Button>
+            <Button onClick={handleCloseDialog}>Ok</Button>
           ) : (
             <>
-              <Button onClick={handleCloseDialog} color="primary">
-                Cancel
-              </Button>
+              <Button onClick={handleCloseDialog}>Cancel</Button>
               <Button
                 onClick={handleAddUsers}
-                color="primary"
                 disabled={selectedUserIds.length === 0}
               >
                 Add

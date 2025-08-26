@@ -19,6 +19,7 @@ import ProtectedRoute from "./components/context/auth/ProtectedRoute";
 import TemplatesPage from "./pages/templates/TemplatesPage";
 import TemplatePage from "./pages/templates/TemplatePage";
 import UserProfilePage from "./pages/auth/UserProfilePage";
+import NotFoundPage from "./pages/errors/NotFoundPage";
 
 function App() {
   const [open, setOpen] = useState(true);
@@ -49,7 +50,7 @@ function App() {
   return (
     <Box className="home-box">
       <BrowserRouter>
-        {<Header />}
+        <Header />
         <Toolbar />
         <Navbar
           open={open}
@@ -148,6 +149,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="*" element={<NotFoundPage open={open} />} />
         </Routes>
         <Footer ref={footerRef} />
       </BrowserRouter>

@@ -27,8 +27,17 @@
   padding-bottom: 10px;
 }
 
-.addTemplateSubmitButton:hover {
-  background-color: var(--color-accent);
+.button {
+  color: var(--color-text);
+}
+
+.button:hover {
+  color: var(--color-accent);
+}
+
+.icon {
+  width: 3.75em;
+  height: 3.75em;
 }
 
 .customFieldsContainer {

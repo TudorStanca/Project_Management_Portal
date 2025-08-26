@@ -60,6 +60,8 @@ import {
 } from "@models/CustomFieldType";
 import AlertDialog from "../../components/AlertDialog";
 import { type Project } from "@models/Project";
+import UpdateOutlinedIcon from "@mui/icons-material/UpdateOutlined";
+import { AddCircleOutline } from "@mui/icons-material";
 
 interface TemplatePageProps {
   open: boolean;
@@ -188,8 +190,6 @@ const TemplatePage = (props: TemplatePageProps) => {
       setNewFieldType(Text);
       setNewFieldVisibleOn([]);
     } catch (error) {
-      console.error(error);
-
       showSnackbar(handleApiError(error), "error");
     } finally {
       setIsCustomFieldSaving(false);
@@ -207,8 +207,6 @@ const TemplatePage = (props: TemplatePageProps) => {
       );
       showSnackbar("Custom field deleted successfuly", "success");
     } catch (error) {
-      console.error(error);
-
       showSnackbar(handleApiError(error), "error");
     }
   };
@@ -344,22 +342,30 @@ const TemplatePage = (props: TemplatePageProps) => {
                   ))}
                 </Select>
               </FormControl>
-              <Grid size={{ xs: 12 }}>
-                <Button
-                  variant="contained"
-                  type="submit"
-                  color="primary"
-                  disabled={isSaving}
-                  className={styles.addTemplateSubmitButton}
-                >
-                  {isSaving ? (
-                    <CircularProgress />
-                  ) : templateId ? (
-                    "Update"
-                  ) : (
-                    "Save"
-                  )}
-                </Button>
+              <Grid container size={{ xs: 12 }}>
+                <Grid size={{ xs: 1 }}>
+                  <Button
+                    variant="outlined"
+                    type="submit"
+                    disabled={isSaving}
+                    className={styles.button}
+                    startIcon={
+                      templateId ? (
+                        <UpdateOutlinedIcon className={styles.icon} />
+                      ) : (
+                        <AddCircleOutline className={styles.icon} />
+                      )
+                    }
+                  >
+                    {isSaving ? (
+                      <CircularProgress />
+                    ) : templateId ? (
+                      "Update"
+                    ) : (
+                      "Save"
+                    )}
+                  </Button>
+                </Grid>
               </Grid>
             </Grid>
           </Box>
@@ -398,6 +404,7 @@ const TemplatePage = (props: TemplatePageProps) => {
                         <Button
                           size="small"
                           variant="outlined"
+                          className={styles.button}
                           onClick={() => {
                             setFieldToEdit(field);
                             setIsEditDialogOpen(true);
@@ -602,11 +609,13 @@ const TemplatePage = (props: TemplatePageProps) => {
                       </Select>
                     </FormControl>
                   </Grid>
-                  <Grid size={{ xs: 12 }}>
+                  <Grid size={{ xs: 1 }}>
                     <Button
-                      variant="contained"
+                      variant="outlined"
                       type="submit"
-                      color="primary"
+                      className={styles.button}
+                      sx={{ minWidth: "9.75em" }}
+                      startIcon={<AddCircleOutline className={styles.icon} />}
                       disabled={isCustomFieldSaving}
                     >
                       {isCustomFieldSaving ? <CircularProgress /> : "Add Field"}

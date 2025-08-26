@@ -29,3 +29,7 @@
 .resourceCellSpan {
   margin: 0 auto;
 }
+
+.projectBoxContent {
+  padding-bottom: 0;
+}

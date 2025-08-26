@@ -28,6 +28,7 @@ import BoxContent from "../../components/layout/background/BoxContent";
 import useSnackbar from "../../hooks/useSnackbar";
 import CustomSnackbar from "../../components/snackbar/CustomSnackbar";
 import UserAvatar from "../../components/avatar/UserAvatar";
+import { AddCircleOutline } from "@mui/icons-material";
 
 interface ProjectFormProps {
   open: boolean;
@@ -158,9 +159,9 @@ const AddProjectPage = (props: ProjectFormProps) => {
             There are no templates available, add one.
           </Typography>
           <Button
-            variant="contained"
-            color="primary"
-            className={styles.addTemplateButton}
+            variant="outlined"
+            className={styles.button}
+            startIcon={<AddCircleOutline className={styles.icon} />}
             onClick={() => navigate("/add-template")}
           >
             Add Template
@@ -272,15 +273,18 @@ const AddProjectPage = (props: ProjectFormProps) => {
                   ))}
                 </Select>
               </FormControl>
-              <Grid size={{ xs: 12 }}>
-                <Button
-                  variant="contained"
-                  type="submit"
-                  disabled={isSaving}
-                  className={styles.addProjectSubmitButton}
-                >
-                  {isSaving ? <CircularProgress /> : "Save"}
-                </Button>
+              <Grid size={{ xs: 12 }} container>
+                <Grid size={{ xs: 1 }}>
+                  <Button
+                    variant="outlined"
+                    type="submit"
+                    disabled={isSaving}
+                    className={styles.button}
+                    startIcon={<AddCircleOutline className={styles.icon} />}
+                  >
+                    {isSaving ? <CircularProgress /> : "Save"}
+                  </Button>
+                </Grid>
               </Grid>
             </Grid>
           </form>

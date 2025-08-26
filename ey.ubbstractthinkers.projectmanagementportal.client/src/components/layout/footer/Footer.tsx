@@ -13,7 +13,7 @@ const Footer = forwardRef((_, ref: Ref<HTMLDivElement>) => {
   }
 
   return (
-    <Box className={styles.footerBox} component="footer" ref={ref}>
+    <Box component="footer" ref={ref} className={styles.footerBox}>
       <Stack direction="row" spacing={3} className={styles.footerStack}>
         <Typography variant="body2">
           <CopyrightIcon />

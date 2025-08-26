@@ -17,9 +17,20 @@ import { getUser, logout } from "@services/AuthClient";
 import { DefaultUser, type User } from "@models/Auth";
 import { isAuthPage } from "../../../utils/LocationFunctions";
 import UserAvatar from "../../avatar/UserAvatar";
+import useSnackbar from "../../../hooks/useSnackbar";
+import CustomSnackbar from "../../../components/snackbar/CustomSnackbar";
+import { handleApiError } from "@services/ErrorHandler";
 
 const Header = () => {
   const [user, setUser] = useState<User>(DefaultUser);
+
+  const {
+    showSnackbar,
+    isSnackbarOpen,
+    message,
+    snackbarSeverity,
+    handleSnackbarClose,
+  } = useSnackbar();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -43,7 +54,7 @@ const Header = () => {
       handleMenuClose();
       navigate("/");
     } catch (error) {
-      console.error(error);
+      showSnackbar(handleApiError(error), "error");
     }
   };
 
@@ -63,69 +74,77 @@ const Header = () => {
   }
 
   return (
-    <AppBar className={styles.headerAppbar}>
-      <Toolbar className={styles.headerToolbar}>
-        <Box className={styles.headerBox}>
-          <IconButton
-            size="small"
-            edge="start"
-            className={styles.headerIconButton}
-            onClick={() => navigate("/")}
-          >
-            <Box component="img" src={logo} alt="Logo" />
-          </IconButton>
-          <Typography
-            variant="h6"
-            component="div"
-            className={styles.headerTypography}
-          >
-            Project Management Portal
-          </Typography>
-        </Box>
-
-        {isAuthenticated ? (
-          <>
-            <UserAvatar
-              className={styles.headerAvatarDiv}
-              user={user}
-              onClick={handleMenuClick}
-            />
-            <Menu
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleMenuClose}
+    <>
+      <AppBar className={styles.headerAppbar}>
+        <Toolbar className={styles.headerToolbar}>
+          <Box className={styles.headerBox}>
+            <IconButton
+              size="small"
+              edge="start"
+              className={styles.headerIconButton}
+              onClick={() => navigate("/")}
             >
-              <MenuItem
-                onClick={() => {
-                  navigate("/profile");
-                  handleMenuClose();
-                }}
-              >
-                User Profile
-              </MenuItem>
-              <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
-            </Menu>
-          </>
-        ) : (
-          <Box className={styles.headerBoxButtons}>
-            <Button
-              variant="outlined"
-              className={styles.headerButton}
-              onClick={() => navigate("/login")}
+              <Box component="img" src={logo} alt="Logo" />
+            </IconButton>
+            <Typography
+              variant="h6"
+              component="div"
+              className={styles.headerTypography}
             >
-              Login
-            </Button>
-            <Button
-              variant="outlined"
-              className={styles.headerButton}
-              onClick={() => navigate("/register")}
-            >
-              Register
-            </Button>
+              Project Management Portal
+            </Typography>
           </Box>
-        )}
-      </Toolbar>
-    </AppBar>
+
+          {isAuthenticated ? (
+            <>
+              <UserAvatar
+                className={styles.headerAvatarDiv}
+                user={user}
+                onClick={handleMenuClick}
+              />
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+              >
+                <MenuItem
+                  onClick={() => {
+                    navigate("/profile");
+                    handleMenuClose();
+                  }}
+                >
+                  User Profile
+                </MenuItem>
+                <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
+              </Menu>
+            </>
+          ) : (
+            <Box className={styles.headerBoxButtons}>
+              <Button
+                variant="outlined"
+                className={styles.headerButton}
+                onClick={() => navigate("/login")}
+              >
+                Login
+              </Button>
+              <Button
+                variant="outlined"
+                className={styles.headerButton}
+                onClick={() => navigate("/register")}
+              >
+                Register
+              </Button>
+            </Box>
+          )}
+        </Toolbar>
+      </AppBar>
+      <CustomSnackbar
+        isOpen={isSnackbarOpen}
+        message={message}
+        snackbarSeverity={snackbarSeverity}
+        handleSnackbarClose={handleSnackbarClose}
+      />
+    </>
   );
 };
 

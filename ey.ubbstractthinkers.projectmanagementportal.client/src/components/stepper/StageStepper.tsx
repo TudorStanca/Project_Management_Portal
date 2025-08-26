@@ -7,10 +7,7 @@ import { useEffect, useState } from "react";
 import type { Stage } from "@models/Stage";
 import { getStages } from "@services/StageClient";
 import { handleApiError } from "@services/ErrorHandler";
-import type { SnackbarSeverity } from "@models/SnackbarSeverity";
 import {
-  Alert,
-  Snackbar,
   Step,
   StepConnector,
   stepConnectorClasses,
@@ -22,6 +19,8 @@ import {
 import type { Project } from "@models/Project";
 import { getTemplate } from "@services/TemplateClient";
 import styles from "./StageStepper.module.css";
+import CustomSnackbar from "../../components/snackbar/CustomSnackbar";
+import useSnackbar from "../../hooks/useSnackbar";
 
 interface StageStepperProps {
   project: Project;
@@ -79,10 +78,14 @@ const ColorlibStepIcon = (props: StepIconProps) => {
 
 const StageStepper = (props: StageStepperProps) => {
   const [stages, setStages] = useState<Stage[]>([]);
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
-  const [snackbarSeverity, setSnackbarSeverity] =
-    useState<SnackbarSeverity>("success");
+
+  const {
+    showSnackbar,
+    isSnackbarOpen,
+    message,
+    snackbarSeverity,
+    handleSnackbarClose,
+  } = useSnackbar();
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -102,11 +105,7 @@ const StageStepper = (props: StageStepperProps) => {
 
         setStages(filtered);
       } catch (error) {
-        console.error(error);
-
-        setErrorMessage(handleApiError(error));
-        setSnackbarSeverity("error");
-        setSnackbarOpen(true);
+        showSnackbar(handleApiError(error), "error");
       }
     };
 
@@ -116,10 +115,6 @@ const StageStepper = (props: StageStepperProps) => {
   const currentStageIndex = stages.findIndex(
     (stage) => stage.uid === props.project.currentStageUid,
   );
-
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
 
   return (
     <>
@@ -140,15 +135,12 @@ const StageStepper = (props: StageStepperProps) => {
           </Step>
         ))}
       </Stepper>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={4000}
-        onClose={handleSnackbarClose}
-      >
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
-          {errorMessage}
-        </Alert>
-      </Snackbar>
+      <CustomSnackbar
+        isOpen={isSnackbarOpen}
+        message={message}
+        snackbarSeverity={snackbarSeverity}
+        handleSnackbarClose={handleSnackbarClose}
+      />
     </>
   );
 };
