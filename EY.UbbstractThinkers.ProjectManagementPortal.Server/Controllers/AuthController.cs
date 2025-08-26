@@ -50,7 +50,8 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Controllers
                 return Ok("User registered successfully.");
             }
 
-            return BadRequest(result.Errors);
+            var errorMessages = string.Join("\n", result.Errors.Select(e => e.Description));
+            return BadRequest(errorMessages);
         }
 
         [HttpPost("login")]

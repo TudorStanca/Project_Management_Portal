@@ -1,4 +1,5 @@
 ﻿using EY.UbbstractThinkers.ProjectManagementPortal.Server.Models;
+using EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -30,6 +31,8 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Data.ModelConfig
                 .UsingEntity<TemplateStage>(
                     r => r.HasOne<Template>().WithMany().HasForeignKey(x => x.TemplateId),
                     l => l.HasOne<Stage>().WithMany().HasForeignKey(x => x.StageId));
+
+            builder.HasData(DatabaseConstants.Stages);
         }
     }
 }

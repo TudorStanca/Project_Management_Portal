@@ -4,6 +4,7 @@ using EY.UbbstractThinkers.ProjectManagementPortal.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250826112152_StageSeeding")]
+    partial class StageSeeding
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,7 +68,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
 
                     b.HasIndex("ToStageId");
 
-                    b.ToTable("ApprovalRequests", (string)null);
+                    b.ToTable("ApprovalRequests");
                 });
 
             modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.CustomField", b =>
@@ -94,7 +97,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
 
                     b.HasIndex("TemplateId");
 
-                    b.ToTable("CustomFields", (string)null);
+                    b.ToTable("CustomFields");
                 });
 
             modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.CustomFieldValue", b =>
@@ -113,7 +116,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
                     b.HasIndex("CustomFieldId")
                         .IsUnique();
 
-                    b.ToTable("CustomFieldValues", (string)null);
+                    b.ToTable("CustomFieldValues");
                 });
 
             modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Project", b =>
@@ -156,7 +159,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
 
                     b.HasIndex("TemplateUid");
 
-                    b.ToTable("Projects", (string)null);
+                    b.ToTable("Projects");
                 });
 
             modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.ProjectResource", b =>
@@ -169,7 +172,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
 
                     b.HasKey("ProjectId", "UserId");
 
-                    b.ToTable("ProjectResources", (string)null);
+                    b.ToTable("ProjectResources");
                 });
 
             modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.ProjectStakeholder", b =>
@@ -182,7 +185,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
 
                     b.HasKey("ProjectId", "UserId");
 
-                    b.ToTable("ProjectStakeholders", (string)null);
+                    b.ToTable("ProjectStakeholders");
                 });
 
             modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.ProjectTask", b =>
@@ -220,7 +223,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
 
                     b.HasIndex("ProjectUid");
 
-                    b.ToTable("ProjectTasks", (string)null);
+                    b.ToTable("ProjectTasks");
                 });
 
             modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.Stage", b =>
@@ -247,7 +250,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
                     b.HasIndex("OrderNumber")
                         .IsUnique();
 
-                    b.ToTable("Stages", (string)null);
+                    b.ToTable("Stages");
 
                     b.HasData(
                         new
@@ -305,7 +308,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
 
                     b.HasKey("Uid");
 
-                    b.ToTable("Templates", (string)null);
+                    b.ToTable("Templates");
                 });
 
             modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.TemplateStage", b =>
@@ -320,7 +323,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
 
                     b.HasIndex("StageId");
 
-                    b.ToTable("TemplateStage", (string)null);
+                    b.ToTable("TemplateStage");
                 });
 
             modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.TemplateStageCustomField", b =>
@@ -338,7 +341,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Migrations
 
                     b.HasIndex("CustomFieldId");
 
-                    b.ToTable("TemplateStageCustomField", (string)null);
+                    b.ToTable("TemplateStageCustomField");
                 });
 
             modelBuilder.Entity("EY.UbbstractThinkers.ProjectManagementPortal.Server.Models.ApprovalRequest", b =>
