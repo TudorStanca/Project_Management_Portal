@@ -156,7 +156,7 @@ const UserProfilePage = (props: UserProfilePageProps) => {
 
               <input
                 type="file"
-                accept="image/png, image/jpg, image/jpeg"
+                accept="image/png, image/jpg, image/jpeg, image/gif"
                 onChange={handleFileChange}
                 ref={fileInputRef}
                 hidden

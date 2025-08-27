@@ -8,6 +8,7 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils
         public const string PNG = "image/png";
         public const string JPG = "image/jpg";
         public const string JPEG = "image/jpeg";
+        public const string GIF = "image/gif";
         public const string Unknown = "unknown";
 
         public static string GetImageFormat(byte[] imageData)
@@ -26,6 +27,11 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils
                 imageData[2] == 0x4E && imageData[3] == 0x47)
             {
                 return PNG;
+            }
+
+            if (imageData[0] == 'G' && imageData[1] == 'I' && imageData[2] == 'F' && imageData[3] == '8' && (imageData[4] == '9' || imageData[4] == '7') && imageData[5] == 'a')
+            {
+                return GIF;
             }
 
             return Unknown;
