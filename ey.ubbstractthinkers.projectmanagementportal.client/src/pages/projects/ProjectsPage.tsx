@@ -107,7 +107,7 @@ const ProjectsPage = (props: ProjectsPageProps) => {
                       >
                         About:{" "}
                         {project.description && project.description.length > 0
-                          ? truncateDescription(project.description)
+                          ? truncateDescription(project.description) + "..."
                           : "Nothing to show"}
                       </Typography>
                     </Box>

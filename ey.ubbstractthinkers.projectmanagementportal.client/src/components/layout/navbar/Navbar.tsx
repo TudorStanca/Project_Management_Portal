@@ -60,11 +60,6 @@ const Navbar = (props: NavbarProps) => {
       icon: <ClassIcon className={styles.navbarListItemIcon} />,
     },
     {
-      text: "Add Template",
-      path: "/add-template",
-      icon: <AddIcon className={styles.navbarListItemIcon} />,
-    },
-    {
       text: "Approvals",
       path: "/approvals",
       icon: <ApprovalIcon className={styles.navbarListItemIcon} />,

@@ -111,10 +111,10 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Utils
                 Type = customField.Type,
                 TemplateId = customField.TemplateId,
                 VisibleOnStageIds = customField.TemplateStages.Select(x => x.StageId).ToList(),
-                CustomFieldValue = customField.CustomFieldValue != null ? new CustomFieldValueDto()
+                CustomFieldValue = customField.CustomFieldValues.Count != 0 ? new CustomFieldValueDto()
                 {
-                    Value = ConvertStringToType(customField.CustomFieldValue),
-                    ProjectId = customField.CustomFieldValue.ProjectId,
+                    Value = ConvertStringToType(customField.CustomFieldValues[0]),
+                    ProjectId = customField.CustomFieldValues[0].ProjectId,
                     CustomFieldId = customField.Uid
                 } : null
             };

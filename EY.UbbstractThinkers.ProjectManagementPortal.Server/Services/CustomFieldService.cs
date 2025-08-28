@@ -103,6 +103,11 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
                 .Where(x => x.TemplateStages.Select(x => x.StageId).Contains(project.CurrentStageUid))
                 .ToList();
 
+            foreach (var customField in customFieldsVisibleInStage)
+            {
+                customField.CustomFieldValues = _context.CustomFieldValues.Where(x => x.ProjectId == id && x.CustomFieldId == customField.Uid).ToList();
+            }
+
             return customFieldsVisibleInStage;
         }
 
@@ -155,9 +160,10 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Services
                 {
                     existingCustomFieldValue.Value = customFieldValue.Value;
                 }
+
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
         }
 
         public async Task<CustomField> UpdateCustomField(Guid id, CustomField customField)

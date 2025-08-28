@@ -16,9 +16,9 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Data.ModelConfig
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.CustomField)
-                 .WithOne(x => x.CustomFieldValue)
-                 .HasForeignKey<CustomFieldValue>(x => x.CustomFieldId)
-                 .IsRequired();
+                 .WithMany(x => x.CustomFieldValues)
+                 .HasForeignKey(x => x.CustomFieldId)
+                 .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

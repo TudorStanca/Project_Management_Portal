@@ -12,6 +12,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Models
         public Guid TemplateId { get; set; }
         public Template Template { get; set; }
         public List<TemplateStage> TemplateStages { get; set; }
-        public CustomFieldValue CustomFieldValue { get; set; }
+        public List<CustomFieldValue> CustomFieldValues { get; set; } = [];
     }
 }

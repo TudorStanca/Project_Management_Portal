@@ -30,7 +30,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories
             return _context.CustomFields
                 .Include(x => x.Template)
                 .Include(x => x.TemplateStages)
-                .Include(x => x.CustomFieldValue)
                 .ToListAsync();
         }
 
@@ -38,7 +37,6 @@ namespace EY.UbbstractThinkers.ProjectManagementPortal.Server.Repositories
         {
             return _context.CustomFields
                 .Include(x => x.TemplateStages)
-                .Include(x => x.CustomFieldValue)
                 .Where(x => x.TemplateId == id)
                 .ToListAsync();
         }
